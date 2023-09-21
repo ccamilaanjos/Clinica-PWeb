@@ -1,2 +1,2 @@
-# Clinica-PWeb
+# Clínica Médica
 Trabalho da disciplina INF012 - Programação Web
