@@ -1,16 +1,19 @@
 package com.pweb.clinica.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Service;
 
 import com.pweb.clinica.dtos.PacienteDTO;
 import com.pweb.clinica.models.Paciente;
 import com.pweb.clinica.repositories.PacienteRepository;
 
+@Service
 public class PacienteService implements PessoaService {
 	
 	@Autowired
@@ -33,9 +36,23 @@ public class PacienteService implements PessoaService {
 	}
 
 	@Override
-	public ResponseEntity<?> tornarInativo() {
-		// TODO
-		return null;
+	public ResponseEntity<?> tornarInativo(Long id) {
+		Optional<Paciente> optionalPaciente = buscarPorID(id);
+		
+		if(optionalPaciente.isEmpty()) {
+			return null;
+		}
+		
+		Paciente paciente = optionalPaciente.get();
+		paciente.setAtivo(false);
+		pacienteRepository.save(paciente);
+		
+		return ResponseEntity.ok(null);
+	}
+
+	@Override
+	public Optional<Paciente> buscarPorID(Long id) {
+		return pacienteRepository.findById(id);
 	}
 
 }

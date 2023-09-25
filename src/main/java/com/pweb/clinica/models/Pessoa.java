@@ -1,5 +1,7 @@
 package com.pweb.clinica.models;
 
+import org.hibernate.annotations.ColumnDefault;
+
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,10 +18,12 @@ public class Pessoa {
 	private String telefone;
 	@ManyToOne
 	private Endereco endereco;
+	@ColumnDefault(value = "TRUE")
+	private Boolean ativo = true;
 	
 	public Pessoa() {}
 
-	public Pessoa(String nome, String email, String telefone, Endereco endereco) {
+	public Pessoa(String nome, String email, String telefone, Endereco endereco, Boolean ativo) {
 		this.nome = nome;
 		this.email = email;
 		this.telefone = telefone;
@@ -56,5 +60,13 @@ public class Pessoa {
 
 	public void setEndereco(Endereco endereco) {
 		this.endereco = endereco;
+	}
+
+	public Boolean getAtivo() {
+		return ativo;
+	}
+
+	public void setAtivo(Boolean ativo) {
+		this.ativo = ativo;
 	}
 }

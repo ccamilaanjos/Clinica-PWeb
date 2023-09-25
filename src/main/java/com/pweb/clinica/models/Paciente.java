@@ -9,7 +9,7 @@ public class Paciente extends Pessoa {
 		super();
 	}
 	
-	public Paciente(String nome, String email, Endereco endereco, String telefone) {
-		super(nome, email, telefone, endereco);
+	public Paciente(String nome, String email, String telefone, Endereco endereco, Boolean ativo) {
+		super(nome, email, telefone, endereco, ativo);
 	}
 }
