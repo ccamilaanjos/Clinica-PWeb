@@ -1,4 +1,4 @@
-package com.pweb.clinica.service;
+package com.pweb.clinica.services;
 
 import java.util.List;
 import java.util.stream.Collectors;

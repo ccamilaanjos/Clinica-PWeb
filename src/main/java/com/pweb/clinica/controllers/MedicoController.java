@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pweb.clinica.dtos.MedicoDTO;
 import com.pweb.clinica.models.Medico;
 import com.pweb.clinica.models.Pessoa;
-import com.pweb.clinica.service.MedicoService;
+import com.pweb.clinica.services.MedicoService;
 
 @RestController
 @RequestMapping("/medicos")
