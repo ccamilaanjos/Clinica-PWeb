@@ -4,9 +4,9 @@ import com.pweb.clinica.models.Endereco;
 import com.pweb.clinica.models.Especialidade;
 import com.pweb.clinica.models.Medico;
 
-public record MedicoDTO (String nome, String email, String telefone, Endereco endereco, String CRM, Especialidade especialidade, Boolean ativo) {
+public record MedicoDTO (Long id, String nome, String email, String telefone, Endereco endereco, String CRM, Especialidade especialidade, Boolean ativo) {
 	
 	public MedicoDTO(Medico medico) {
-		this(medico.getNome(), medico.getEmail(), medico.getTelefone(), medico.getEndereco(), medico.getCRM(), medico.getEspecialidade(), medico.getAtivo());
+		this(medico.getId(), medico.getNome(), medico.getEmail(), medico.getTelefone(), medico.getEndereco(), medico.getCRM(), medico.getEspecialidade(), medico.getAtivo());
 	}
 }
