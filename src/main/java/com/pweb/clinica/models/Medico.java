@@ -14,8 +14,8 @@ public class Medico extends Pessoa {
 		super();
 	}
 	
-	public Medico(String nome, String email, String telefone/*, Endereco endereco*/, String CRM, Especialidade especialidade) {
-		super(nome, email, telefone/*, endereco*/);
+	public Medico(String nome, String email, String telefone, Endereco endereco, String CRM, Especialidade especialidade) {
+		super(nome, email, telefone, endereco);
 		this.CRM = CRM;
 		this.especialidade = especialidade;
 	}
@@ -24,16 +24,6 @@ public class Medico extends Pessoa {
 	public void setTelefone(String telefone) {
 		super.setTelefone(telefone);
 	}
-	
-//	@Override
-//	public Endereco getEndereco() {
-//		return super.getEndereco();
-//	}
-//
-//	@Override
-//	public void setEndereco(Endereco endereco) {
-//		super.setEndereco(endereco);
-//	}
 
 	public String getCRM() {
 		return CRM;

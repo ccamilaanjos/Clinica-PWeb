@@ -3,6 +3,7 @@ package com.pweb.clinica.models;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.MappedSuperclass;
 
 @MappedSuperclass
@@ -13,15 +14,16 @@ public class Pessoa {
 	private String nome;
 	private String email;
 	private String telefone;
-	// private Endereco endereco;
+	@ManyToOne
+	private Endereco endereco;
 	
 	public Pessoa() {}
 
-	public Pessoa(String nome, String email, String telefone/*, Endereco endereco*/) {
+	public Pessoa(String nome, String email, String telefone, Endereco endereco) {
 		this.nome = nome;
 		this.email = email;
 		this.telefone = telefone;
-		// this.endereco = endereco;
+		this.endereco = endereco;
 	}
 	
 	public String getNome() {
@@ -48,11 +50,11 @@ public class Pessoa {
 		this.telefone = telefone;
 	}
 
-//	public Endereco getEndereco() {
-//		return endereco;
-//	}
-//
-//	public void setEndereco(Endereco endereco) {
-//		this.endereco = endereco;
-//	}
+	public Endereco getEndereco() {
+		return endereco;
+	}
+
+	public void setEndereco(Endereco endereco) {
+		this.endereco = endereco;
+	}
 }
