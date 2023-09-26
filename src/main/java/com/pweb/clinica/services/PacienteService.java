@@ -1,11 +1,10 @@
 package com.pweb.clinica.services;
 
-import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.pweb.clinica.dtos.PacienteDTO;
@@ -14,19 +13,18 @@ import com.pweb.clinica.models.Paciente;
 import com.pweb.clinica.repositories.PacienteRepository;
 
 @Service
-public class PacienteService implements PessoaService<PacienteFormDTO> {
-	
+public class PacienteService implements PessoaService<Paciente, PacienteFormDTO, PacienteDTO> {
+
 	@Autowired
 	private PacienteRepository pacienteRepository;
 
-	@Override
-	public List<PacienteDTO> converterLista(List<?> list) {
-		return list.stream().map(paciente -> new PacienteDTO((Paciente) paciente)).collect(Collectors.toList());
+	public Page<PacienteDTO> getPagina(Pageable pageable) {
+		return pacienteRepository.findAll(pageable).map(this::converterParaDTO);
 	}
 
-	@Override
-	public List<PacienteDTO> getListaOrdenadaPorNome() {
-		return converterLista(pacienteRepository.findAll(Sort.by(Sort.Direction.ASC, "nome")));
+	public PacienteDTO converterParaDTO(Paciente paciente) {
+		return new PacienteDTO(paciente.getId(), paciente.getNome(), paciente.getEmail(), paciente.getTelefone(),
+				paciente.getEndereco(), paciente.getAtivo());
 	}
 
 	@Override
@@ -43,15 +41,15 @@ public class PacienteService implements PessoaService<PacienteFormDTO> {
 	@Override
 	public Paciente tornarInativo(Long id) {
 		Optional<Paciente> optionalPaciente = buscarPorID(id);
-		
-		if(optionalPaciente.isEmpty()) {
+
+		if (optionalPaciente.isEmpty()) {
 			return null;
 		}
-		
+
 		Paciente paciente = optionalPaciente.get();
 		paciente.setAtivo(false);
 		pacienteRepository.save(paciente);
-		
+
 		return paciente;
 	}
 

@@ -1,8 +1,10 @@
 package com.pweb.clinica.controllers;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,8 +30,8 @@ public class MedicoController implements PessoaController<MedicoFormDTO> {
 
 	@GetMapping
 	@Override
-	public List<MedicoDTO> listar() {
-		return this.medicoService.getListaOrdenadaPorNome();
+	public Page<MedicoDTO> listar(@PageableDefault(size = 10, direction = Direction.ASC, sort="nome") Pageable pageable) {
+		return medicoService.getPagina(pageable);
 	}
 	
 	@PostMapping
@@ -46,7 +48,7 @@ public class MedicoController implements PessoaController<MedicoFormDTO> {
 	@DeleteMapping("/")
 	@Override
 	public ResponseEntity<?> remover(@RequestParam("id") Long id) {
-		if(this.medicoService.tornarInativo(id) == null) {
+		if(medicoService.tornarInativo(id) == null) {
 			return new ResponseEntity<>("Registro não encontrado", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(HttpStatus.OK);

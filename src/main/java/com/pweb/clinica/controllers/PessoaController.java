@@ -1,13 +1,13 @@
 package com.pweb.clinica.controllers;
 
-import java.util.List;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
 public interface PessoaController<T> {
 	
-	public abstract List<?> listar();
-	public abstract ResponseEntity<?> cadastrar(T dto);
-	public abstract ResponseEntity<?> atualizar();
-	public abstract ResponseEntity<?> remover(Long id);
+	public Page<?> listar(Pageable pageable);
+	public ResponseEntity<?> cadastrar(T dto);
+	public ResponseEntity<?> atualizar();
+	public ResponseEntity<?> remover(Long id);
 }
