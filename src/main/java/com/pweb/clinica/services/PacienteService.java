@@ -42,7 +42,7 @@ public class PacienteService implements PessoaService<PacienteFormDTO> {
 	}
 
 	@Override
-	public ResponseEntity<?> tornarInativo(Long id) {
+	public Paciente tornarInativo(Long id) {
 		Optional<Paciente> optionalPaciente = buscarPorID(id);
 		
 		if(optionalPaciente.isEmpty()) {
@@ -53,12 +53,11 @@ public class PacienteService implements PessoaService<PacienteFormDTO> {
 		paciente.setAtivo(false);
 		pacienteRepository.save(paciente);
 		
-		return ResponseEntity.ok(null);
+		return paciente;
 	}
 
 	@Override
 	public Optional<Paciente> buscarPorID(Long id) {
 		return pacienteRepository.findById(id);
 	}
-
 }

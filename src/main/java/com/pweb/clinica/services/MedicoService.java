@@ -44,7 +44,7 @@ public class MedicoService implements PessoaService<MedicoFormDTO> {
 	}
 
 	@Override
-	public ResponseEntity<?> tornarInativo(Long id) {
+	public Medico tornarInativo(Long id) {
 		Optional<Medico> optionalMedico = buscarPorID(id);
 		
 		if(optionalMedico.isEmpty()) {
@@ -55,7 +55,7 @@ public class MedicoService implements PessoaService<MedicoFormDTO> {
 		medico.setAtivo(false);
 		medicoRepository.save(medico);
 		
-		return ResponseEntity.ok(null);
+		return medico;
 	}
 
 	@Override
