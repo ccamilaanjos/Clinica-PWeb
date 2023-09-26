@@ -29,8 +29,8 @@ public class Medico extends Pessoa {
 		return CRM;
 	}
 
-	public void setCRM(String cRM) {
-		CRM = cRM;
+	public void setCRM(String crm) {
+		this.CRM = crm;
 	}
 
 	public Especialidade getEspecialidade() {

@@ -23,15 +23,33 @@ public class PacienteService implements PessoaService<Paciente, PacienteFormDTO,
 	}
 
 	public PacienteDTO converterParaDTO(Paciente paciente) {
-		return new PacienteDTO(paciente.getId(), paciente.getNome(), paciente.getEmail(), paciente.getTelefone(),
+		return new PacienteDTO(paciente.getId(), paciente.getNome(), paciente.getCPF(), paciente.getEmail(), paciente.getTelefone(),
 				paciente.getEndereco(), paciente.getAtivo());
 	}
 
 	@Override
 	public Paciente cadastrar(PacienteFormDTO pacienteForm) {
 		Paciente paciente = new Paciente();
-		paciente.setNome(pacienteForm.nome());
 		paciente.setEmail(pacienteForm.email());
+		paciente.setCPF(pacienteForm.CPF());
+		salvarDados(paciente, pacienteForm);
+		return paciente;
+	}
+	
+	@Override
+	public Paciente atualizar(Long id, PacienteFormDTO pacienteForm) {
+		Optional<Paciente> optionalPaciente = buscarPorID(id);
+		if (optionalPaciente.isEmpty()) {
+			return null;
+		}
+		
+		Paciente paciente = salvarDados(optionalPaciente.get(), pacienteForm);
+		return paciente;
+	}
+	
+	@Override
+	public Paciente salvarDados(Paciente paciente, PacienteFormDTO pacienteForm) {
+		paciente.setNome(pacienteForm.nome());
 		paciente.setEndereco(pacienteForm.endereco());
 		paciente.setTelefone(pacienteForm.telefone());
 		pacienteRepository.save(paciente);

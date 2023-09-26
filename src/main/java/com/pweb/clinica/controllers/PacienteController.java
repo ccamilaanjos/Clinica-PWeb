@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pweb.clinica.dtos.MedicoDTO;
 import com.pweb.clinica.dtos.PacienteDTO;
 import com.pweb.clinica.dtos.PacienteFormDTO;
 import com.pweb.clinica.models.Paciente;
@@ -44,8 +45,9 @@ public class PacienteController implements PessoaController<PacienteFormDTO, Pac
 	
 	@PutMapping
 	@Override
-	public ResponseEntity<Pessoa> atualizar() {
-		return null;
+	public ResponseEntity<PacienteDTO> atualizar(@RequestParam("id") Long id, @RequestBody PacienteFormDTO pacienteForm) {
+		Paciente paciente = pacienteService.atualizar(id, pacienteForm);
+		return new ResponseEntity<PacienteDTO>(new PacienteDTO(paciente), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/")

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -17,9 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pweb.clinica.dtos.MedicoDTO;
 import com.pweb.clinica.dtos.MedicoFormDTO;
-import com.pweb.clinica.dtos.PacienteDTO;
 import com.pweb.clinica.models.Medico;
-import com.pweb.clinica.models.Pessoa;
 import com.pweb.clinica.services.MedicoService;
 
 @RestController
@@ -41,9 +40,12 @@ public class MedicoController implements PessoaController<MedicoFormDTO, MedicoD
 		Medico medico = medicoService.cadastrar(medicoForm);
 		return new ResponseEntity<MedicoDTO>(new MedicoDTO(medico), HttpStatus.CREATED);
 	}
+	
+	@PutMapping
 	@Override
-	public ResponseEntity<Pessoa> atualizar() {
-		return null;
+	public ResponseEntity<MedicoDTO> atualizar(@RequestParam("id") Long id, @RequestBody MedicoFormDTO medicoForm) {
+		Medico medico = medicoService.atualizar(id, medicoForm);
+		return new ResponseEntity<MedicoDTO>(new MedicoDTO(medico), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/")

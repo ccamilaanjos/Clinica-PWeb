@@ -32,12 +32,31 @@ public class MedicoService implements PessoaService<Medico, MedicoFormDTO, Medic
 	@Override
 	public Medico cadastrar(MedicoFormDTO medicoForm) {
 		Medico medico = new Medico();
-		medico.setNome(medicoForm.nome());
 		medico.setEmail(medicoForm.email());
-		medico.setEndereco(medicoForm.endereco());
-		medico.setTelefone(medicoForm.telefone());
 		medico.setCRM(medicoForm.CRM());
 		medico.setEspecialidade(medicoForm.especialidade());
+		
+		salvarDados(medico, medicoForm);
+		return medico;
+	}
+	
+	@Override
+	public Medico atualizar(Long id, MedicoFormDTO medicoForm) {
+		Optional<Medico> optionalMedico = buscarPorID(id);
+		if (optionalMedico.isEmpty()) {
+			return null;
+		}
+		
+		Medico medicoFound = optionalMedico.get();
+		salvarDados(medicoFound, medicoForm);
+		return medicoFound;
+	}
+	
+	@Override
+	public Medico salvarDados(Medico medico, MedicoFormDTO medicoForm) {
+		medico.setNome(medicoForm.nome());
+		medico.setEndereco(medicoForm.endereco());
+		medico.setTelefone(medicoForm.telefone());
 		medicoRepository.save(medico);
 		return medico;
 	}
@@ -45,7 +64,6 @@ public class MedicoService implements PessoaService<Medico, MedicoFormDTO, Medic
 	@Override
 	public Medico tornarInativo(Long id) {
 		Optional<Medico> optionalMedico = buscarPorID(id);
-
 		if (optionalMedico.isEmpty()) {
 			return null;
 		}
