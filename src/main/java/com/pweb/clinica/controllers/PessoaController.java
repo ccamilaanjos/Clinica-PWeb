@@ -4,10 +4,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
-public interface PessoaController<T> {
+import com.pweb.clinica.dtos.PacienteDTO;
+
+public interface PessoaController<FormDTO, DTO> {
 	
-	public Page<?> listar(Pageable pageable);
-	public ResponseEntity<?> cadastrar(T dto);
+	public ResponseEntity<Page<DTO>> listar(Pageable pageable);
+	public ResponseEntity<?> cadastrar(FormDTO dto);
 	public ResponseEntity<?> atualizar();
 	public ResponseEntity<?> remover(Long id);
 }

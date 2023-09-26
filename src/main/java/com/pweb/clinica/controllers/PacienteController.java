@@ -24,15 +24,15 @@ import com.pweb.clinica.services.PacienteService;
 
 @RestController
 @RequestMapping("/pacientes")
-public class PacienteController implements PessoaController<PacienteFormDTO> {
+public class PacienteController implements PessoaController<PacienteFormDTO, PacienteDTO> {
 	
 	@Autowired
 	private PacienteService pacienteService;
 
 	@GetMapping
 	@Override
-	public Page<PacienteDTO> listar(@PageableDefault(size = 10, direction = Direction.ASC, sort = "nome") Pageable pageable) {
-		return pacienteService.getPagina(pageable);
+	public ResponseEntity<Page<PacienteDTO>> listar(@PageableDefault(size = 10, direction = Direction.ASC, sort = "nome") Pageable pageable) {
+		return new ResponseEntity<Page<PacienteDTO>>(pacienteService.getPagina(pageable), HttpStatus.OK);
 	}
 	
 	@PostMapping

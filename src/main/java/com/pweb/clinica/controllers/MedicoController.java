@@ -17,21 +17,22 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.pweb.clinica.dtos.MedicoDTO;
 import com.pweb.clinica.dtos.MedicoFormDTO;
+import com.pweb.clinica.dtos.PacienteDTO;
 import com.pweb.clinica.models.Medico;
 import com.pweb.clinica.models.Pessoa;
 import com.pweb.clinica.services.MedicoService;
 
 @RestController
 @RequestMapping("/medicos")
-public class MedicoController implements PessoaController<MedicoFormDTO> {
+public class MedicoController implements PessoaController<MedicoFormDTO, MedicoDTO> {
 	
 	@Autowired
 	private MedicoService medicoService;
-
+	
 	@GetMapping
 	@Override
-	public Page<MedicoDTO> listar(@PageableDefault(size = 10, direction = Direction.ASC, sort="nome") Pageable pageable) {
-		return medicoService.getPagina(pageable);
+	public ResponseEntity<Page<MedicoDTO>> listar(@PageableDefault(size = 10, direction = Direction.ASC, sort = "nome") Pageable pageable) {
+		return new ResponseEntity<Page<MedicoDTO>>(medicoService.getPagina(pageable), HttpStatus.OK);
 	}
 	
 	@PostMapping
