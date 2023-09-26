@@ -5,11 +5,13 @@ import java.util.Optional;
 
 import org.springframework.http.ResponseEntity;
 
-public interface PessoaService {
+import com.pweb.clinica.models.Pessoa;
+
+public interface PessoaService<T> {
 	
 	public List<?> converterLista(List<?> list);
 	public List<?> getListaOrdenadaPorNome();
-	public ResponseEntity<?> cadastrar();
+	public Pessoa cadastrar(T dto);
 	public ResponseEntity<?> tornarInativo(Long id);
 	public Optional<?> buscarPorID(Long id);
 }

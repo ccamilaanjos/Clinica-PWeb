@@ -34,6 +34,10 @@ public class Endereco {
 		this.CEP = CEP;
 	}
 	
+	public Long getId() {
+		return id;
+	}
+	
 	public String getLogradouro() {
 		return logradouro;
 	}

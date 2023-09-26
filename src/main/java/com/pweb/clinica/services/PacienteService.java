@@ -10,11 +10,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.pweb.clinica.dtos.PacienteDTO;
+import com.pweb.clinica.dtos.PacienteFormDTO;
 import com.pweb.clinica.models.Paciente;
 import com.pweb.clinica.repositories.PacienteRepository;
 
 @Service
-public class PacienteService implements PessoaService {
+public class PacienteService implements PessoaService<PacienteFormDTO> {
 	
 	@Autowired
 	private PacienteRepository pacienteRepository;
@@ -30,9 +31,14 @@ public class PacienteService implements PessoaService {
 	}
 
 	@Override
-	public ResponseEntity<?> cadastrar() {
-		// TODO
-		return null;
+	public Paciente cadastrar(PacienteFormDTO pacienteForm) {
+		Paciente paciente = new Paciente();
+		paciente.setNome(pacienteForm.nome());
+		paciente.setEmail(pacienteForm.email());
+		paciente.setEndereco(pacienteForm.endereco());
+		paciente.setTelefone(pacienteForm.telefone());
+		pacienteRepository.save(paciente);
+		return paciente;
 	}
 
 	@Override

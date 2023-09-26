@@ -2,6 +2,7 @@ package com.pweb.clinica.models;
 
 import org.hibernate.annotations.ColumnDefault;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,7 +17,7 @@ public class Pessoa {
 	private String nome;
 	private String email;
 	private String telefone;
-	@ManyToOne
+	@ManyToOne(cascade=CascadeType.PERSIST)
 	private Endereco endereco;
 	@ColumnDefault(value = "TRUE")
 	private Boolean ativo = true;
@@ -33,11 +34,7 @@ public class Pessoa {
 	public Long getId() {
 		return id;
 	}
-	
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
+		
 	public String getNome() {
 		return nome;
 	}
