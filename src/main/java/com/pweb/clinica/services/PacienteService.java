@@ -31,7 +31,7 @@ public class PacienteService implements PessoaService<Paciente, PacienteFormDTO,
 	public Paciente cadastrar(PacienteFormDTO pacienteForm) {
 		Paciente paciente = new Paciente();
 		paciente.setEmail(pacienteForm.email());
-		paciente.setCPF(pacienteForm.CPF());
+		paciente.setCPF(pacienteForm.cpf());
 		salvarDados(paciente, pacienteForm);
 		return paciente;
 	}

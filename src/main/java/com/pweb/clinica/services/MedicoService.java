@@ -33,7 +33,7 @@ public class MedicoService implements PessoaService<Medico, MedicoFormDTO, Medic
 	public Medico cadastrar(MedicoFormDTO medicoForm) {
 		Medico medico = new Medico();
 		medico.setEmail(medicoForm.email());
-		medico.setCRM(medicoForm.CRM());
+		medico.setCRM(medicoForm.crm());
 		medico.setEspecialidade(medicoForm.especialidade());
 		
 		salvarDados(medico, medicoForm);

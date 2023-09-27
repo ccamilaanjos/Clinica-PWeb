@@ -4,22 +4,22 @@ import jakarta.persistence.Entity;
 
 @Entity(name="pacientes")
 public class Paciente extends Pessoa {
-	private String CPF;
+	private String cpf;
 
 	public Paciente() {
 		super();
 	}
 	
-	public Paciente(String nome, String email, String telefone, Endereco endereco, Boolean ativo, String CPF) {
+	public Paciente(String nome, String email, String telefone, Endereco endereco, Boolean ativo, String cpf) {
 		super(nome, email, telefone, endereco, ativo);
-		this.CPF = CPF;
+		this.cpf = cpf;
 	}
 	
 	public String getCPF() {
-		return CPF;
+		return cpf;
 	}
 	
-	public void setCPF(String CPF) {
-		this.CPF = CPF;
+	public void setCPF(String cpf) {
+		this.cpf = cpf;
 	}
 }

@@ -6,7 +6,7 @@ import jakarta.persistence.Enumerated;
 
 @Entity(name="medicos")
 public class Medico extends Pessoa {
-	private String CRM;
+	private String crm;
 	@Enumerated(EnumType.STRING)
 	private Especialidade especialidade;
 	
@@ -14,23 +14,18 @@ public class Medico extends Pessoa {
 		super();
 	}
 	
-	public Medico(String nome, String email, String telefone, Endereco endereco, String CRM, Especialidade especialidade, Boolean ativo) {
+	public Medico(String nome, String email, String telefone, Endereco endereco, String crm, Especialidade especialidade, Boolean ativo) {
 		super(nome, email, telefone, endereco, ativo);
-		this.CRM = CRM;
+		this.crm = crm;
 		this.especialidade = especialidade;
 	}
 
-	@Override
-	public void setTelefone(String telefone) {
-		super.setTelefone(telefone);
-	}
-
 	public String getCRM() {
-		return CRM;
+		return crm;
 	}
 
 	public void setCRM(String crm) {
-		this.CRM = crm;
+		this.crm = crm;
 	}
 
 	public Especialidade getEspecialidade() {
