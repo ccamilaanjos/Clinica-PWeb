@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.pweb.clinica.dtos.MedicoDTO;
 import com.pweb.clinica.dtos.MedicoFormDTO;
+import com.pweb.clinica.models.Endereco;
 import com.pweb.clinica.models.Medico;
 import com.pweb.clinica.repositories.MedicoRepository;
 
@@ -17,6 +18,8 @@ public class MedicoService implements PessoaService<Medico, MedicoFormDTO, Medic
 
 	@Autowired
 	private MedicoRepository medicoRepository;
+	@Autowired
+	private EnderecoService enderecoService;
 
 	@Override
 	public Page<MedicoDTO> getPagina(Pageable pageable) {
@@ -53,10 +56,25 @@ public class MedicoService implements PessoaService<Medico, MedicoFormDTO, Medic
 	}
 	
 	public Medico salvarDados(Medico medico, MedicoFormDTO medicoForm) {
-		medico.setNome(medicoForm.nome());
-		medico.setEndereco(medicoForm.endereco());
-		medico.setTelefone(medicoForm.telefone());
+		medico.setNome(medicoForm.nome() == null ? medico.getNome() : medicoForm.nome());
+		medico.setTelefone(medicoForm.telefone() == null ? medico.getTelefone() : medicoForm.telefone());
+		
+		if(medicoForm.endereco() != null) {
+			atribuirEndereco(medico, medicoForm);
+		}
+		
 		medicoRepository.save(medico);
+		return medico;
+	}
+	
+	private Medico atribuirEndereco(Medico medico, MedicoFormDTO medicoForm) {
+		Endereco enderecoBase = medicoForm.endereco();
+		Optional<Endereco> enderecoExistente = enderecoService.buscarEnderecoExistente(enderecoBase);
+		if(enderecoExistente.isPresent()) {
+			medico.setEndereco(medicoForm.endereco() == null ? medico.getEndereco() : enderecoExistente.get());
+		} else {
+			medico.setEndereco(medicoForm.endereco() == null ? medico.getEndereco() : medicoForm.endereco());
+		}
 		return medico;
 	}
 

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.pweb.clinica.dtos.PacienteDTO;
 import com.pweb.clinica.dtos.PacienteFormDTO;
+import com.pweb.clinica.models.Endereco;
 import com.pweb.clinica.models.Paciente;
 import com.pweb.clinica.repositories.PacienteRepository;
 
@@ -17,6 +18,9 @@ public class PacienteService implements PessoaService<Paciente, PacienteFormDTO,
 
 	@Autowired
 	private PacienteRepository pacienteRepository;
+	
+	@Autowired
+	private EnderecoService enderecoService;
 
 	public Page<PacienteDTO> getPagina(Pageable pageable) {
 		return pacienteRepository.findAll(pageable).map(this::converterParaDTO);
@@ -48,10 +52,25 @@ public class PacienteService implements PessoaService<Paciente, PacienteFormDTO,
 	}
 	
 	public Paciente salvarDados(Paciente paciente, PacienteFormDTO pacienteForm) {
-		paciente.setNome(pacienteForm.nome());
-		paciente.setEndereco(pacienteForm.endereco());
-		paciente.setTelefone(pacienteForm.telefone());
+		paciente.setNome(pacienteForm.nome() == null ? paciente.getNome() : pacienteForm.nome());
+		paciente.setTelefone(pacienteForm.telefone() == null ? paciente.getTelefone() : pacienteForm.telefone());
+		
+		if(pacienteForm.endereco() != null) {
+			atribuirEndereco(paciente, pacienteForm);
+		}
+				
 		pacienteRepository.save(paciente);
+		return paciente;
+	}
+	
+	private Paciente atribuirEndereco(Paciente paciente, PacienteFormDTO pacienteForm) {
+		Endereco enderecoBase = pacienteForm.endereco();
+		Optional<Endereco> enderecoExistente = enderecoService.buscarEnderecoExistente(enderecoBase);
+		if(enderecoExistente.isPresent()) {
+			paciente.setEndereco(pacienteForm.endereco() == null ? paciente.getEndereco() : enderecoExistente.get());
+		} else {
+			paciente.setEndereco(pacienteForm.endereco() == null ? paciente.getEndereco() : pacienteForm.endereco());
+		}
 		return paciente;
 	}
 
@@ -74,4 +93,5 @@ public class PacienteService implements PessoaService<Paciente, PacienteFormDTO,
 	public Optional<Paciente> buscarPorID(Long id) {
 		return pacienteRepository.findById(id);
 	}
+	
 }

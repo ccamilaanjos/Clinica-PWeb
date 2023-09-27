@@ -18,20 +18,20 @@ public class Endereco {
 	private String complemento;
 	private String bairro;
 	private String cidade;
-	private String UF;
-	private String CEP;
+	private String uf;
+	private String cep;
 	
 	public Endereco() {}
 	
-	public Endereco(String logradouro, int numero, String complemento, String bairro, String cidade, String UF,
-			String CEP) {
+	public Endereco(String logradouro, int numero, String complemento, String bairro, String cidade, String uf,
+			String cep) {
 		this.logradouro = logradouro;
 		this.numero = numero;
 		this.complemento = complemento;
 		this.bairro = bairro;
 		this.cidade = cidade;
-		this.UF = UF;
-		this.CEP = CEP;
+		this.uf = uf;
+		this.cep = cep;
 	}
 	
 	public Long getId() {
@@ -43,7 +43,7 @@ public class Endereco {
 	}
 
 	public void setLogradouro(String logradouro) {
-		this.logradouro = logradouro;
+		this.logradouro = logradouro == null ? logradouro : logradouro.toUpperCase();
 	}
 
 	public Integer getNumero() {
@@ -59,7 +59,7 @@ public class Endereco {
 	}
 
 	public void setComplemento(String complemento) {
-		this.complemento = complemento;
+		this.complemento = complemento == null ? complemento : complemento.toUpperCase();
 	}
 
 	public String getBairro() {
@@ -67,7 +67,7 @@ public class Endereco {
 	}
 
 	public void setBairro(String bairro) {
-		this.bairro = bairro;
+		this.bairro = bairro == null ? bairro : bairro.toUpperCase();
 	}
 
 	public String getCidade() {
@@ -75,22 +75,22 @@ public class Endereco {
 	}
 
 	public void setCidade(String cidade) {
-		this.cidade = cidade;
+		this.cidade = cidade == null ? cidade : cidade.toUpperCase();
 	}
 
 	public String getUF() {
-		return UF;
+		return uf;
 	}
 
-	public void setUF(String UF) {
-		this.UF = UF;
+	public void setUF(String uf) {
+		this.uf =  uf == null ? uf : uf.toUpperCase();
 	}
 
-	public String getCEP() {
-		return CEP;
+	public String getCep() {
+		return cep;
 	}
 
-	public void setCEP(String CEP) {
-		this.CEP = CEP;
+	public void setCep(String cep) {
+		this.cep = cep;
 	}
 }
