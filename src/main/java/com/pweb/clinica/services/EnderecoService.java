@@ -13,8 +13,6 @@ public class EnderecoService {
 	@Autowired
 	private EnderecoRepository enderecoRepository;
 	
-	public EnderecoService() {}
-	
 	public Optional<Endereco> buscarEnderecoExistente(Endereco endereco) {
 	    return this.enderecoRepository.findByLogradouroAndNumeroAndComplementoAndBairroAndCidadeAndUfAndCepIgnoreCase(
 	    		endereco.getLogradouro(),
