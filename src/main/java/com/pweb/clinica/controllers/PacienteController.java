@@ -39,12 +39,11 @@ public class PacienteController implements PessoaController<PacienteFormDTO, Pac
 	@PostMapping
 	@Override
 	public ResponseEntity<PacienteDTO> cadastrar(@RequestBody PacienteFormDTO pacienteForm) {
-		System.out.println("CPF::: " + pacienteForm.cpf());
 		Paciente paciente = pacienteService.cadastrar(pacienteForm);
 		return new ResponseEntity<PacienteDTO>(new PacienteDTO(paciente), HttpStatus.CREATED);
 	}
 	
-	@PutMapping
+	@PutMapping("/")
 	@Override
 	public ResponseEntity<PacienteDTO> atualizar(@RequestParam("id") Long id, @RequestBody PacienteFormDTO pacienteForm) {
 		Paciente paciente = pacienteService.atualizar(id, pacienteForm);

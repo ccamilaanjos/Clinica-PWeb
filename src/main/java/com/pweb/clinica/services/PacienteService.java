@@ -47,7 +47,6 @@ public class PacienteService implements PessoaService<Paciente, PacienteFormDTO,
 		return paciente;
 	}
 	
-	@Override
 	public Paciente salvarDados(Paciente paciente, PacienteFormDTO pacienteForm) {
 		paciente.setNome(pacienteForm.nome());
 		paciente.setEndereco(pacienteForm.endereco());

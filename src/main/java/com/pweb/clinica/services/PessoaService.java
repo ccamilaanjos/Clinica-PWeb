@@ -13,7 +13,6 @@ public interface PessoaService<Model, FormDTO, DTO> {
 	public DTO converterParaDTO(Model model);
 	public Pessoa cadastrar(FormDTO formDto);
 	public Model atualizar(Long id, FormDTO formDto); 
-	public Model salvarDados(Model model, FormDTO formDto);
 	public Pessoa tornarInativo(Long id);
 	public Optional<Model> buscarPorID(Long id);
 }

@@ -52,7 +52,6 @@ public class MedicoService implements PessoaService<Medico, MedicoFormDTO, Medic
 		return medicoFound;
 	}
 	
-	@Override
 	public Medico salvarDados(Medico medico, MedicoFormDTO medicoForm) {
 		medico.setNome(medicoForm.nome());
 		medico.setEndereco(medicoForm.endereco());

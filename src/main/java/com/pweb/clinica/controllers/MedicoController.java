@@ -41,7 +41,7 @@ public class MedicoController implements PessoaController<MedicoFormDTO, MedicoD
 		return new ResponseEntity<MedicoDTO>(new MedicoDTO(medico), HttpStatus.CREATED);
 	}
 	
-	@PutMapping
+	@PutMapping("/")
 	@Override
 	public ResponseEntity<MedicoDTO> atualizar(@RequestParam("id") Long id, @RequestBody MedicoFormDTO medicoForm) {
 		Medico medico = medicoService.atualizar(id, medicoForm);
