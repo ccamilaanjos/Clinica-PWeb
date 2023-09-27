@@ -24,7 +24,7 @@ public class Pessoa {
 	
 	public Pessoa() {}
 
-	public Pessoa(String nome, String email, String telefone, Endereco endereco, Boolean ativo) {
+	public Pessoa(String nome, String email, String telefone, Endereco endereco) {
 		this.nome = nome;
 		this.email = email;
 		this.telefone = telefone;

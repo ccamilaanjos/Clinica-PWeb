@@ -1,5 +1,7 @@
 package com.pweb.clinica.models;
 
+import com.pweb.clinica.dtos.EnderecoFormDTO;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,6 +37,16 @@ public class Endereco {
 		this.cidade = cidade;
 		this.uf = uf;
 		this.cep = cep;
+	}
+	
+	public Endereco(EnderecoFormDTO enderecoForm) {
+		this.logradouro = enderecoForm.logradouro();
+		this.numero = enderecoForm.numero();
+		this.complemento = enderecoForm.complemento();
+		this.bairro = enderecoForm.bairro();
+		this.cidade = enderecoForm.cidade();
+		this.uf = enderecoForm.uf();
+		this.cep = enderecoForm.cep();
 	}
 	
 	public Long getId() {

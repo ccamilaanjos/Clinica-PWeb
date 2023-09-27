@@ -68,12 +68,13 @@ public class MedicoService implements PessoaService<Medico, MedicoFormDTO, Medic
 	}
 	
 	private Medico atribuirEndereco(Medico medico, MedicoFormDTO medicoForm) {
-		Endereco enderecoBase = medicoForm.endereco();
+		enderecoService.getEnderecoFinal(medico.getEndereco(), medicoForm.endereco());
+		
 		Optional<Endereco> enderecoExistente = enderecoService.buscarEnderecoExistente(enderecoBase);
 		if(enderecoExistente.isPresent()) {
 			medico.setEndereco(medicoForm.endereco() == null ? medico.getEndereco() : enderecoExistente.get());
 		} else {
-			medico.setEndereco(medicoForm.endereco() == null ? medico.getEndereco() : medicoForm.endereco());
+			medico.setEndereco(medicoForm.endereco() == null ? medico.getEndereco() : enderecoBase);
 		}
 		return medico;
 	}

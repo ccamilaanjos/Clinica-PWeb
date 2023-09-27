@@ -10,8 +10,8 @@ public class Paciente extends Pessoa {
 		super();
 	}
 	
-	public Paciente(String nome, String email, String telefone, Endereco endereco, Boolean ativo, String cpf) {
-		super(nome, email, telefone, endereco, ativo);
+	public Paciente(String nome, String email, String telefone, Endereco endereco, String cpf) {
+		super(nome, email, telefone, endereco);
 		this.cpf = cpf;
 	}
 	
