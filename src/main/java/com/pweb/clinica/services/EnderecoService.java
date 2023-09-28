@@ -13,30 +13,76 @@ import com.pweb.clinica.repositories.EnderecoRepository;
 public class EnderecoService {
 	@Autowired
 	private EnderecoRepository enderecoRepository;
-	
+
 	public Optional<Endereco> buscarEnderecoExistente(Endereco endereco) {
-	    return this.enderecoRepository.findByLogradouroAndNumeroAndComplementoAndBairroAndCidadeAndUfAndCepIgnoreCase(
-	    		endereco.getLogradouro(),
-	    		endereco.getNumero(),
-	    		endereco.getComplemento(),
-	    		endereco.getBairro(),
-	    		endereco.getCidade(),
-	    		endereco.getUF(),
-	    		endereco.getCep()
-	    );
+		return enderecoRepository.findByLogradouroAndNumeroAndComplementoAndBairroAndCidadeAndUfAndCepIgnoreCase(
+				endereco.getLogradouro(), endereco.getNumero(), endereco.getComplemento(), endereco.getBairro(),
+				endereco.getCidade(), endereco.getUF(), endereco.getCep());
+	}
+
+	public Endereco getEnderecoFinalNulosNulos(Endereco enderecoAntigo, Endereco enderecoForm) {
+		Endereco enderecoFinal = new Endereco();
+
+		enderecoFinal.setLogradouro(
+				enderecoForm.getLogradouro() == null ? enderecoAntigo.getLogradouro() : enderecoForm.getLogradouro());
+		enderecoFinal
+				.setBairro(enderecoForm.getBairro() == null ? enderecoAntigo.getBairro() : enderecoForm.getBairro());
+		enderecoFinal
+				.setCidade(enderecoForm.getCidade() == null ? enderecoAntigo.getCidade() : enderecoForm.getCidade());
+		enderecoFinal.setUF(enderecoForm.getUF() == null ? enderecoAntigo.getUF() : enderecoForm.getUF());
+		enderecoFinal.setCep(enderecoForm.getCep() == null ? enderecoAntigo.getCep() : enderecoForm.getCep());
+
+		return enderecoFinal;
 	}
 	
-	public Endereco getEnderecoFinal(Endereco enderecoAntigo, EnderecoFormDTO enderecoForm) {
+	public Endereco getEnderecoFinal(Endereco enderecoAntigo, Endereco enderecoForm) {
+		System.out.println("COMPARANDO " + enderecoAntigo.getNumero() + " COM " + enderecoForm.getNumero());
 		Endereco enderecoFinal = new Endereco();
-		
-		enderecoFinal.setLogradouro(enderecoForm.logradouro() == null ? enderecoAntigo.getLogradouro() : enderecoForm.logradouro());
-		enderecoFinal.setNumero(enderecoForm.numero() == null ? enderecoAntigo.getNumero() : enderecoForm.numero());
-		enderecoFinal.setComplemento(enderecoForm.complemento() == null ? enderecoAntigo.getComplemento() : enderecoForm.complemento());
-		enderecoFinal.setBairro(enderecoForm.bairro() == null ? enderecoAntigo.getBairro() : enderecoForm.bairro());
-		enderecoFinal.setCidade(enderecoForm.cidade() == null ? enderecoAntigo.getCidade() : enderecoForm.cidade());
-		enderecoFinal.setUF(enderecoForm.uf() == null ? enderecoAntigo.getUF() : enderecoForm.uf());
-		enderecoFinal.setCep(enderecoForm.cep() == null ? enderecoAntigo.getCep() : enderecoForm.cep());
-		
+
+		enderecoFinal.setLogradouro(
+				enderecoForm.getLogradouro() == null ? enderecoAntigo.getLogradouro() : enderecoForm.getLogradouro());
+		enderecoFinal
+				.setNumero(enderecoForm.getNumero() == null ? enderecoAntigo.getNumero() : enderecoForm.getNumero());
+		enderecoFinal.setComplemento(enderecoForm.getComplemento() == null ? enderecoAntigo.getComplemento()
+				: enderecoForm.getComplemento());
+		enderecoFinal
+				.setBairro(enderecoForm.getBairro() == null ? enderecoAntigo.getBairro() : enderecoForm.getBairro());
+		enderecoFinal
+				.setCidade(enderecoForm.getCidade() == null ? enderecoAntigo.getCidade() : enderecoForm.getCidade());
+		enderecoFinal.setUF(enderecoForm.getUF() == null ? enderecoAntigo.getUF() : enderecoForm.getUF());
+		enderecoFinal.setCep(enderecoForm.getCep() == null ? enderecoAntigo.getCep() : enderecoForm.getCep());
+
 		return enderecoFinal;
+	}
+
+	public Boolean todosOsCamposSaoNulos(Endereco enderecoForm) {
+		if (enderecoForm.getLogradouro() == null && enderecoForm.getNumero() == null
+				&& enderecoForm.getComplemento() == null && enderecoForm.getBairro() == null
+				&& enderecoForm.getCidade() == null && enderecoForm.getUF() == null && enderecoForm.getCep() == null) {
+			return true;
+		}
+		return false;
+	}
+
+	public Boolean algumCampoNaoNuloENulo(Endereco enderecoForm) {
+		if (enderecoForm.getLogradouro() == null || enderecoForm.getBairro() == null || enderecoForm.getCidade() == null
+				|| enderecoForm.getUF() == null || enderecoForm.getCep() == null) {
+			return true;
+		}
+		return false;
+	}
+
+	public Boolean algumCampoAnulavelENuloEOSDemaisNao(Endereco enderecoForm) {
+		if ((enderecoForm.getNumero() == null || enderecoForm.getComplemento() == null)
+				&& (enderecoForm.getLogradouro() != null && enderecoForm.getBairro() != null
+						&& enderecoForm.getCidade() != null && enderecoForm.getUF() != null
+						&& enderecoForm.getCep() != null)) {
+			return true;
+		}
+		return false;
+	}
+
+	public Endereco converter(EnderecoFormDTO enderecoForm) {
+		return new Endereco(enderecoForm);
 	}
 }

@@ -24,26 +24,28 @@ import com.pweb.clinica.services.PacienteService;
 @RestController
 @RequestMapping("/pacientes")
 public class PacienteController implements PessoaController<PacienteFormDTO, PacienteDTO> {
-	
+
 	@Autowired
 	private PacienteService pacienteService;
 
 	@GetMapping
 	@Override
-	public ResponseEntity<Page<PacienteDTO>> listar(@PageableDefault(size = 10, direction = Direction.ASC, sort = "nome") Pageable pageable) {
+	public ResponseEntity<Page<PacienteDTO>> listar(
+			@PageableDefault(size = 10, direction = Direction.ASC, sort = "nome") Pageable pageable) {
 		return new ResponseEntity<Page<PacienteDTO>>(pacienteService.getPagina(pageable), HttpStatus.OK);
 	}
-	
+
 	@PostMapping
 	@Override
 	public ResponseEntity<PacienteDTO> cadastrar(@RequestBody PacienteFormDTO pacienteForm) {
 		Paciente paciente = pacienteService.cadastrar(pacienteForm);
 		return new ResponseEntity<PacienteDTO>(new PacienteDTO(paciente), HttpStatus.CREATED);
 	}
-	
+
 	@PutMapping("/")
 	@Override
-	public ResponseEntity<PacienteDTO> atualizar(@RequestParam("id") Long id, @RequestBody PacienteFormDTO pacienteForm) {
+	public ResponseEntity<PacienteDTO> atualizar(@RequestParam("id") Long id,
+			@RequestBody PacienteFormDTO pacienteForm) {
 		Paciente paciente = pacienteService.atualizar(id, pacienteForm);
 		return new ResponseEntity<PacienteDTO>(new PacienteDTO(paciente), HttpStatus.OK);
 	}
@@ -51,7 +53,7 @@ public class PacienteController implements PessoaController<PacienteFormDTO, Pac
 	@DeleteMapping("/")
 	@Override
 	public ResponseEntity<?> remover(@RequestParam("id") Long id) {
-		if(this.pacienteService.tornarInativo(id) == null) {
+		if (this.pacienteService.tornarInativo(id) == null) {
 			return new ResponseEntity<>("Registro não encontrado", HttpStatus.NOT_FOUND);
 		}
 		return new ResponseEntity<>(HttpStatus.OK);

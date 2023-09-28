@@ -55,28 +55,43 @@ public class MedicoService implements PessoaService<Medico, MedicoFormDTO, Medic
 		return medicoFound;
 	}
 	
-	public Medico salvarDados(Medico medico, MedicoFormDTO medicoForm) {
+	private Medico salvarDados(Medico medico, MedicoFormDTO medicoForm) {
 		medico.setNome(medicoForm.nome() == null ? medico.getNome() : medicoForm.nome());
 		medico.setTelefone(medicoForm.telefone() == null ? medico.getTelefone() : medicoForm.telefone());
 		
-		if(medicoForm.endereco() != null) {
-			atribuirEndereco(medico, medicoForm);
+		// Se todos os campos forem nulos, manter endereço antigo
+		Endereco enderecoForm = enderecoService.converter(medicoForm.endereco());
+		if(enderecoService.todosOsCamposSaoNulos(enderecoForm)) {
+			medicoRepository.save(medico);
+			return medico;
 		}
 		
+		if (enderecoService.algumCampoNaoNuloENulo(enderecoForm)) {
+			Endereco enderecoFinal = enderecoService.getEnderecoFinal(medico.getEndereco(), enderecoForm);
+			medico.setEndereco(enderecoFinal);
+			medicoRepository.save(medico);
+			return medico;
+		}
+		
+		if(enderecoService.algumCampoAnulavelENuloEOSDemaisNao(enderecoForm)) {
+			Endereco enderecoFinal = enderecoService.getEnderecoFinalNulosNulos(medico.getEndereco(), enderecoForm);
+			medico.setEndereco(enderecoFinal);
+			medicoRepository.save(medico);
+			return medico;
+		}
+		
+		medico.setEndereco(atribuirEndereco(medico, enderecoForm));
 		medicoRepository.save(medico);
 		return medico;
 	}
 	
-	private Medico atribuirEndereco(Medico medico, MedicoFormDTO medicoForm) {
-		enderecoService.getEnderecoFinal(medico.getEndereco(), medicoForm.endereco());
+	private Endereco atribuirEndereco(Medico medico, Endereco enderecoForm) {
+		Optional<Endereco> enderecoExistente = enderecoService.buscarEnderecoExistente(enderecoForm);
 		
-		Optional<Endereco> enderecoExistente = enderecoService.buscarEnderecoExistente(enderecoBase);
 		if(enderecoExistente.isPresent()) {
-			medico.setEndereco(medicoForm.endereco() == null ? medico.getEndereco() : enderecoExistente.get());
-		} else {
-			medico.setEndereco(medicoForm.endereco() == null ? medico.getEndereco() : enderecoBase);
+			return enderecoExistente.get();
 		}
-		return medico;
+		return enderecoService.getEnderecoFinal(medico.getEndereco(), enderecoForm);
 	}
 
 	@Override

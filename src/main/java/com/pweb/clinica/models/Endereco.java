@@ -40,12 +40,16 @@ public class Endereco {
 	}
 	
 	public Endereco(EnderecoFormDTO enderecoForm) {
-		this.logradouro = enderecoForm.logradouro();
+		if(enderecoForm == null) {
+			return;
+		}
+		
+		this.logradouro = enderecoForm.logradouro() == null ? null : enderecoForm.logradouro().toUpperCase();
 		this.numero = enderecoForm.numero();
-		this.complemento = enderecoForm.complemento();
-		this.bairro = enderecoForm.bairro();
-		this.cidade = enderecoForm.cidade();
-		this.uf = enderecoForm.uf();
+		this.complemento = enderecoForm.complemento() == null ? null : enderecoForm.complemento().toUpperCase();
+		this.bairro = enderecoForm.bairro() == null ? null : enderecoForm.bairro().toUpperCase();
+		this.cidade = enderecoForm.cidade() == null ? null : enderecoForm.cidade().toUpperCase();
+		this.uf = enderecoForm.uf() == null ? null : enderecoForm.uf().toUpperCase();
 		this.cep = enderecoForm.cep();
 	}
 	
@@ -65,7 +69,7 @@ public class Endereco {
 		return numero;
 	}
 
-	public void setNumero(int numero) {
+	public void setNumero(Integer numero) {
 		this.numero = numero;
 	}
 
