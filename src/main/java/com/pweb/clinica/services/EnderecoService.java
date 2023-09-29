@@ -58,33 +58,4 @@ public class EnderecoService {
 		
 		return enderecoFinal;
 	}
-
-	public Boolean todosOsCamposSaoNulos(Endereco enderecoForm) {
-		if (enderecoForm.getLogradouro() == null && enderecoForm.getNumero() == null
-				&& enderecoForm.getComplemento() == null && enderecoForm.getBairro() == null
-				&& enderecoForm.getCidade() == null && enderecoForm.getUF() == null && enderecoForm.getCep() == null) {
-			return true;
-		}
-		return false;
-	}
-
-	public Boolean algumCampoNaoNuloENulo(Endereco enderecoForm) {
-		if (enderecoForm.getLogradouro() == null || enderecoForm.getBairro() == null || enderecoForm.getCidade() == null
-				|| enderecoForm.getUF() == null || enderecoForm.getCep() == null) {
-			return true;
-		}
-		return false;
-	}
-
-	public Boolean algumCampoAnulavelENuloEOSDemaisNao(Endereco enderecoForm) {
-		if ((enderecoForm.getNumero() == null || enderecoForm.getComplemento() == null)
-				&& (enderecoForm.getLogradouro() != null && enderecoForm.getBairro() != null
-						&& enderecoForm.getCidade() != null && enderecoForm.getUF() != null
-						&& enderecoForm.getCep() != null)) {
-			return true;
-		}
-		return false;
-	}
-
-	
 }
