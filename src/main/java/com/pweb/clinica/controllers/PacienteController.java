@@ -17,13 +17,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pweb.clinica.dtos.PacienteDTO;
-import com.pweb.clinica.dtos.PacienteFormDTO;
+import com.pweb.clinica.dtos.PacientePostDTO;
+import com.pweb.clinica.dtos.PacientePutDTO;
+import com.pweb.clinica.exceptions.PacienteNotFoundException;
 import com.pweb.clinica.models.Paciente;
 import com.pweb.clinica.services.PacienteService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/pacientes")
-public class PacienteController implements PessoaController<PacienteFormDTO, PacienteDTO> {
+public class PacienteController implements PessoaController<PacientePostDTO, PacientePutDTO, PacienteDTO> {
 
 	@Autowired
 	private PacienteService pacienteService;
@@ -37,17 +41,24 @@ public class PacienteController implements PessoaController<PacienteFormDTO, Pac
 
 	@PostMapping
 	@Override
-	public ResponseEntity<PacienteDTO> cadastrar(@RequestBody PacienteFormDTO pacienteForm) {
+	public ResponseEntity<PacienteDTO> cadastrar(@Valid @RequestBody PacientePostDTO pacienteForm) {
 		Paciente paciente = pacienteService.cadastrar(pacienteForm);
 		return new ResponseEntity<PacienteDTO>(new PacienteDTO(paciente), HttpStatus.CREATED);
 	}
 
 	@PutMapping("/")
 	@Override
-	public ResponseEntity<PacienteDTO> atualizar(@RequestParam("id") Long id,
-			@RequestBody PacienteFormDTO pacienteForm) {
-		Paciente paciente = pacienteService.atualizar(id, pacienteForm);
-		return new ResponseEntity<PacienteDTO>(new PacienteDTO(paciente), HttpStatus.OK);
+	public ResponseEntity<?> atualizar(@RequestParam("id") Long id,
+			@Valid @RequestBody PacientePutDTO pacienteForm) {
+		Paciente paciente;
+		try {
+			paciente = pacienteService.atualizar(id, pacienteForm);
+			return new ResponseEntity<PacienteDTO>(new PacienteDTO(paciente), HttpStatus.OK);
+		} catch (PacienteNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente não encontrado");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
 	}
 
 	@DeleteMapping("/")

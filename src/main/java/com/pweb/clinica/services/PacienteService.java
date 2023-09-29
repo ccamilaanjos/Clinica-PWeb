@@ -7,14 +7,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.pweb.clinica.converters.EnderecoConverter;
 import com.pweb.clinica.dtos.PacienteDTO;
-import com.pweb.clinica.dtos.PacienteFormDTO;
+import com.pweb.clinica.dtos.PacientePostDTO;
+import com.pweb.clinica.dtos.PacientePutDTO;
+import com.pweb.clinica.exceptions.PacienteNotFoundException;
 import com.pweb.clinica.models.Endereco;
 import com.pweb.clinica.models.Paciente;
+import com.pweb.clinica.repositories.MedicoRepository;
 import com.pweb.clinica.repositories.PacienteRepository;
 
 @Service
-public class PacienteService implements PessoaService<Paciente, PacienteFormDTO, PacienteDTO> {
+public class PacienteService implements PessoaService<Paciente, PacientePostDTO, PacientePutDTO, PacienteDTO> {
 
 	@Autowired
 	private PacienteRepository pacienteRepository;
@@ -32,46 +36,44 @@ public class PacienteService implements PessoaService<Paciente, PacienteFormDTO,
 	}
 
 	@Override
-	public Paciente cadastrar(PacienteFormDTO pacienteForm) {
+	public Paciente cadastrar(PacientePostDTO pacienteForm) {
 		Paciente paciente = new Paciente();
 		paciente.setEmail(pacienteForm.email());
 		paciente.setCPF(pacienteForm.cpf());
-		salvarDados(paciente, pacienteForm);
+		paciente.setTelefone(pacienteForm.telefone());
+		
+		Endereco endereco = EnderecoConverter.converterDtoParaModel(pacienteForm.endereco());
+		paciente.setEndereco(atribuirEndereco(endereco));
+		pacienteRepository.save(paciente);
+		
 		return paciente;
 	}
 	
 	@Override
-	public Paciente atualizar(Long id, PacienteFormDTO pacienteForm) {
+	public Paciente atualizar(Long id, PacientePutDTO pacienteForm) throws PacienteNotFoundException {
 		Optional<Paciente> optionalPaciente = buscarPorID(id);
 		if (optionalPaciente.isEmpty()) {
-			return null;
+			throw new PacienteNotFoundException();
 		}
 		
-		Paciente paciente = salvarDados(optionalPaciente.get(), pacienteForm);
-		return paciente;
-	}
-	
-	public Paciente salvarDados(Paciente paciente, PacienteFormDTO pacienteForm) {
-		paciente.setNome(pacienteForm.nome() == null ? paciente.getNome() : pacienteForm.nome());
-		paciente.setTelefone(pacienteForm.telefone() == null ? paciente.getTelefone() : pacienteForm.telefone());
+		Paciente paciente = optionalPaciente.get();
+		paciente.setNome(pacienteForm.nome());
+		paciente.setTelefone(pacienteForm.telefone());
 		
-		if(pacienteForm.endereco() != null) {
-			atribuirEndereco(paciente, pacienteForm);
-		}
-				
+		Endereco endereco = enderecoService.ajustarCampos(paciente.getEndereco(), pacienteForm.endereco());
+		paciente.setEndereco(atribuirEndereco(endereco));
 		pacienteRepository.save(paciente);
+		
 		return paciente;
 	}
 	
-	private Paciente atribuirEndereco(Paciente paciente, PacienteFormDTO pacienteForm) {
-		Endereco enderecoBase = pacienteForm.endereco();
-		Optional<Endereco> enderecoExistente = enderecoService.buscarEnderecoExistente(enderecoBase);
+	private Endereco atribuirEndereco(Endereco enderecoForm) {
+		Optional<Endereco> enderecoExistente = enderecoService.buscarEnderecoExistente(enderecoForm);
 		if(enderecoExistente.isPresent()) {
-			paciente.setEndereco(pacienteForm.endereco() == null ? paciente.getEndereco() : enderecoExistente.get());
-		} else {
-			paciente.setEndereco(pacienteForm.endereco() == null ? paciente.getEndereco() : pacienteForm.endereco());
+			return enderecoExistente.get();
 		}
-		return paciente;
+		
+		return enderecoForm;
 	}
 
 	@Override

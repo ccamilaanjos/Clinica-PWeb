@@ -7,14 +7,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.pweb.clinica.converters.EnderecoConverter;
 import com.pweb.clinica.dtos.MedicoDTO;
-import com.pweb.clinica.dtos.MedicoFormDTO;
+import com.pweb.clinica.dtos.MedicoPostDTO;
+import com.pweb.clinica.dtos.MedicoPutDTO;
+import com.pweb.clinica.exceptions.MedicoNotFoundException;
 import com.pweb.clinica.models.Endereco;
 import com.pweb.clinica.models.Medico;
 import com.pweb.clinica.repositories.MedicoRepository;
 
 @Service
-public class MedicoService implements PessoaService<Medico, MedicoFormDTO, MedicoDTO> {
+public class MedicoService implements PessoaService<Medico, MedicoPostDTO, MedicoPutDTO, MedicoDTO> {
 
 	@Autowired
 	private MedicoRepository medicoRepository;
@@ -33,65 +36,47 @@ public class MedicoService implements PessoaService<Medico, MedicoFormDTO, Medic
 	}
 
 	@Override
-	public Medico cadastrar(MedicoFormDTO medicoForm) {
+	public Medico cadastrar(MedicoPostDTO medicoForm) {
 		Medico medico = new Medico();
+		medico.setNome(medicoForm.nome());
+		medico.setTelefone(medicoForm.telefone());
 		medico.setEmail(medicoForm.email());
 		medico.setCRM(medicoForm.crm());
 		medico.setEspecialidade(medicoForm.especialidade());
 		
-		salvarDados(medico, medicoForm);
+		Endereco endereco = EnderecoConverter.converterDtoParaModel(medicoForm.endereco());
+		medico.setEndereco(atribuirEndereco(endereco));
+		medicoRepository.save(medico);
+		
 		return medico;
 	}
 	
 	@Override
-	public Medico atualizar(Long id, MedicoFormDTO medicoForm) {
+	public Medico atualizar(Long id, MedicoPutDTO medicoForm) throws MedicoNotFoundException {
 		Optional<Medico> optionalMedico = buscarPorID(id);
 		if (optionalMedico.isEmpty()) {
-			return null;
+			throw new MedicoNotFoundException();
 		}
 		
-		Medico medicoFound = optionalMedico.get();
-		salvarDados(medicoFound, medicoForm);
-		return medicoFound;
-	}
-	
-	private Medico salvarDados(Medico medico, MedicoFormDTO medicoForm) {
-		medico.setNome(medicoForm.nome() == null ? medico.getNome() : medicoForm.nome());
-		medico.setTelefone(medicoForm.telefone() == null ? medico.getTelefone() : medicoForm.telefone());
+		Medico medico = optionalMedico.get();
+
+		medico.setNome(medicoForm.nome());
+		medico.setTelefone(medicoForm.telefone());
 		
-		// Se todos os campos forem nulos, manter endereço antigo
-		Endereco enderecoForm = enderecoService.converter(medicoForm.endereco());
-		if(enderecoService.todosOsCamposSaoNulos(enderecoForm)) {
-			medicoRepository.save(medico);
-			return medico;
-		}
-		
-		if (enderecoService.algumCampoNaoNuloENulo(enderecoForm)) {
-			Endereco enderecoFinal = enderecoService.getEnderecoFinal(medico.getEndereco(), enderecoForm);
-			medico.setEndereco(enderecoFinal);
-			medicoRepository.save(medico);
-			return medico;
-		}
-		
-		if(enderecoService.algumCampoAnulavelENuloEOSDemaisNao(enderecoForm)) {
-			Endereco enderecoFinal = enderecoService.getEnderecoFinalNulosNulos(medico.getEndereco(), enderecoForm);
-			medico.setEndereco(enderecoFinal);
-			medicoRepository.save(medico);
-			return medico;
-		}
-		
-		medico.setEndereco(atribuirEndereco(medico, enderecoForm));
+		Endereco endereco = enderecoService.ajustarCampos(medico.getEndereco(), medicoForm.endereco());
+		medico.setEndereco(atribuirEndereco(endereco));
 		medicoRepository.save(medico);
+		
 		return medico;
 	}
 	
-	private Endereco atribuirEndereco(Medico medico, Endereco enderecoForm) {
+	private Endereco atribuirEndereco(Endereco enderecoForm) {
 		Optional<Endereco> enderecoExistente = enderecoService.buscarEnderecoExistente(enderecoForm);
-		
 		if(enderecoExistente.isPresent()) {
 			return enderecoExistente.get();
 		}
-		return enderecoService.getEnderecoFinal(medico.getEndereco(), enderecoForm);
+
+		return enderecoForm;
 	}
 
 	@Override

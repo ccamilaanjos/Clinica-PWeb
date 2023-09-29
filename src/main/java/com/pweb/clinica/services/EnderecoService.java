@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pweb.clinica.converters.EnderecoConverter;
 import com.pweb.clinica.dtos.EnderecoFormDTO;
 import com.pweb.clinica.models.Endereco;
 import com.pweb.clinica.repositories.EnderecoRepository;
@@ -35,23 +36,26 @@ public class EnderecoService {
 		return enderecoFinal;
 	}
 	
-	public Endereco getEnderecoFinal(Endereco enderecoAntigo, Endereco enderecoForm) {
-		System.out.println("COMPARANDO " + enderecoAntigo.getNumero() + " COM " + enderecoForm.getNumero());
+	public Endereco ajustarCampos(Endereco enderecoAntigo, EnderecoFormDTO enderecoForm) {
+		Endereco endereco = EnderecoConverter.converterDtoParaModel(enderecoForm);
 		Endereco enderecoFinal = new Endereco();
 
+		// Se os campos obrigatórios forem uma String vazia, manter registro antigo
 		enderecoFinal.setLogradouro(
-				enderecoForm.getLogradouro() == null ? enderecoAntigo.getLogradouro() : enderecoForm.getLogradouro());
+				endereco.getLogradouro() == "" ? enderecoAntigo.getLogradouro() : endereco.getLogradouro());
 		enderecoFinal
-				.setNumero(enderecoForm.getNumero() == null ? enderecoAntigo.getNumero() : enderecoForm.getNumero());
-		enderecoFinal.setComplemento(enderecoForm.getComplemento() == null ? enderecoAntigo.getComplemento()
-				: enderecoForm.getComplemento());
+				.setBairro(endereco.getBairro() == "" ? enderecoAntigo.getBairro() : endereco.getBairro());
 		enderecoFinal
-				.setBairro(enderecoForm.getBairro() == null ? enderecoAntigo.getBairro() : enderecoForm.getBairro());
-		enderecoFinal
-				.setCidade(enderecoForm.getCidade() == null ? enderecoAntigo.getCidade() : enderecoForm.getCidade());
-		enderecoFinal.setUF(enderecoForm.getUF() == null ? enderecoAntigo.getUF() : enderecoForm.getUF());
-		enderecoFinal.setCep(enderecoForm.getCep() == null ? enderecoAntigo.getCep() : enderecoForm.getCep());
+				.setCidade(endereco.getCidade() == "" ? enderecoAntigo.getCidade() : endereco.getCidade());
+		enderecoFinal.setUF(endereco.getUF() == "" ? enderecoAntigo.getUF() : endereco.getUF());
+		enderecoFinal.setCep(endereco.getCep() == "" ? enderecoAntigo.getCep() : endereco.getCep());
 
+		// Campos opcionais:
+		// Se o número for uma String vazia, definir como campo "s/n"
+		enderecoFinal.setNumero(endereco.getNumero() == "" ? "s/n" : endereco.getNumero());
+		// Se o complemento for uma String vazia, definir como null
+		enderecoFinal.setComplemento(endereco.getComplemento() == "" ? null : endereco.getComplemento());
+		
 		return enderecoFinal;
 	}
 
@@ -82,7 +86,5 @@ public class EnderecoService {
 		return false;
 	}
 
-	public Endereco converter(EnderecoFormDTO enderecoForm) {
-		return new Endereco(enderecoForm);
-	}
+	
 }

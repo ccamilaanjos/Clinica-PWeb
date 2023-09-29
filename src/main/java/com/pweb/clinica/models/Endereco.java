@@ -1,7 +1,5 @@
 package com.pweb.clinica.models;
 
-import com.pweb.clinica.dtos.EnderecoFormDTO;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -15,7 +13,7 @@ public class Endereco {
 	private Long id;
 	@Column(nullable=false)
 	private String logradouro;
-	private Integer numero;
+	private String numero;
 	private String complemento;
 	@Column(nullable=false)
 	private String bairro;
@@ -28,7 +26,7 @@ public class Endereco {
 	
 	public Endereco() {}
 	
-	public Endereco(String logradouro, int numero, String complemento, String bairro, String cidade, String uf,
+	public Endereco(String logradouro, String numero, String complemento, String bairro, String cidade, String uf,
 			String cep) {
 		this.logradouro = logradouro;
 		this.numero = numero;
@@ -37,20 +35,6 @@ public class Endereco {
 		this.cidade = cidade;
 		this.uf = uf;
 		this.cep = cep;
-	}
-	
-	public Endereco(EnderecoFormDTO enderecoForm) {
-		if(enderecoForm == null) {
-			return;
-		}
-		
-		this.logradouro = enderecoForm.logradouro() == null ? null : enderecoForm.logradouro().toUpperCase();
-		this.numero = enderecoForm.numero();
-		this.complemento = enderecoForm.complemento() == null ? null : enderecoForm.complemento().toUpperCase();
-		this.bairro = enderecoForm.bairro() == null ? null : enderecoForm.bairro().toUpperCase();
-		this.cidade = enderecoForm.cidade() == null ? null : enderecoForm.cidade().toUpperCase();
-		this.uf = enderecoForm.uf() == null ? null : enderecoForm.uf().toUpperCase();
-		this.cep = enderecoForm.cep();
 	}
 	
 	public Long getId() {
@@ -65,11 +49,11 @@ public class Endereco {
 		this.logradouro = logradouro == null ? logradouro : logradouro.toUpperCase();
 	}
 
-	public Integer getNumero() {
+	public String getNumero() {
 		return numero;
 	}
 
-	public void setNumero(Integer numero) {
+	public void setNumero(String numero) {
 		this.numero = numero;
 	}
 

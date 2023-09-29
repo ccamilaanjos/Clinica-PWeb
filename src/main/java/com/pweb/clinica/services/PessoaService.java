@@ -7,12 +7,12 @@ import org.springframework.data.domain.Pageable;
 
 import com.pweb.clinica.models.Pessoa;
 
-public interface PessoaService<Model, FormDTO, DTO> {
+public interface PessoaService<Model, PostDTO, PutDTO, DTO> {
 	
 	public Page<DTO> getPagina(Pageable pageable);
 	public DTO converterParaDTO(Model model);
-	public Pessoa cadastrar(FormDTO formDto);
-	public Model atualizar(Long id, FormDTO formDto); 
+	public Pessoa cadastrar(PostDTO formDto);
+	public Model atualizar(Long id, PutDTO formDto) throws Exception; 
 	public Pessoa tornarInativo(Long id);
 	public Optional<Model> buscarPorID(Long id);
 }
