@@ -1,4 +1,4 @@
-package com.pweb.clinica.converters;
+package com.pweb.clinica.utils.converters;
 
 import com.pweb.clinica.dtos.PacienteDTO;
 import com.pweb.clinica.models.Paciente;

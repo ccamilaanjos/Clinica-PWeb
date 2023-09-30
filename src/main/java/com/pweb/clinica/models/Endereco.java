@@ -1,6 +1,6 @@
 package com.pweb.clinica.models;
 
-import com.pweb.clinica.converters.EnderecoConverter;
+import com.pweb.clinica.utils.converters.EnderecoConverter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -7,7 +7,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import com.pweb.clinica.converters.EnderecoConverter;
 import com.pweb.clinica.dtos.MedicoDTO;
 import com.pweb.clinica.dtos.MedicoPostDTO;
 import com.pweb.clinica.dtos.MedicoPutDTO;
@@ -15,7 +14,8 @@ import com.pweb.clinica.exceptions.MedicoNotFoundException;
 import com.pweb.clinica.models.Endereco;
 import com.pweb.clinica.models.Medico;
 import com.pweb.clinica.repositories.MedicoRepository;
-import com.pweb.clinica.converters.MedicoConverter;
+import com.pweb.clinica.utils.converters.EnderecoConverter;
+import com.pweb.clinica.utils.converters.MedicoConverter;
 
 @Service
 public class MedicoService implements PessoaService<Medico, MedicoPostDTO, MedicoPutDTO, MedicoDTO> {

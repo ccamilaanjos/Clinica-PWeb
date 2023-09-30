@@ -5,10 +5,10 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pweb.clinica.converters.EnderecoConverter;
 import com.pweb.clinica.dtos.EnderecoFormDTO;
 import com.pweb.clinica.models.Endereco;
 import com.pweb.clinica.repositories.EnderecoRepository;
+import com.pweb.clinica.utils.converters.EnderecoConverter;
 
 @Service
 public class EnderecoService {
