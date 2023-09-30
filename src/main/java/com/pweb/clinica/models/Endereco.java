@@ -1,5 +1,7 @@
 package com.pweb.clinica.models;
 
+import com.pweb.clinica.converters.EnderecoConverter;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -28,13 +30,13 @@ public class Endereco {
 	
 	public Endereco(String logradouro, String numero, String complemento, String bairro, String cidade, String uf,
 			String cep) {
-		this.logradouro = logradouro;
-		this.numero = numero;
-		this.complemento = complemento;
-		this.bairro = bairro;
-		this.cidade = cidade;
-		this.uf = uf;
-		this.cep = cep;
+		this.logradouro = EnderecoConverter.refinarLogradouro(logradouro);
+		this.numero = EnderecoConverter.refinarNumero(numero);
+		this.complemento = EnderecoConverter.refinarComplemento(complemento);
+		this.bairro = EnderecoConverter.refinarBairro(bairro);
+		this.cidade = EnderecoConverter.refinarCidade(cidade);
+		this.uf = EnderecoConverter.refinarUF(uf);
+		this.cep = EnderecoConverter.refinarCep(cep);
 	}
 	
 	public Long getId() {
@@ -46,7 +48,7 @@ public class Endereco {
 	}
 
 	public void setLogradouro(String logradouro) {
-		this.logradouro = logradouro == null ? logradouro : logradouro.toUpperCase();
+		this.logradouro = EnderecoConverter.refinarLogradouro(logradouro);
 	}
 
 	public String getNumero() {
@@ -54,7 +56,7 @@ public class Endereco {
 	}
 
 	public void setNumero(String numero) {
-		this.numero = numero;
+		this.numero = EnderecoConverter.refinarNumero(numero);
 	}
 
 	public String getComplemento() {
@@ -62,7 +64,7 @@ public class Endereco {
 	}
 
 	public void setComplemento(String complemento) {
-		this.complemento = complemento == null ? complemento : complemento.toUpperCase();
+		this.complemento = EnderecoConverter.refinarComplemento(complemento);
 	}
 
 	public String getBairro() {
@@ -70,7 +72,7 @@ public class Endereco {
 	}
 
 	public void setBairro(String bairro) {
-		this.bairro = bairro == null ? bairro : bairro.toUpperCase();
+		this.bairro = EnderecoConverter.refinarBairro(bairro);
 	}
 
 	public String getCidade() {
@@ -78,7 +80,7 @@ public class Endereco {
 	}
 
 	public void setCidade(String cidade) {
-		this.cidade = cidade == null ? cidade : cidade.toUpperCase();
+		this.cidade = EnderecoConverter.refinarCidade(cidade);
 	}
 
 	public String getUF() {
@@ -86,7 +88,7 @@ public class Endereco {
 	}
 
 	public void setUF(String uf) {
-		this.uf =  uf == null ? uf : uf.toUpperCase();
+		this.uf = EnderecoConverter.refinarUF(uf);
 	}
 
 	public String getCep() {
@@ -94,6 +96,6 @@ public class Endereco {
 	}
 
 	public void setCep(String cep) {
-		this.cep = cep;
+		this.cep = EnderecoConverter.refinarCep(cep);
 	}
 }

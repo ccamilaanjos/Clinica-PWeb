@@ -1,5 +1,7 @@
 package com.pweb.clinica.models;
 
+import com.pweb.clinica.enums.Especialidade;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
