@@ -1,4 +1,4 @@
-package com.pweb.clinica.models;
+package com.pweb.clinica.enums;
 
 public enum Especialidade {
 	ORTOPEDIA,
