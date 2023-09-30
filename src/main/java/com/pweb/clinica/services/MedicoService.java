@@ -10,8 +10,10 @@ import org.springframework.stereotype.Service;
 import com.pweb.clinica.dtos.MedicoDTO;
 import com.pweb.clinica.dtos.MedicoPostDTO;
 import com.pweb.clinica.dtos.MedicoPutDTO;
+import com.pweb.clinica.exceptions.EspecialidadeNotFoundException;
 import com.pweb.clinica.exceptions.MedicoNotFoundException;
 import com.pweb.clinica.models.Endereco;
+import com.pweb.clinica.models.Especialidade;
 import com.pweb.clinica.models.Medico;
 import com.pweb.clinica.repositories.MedicoRepository;
 import com.pweb.clinica.utils.converters.EnderecoConverter;
@@ -24,6 +26,8 @@ public class MedicoService implements PessoaService<Medico, MedicoPostDTO, Medic
 	private MedicoRepository medicoRepository;
 	@Autowired
 	private EnderecoService enderecoService;
+	@Autowired
+	private EspecialidadeService especialidadeService;
 
 	@Override
 	public Page<MedicoDTO> getPagina(Pageable pageable) {
@@ -31,13 +35,18 @@ public class MedicoService implements PessoaService<Medico, MedicoPostDTO, Medic
 	}
 
 	@Override
-	public Medico cadastrar(MedicoPostDTO medicoForm) {
+	public Medico cadastrar(MedicoPostDTO medicoForm) throws EspecialidadeNotFoundException {
 		Medico medico = new Medico();
 		medico.setNome(medicoForm.nome());
 		medico.setTelefone(medicoForm.telefone());
 		medico.setEmail(medicoForm.email());
 		medico.setCRM(medicoForm.crm());
-		medico.setEspecialidade(medicoForm.especialidade());
+		
+		Especialidade especialidade = especialidadeService.verificarEspecialidade(medicoForm.especialidade());
+		if(especialidade == null){
+			throw new EspecialidadeNotFoundException();
+		}
+		medico.setEspecialidade(especialidade);
 		
 		Endereco endereco = EnderecoConverter.converterDtoParaModel(medicoForm.endereco());
 		medico.setEndereco(enderecoService.atribuirEndereco(endereco));

@@ -9,7 +9,7 @@ import com.pweb.clinica.models.Endereco;
 
 @Repository
 public interface EnderecoRepository extends JpaRepository<Endereco, Long>{
-	Optional<Endereco> findByLogradouroAndNumeroAndComplementoAndBairroAndCidadeAndUfAndCepIgnoreCase(
+	public Optional<Endereco> findByLogradouroAndNumeroAndComplementoAndBairroAndCidadeAndUfAndCepIgnoreCase(
 			String logradouro, String numero, String complemento, String bairro, String cidade, String uf, String cep);
 	
 }

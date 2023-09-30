@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pweb.clinica.dtos.MedicoDTO;
 import com.pweb.clinica.dtos.MedicoPostDTO;
 import com.pweb.clinica.dtos.MedicoPutDTO;
+import com.pweb.clinica.exceptions.EspecialidadeNotFoundException;
 import com.pweb.clinica.exceptions.MedicoNotFoundException;
 import com.pweb.clinica.models.Medico;
 import com.pweb.clinica.services.MedicoService;
@@ -40,9 +41,15 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoP
 	
 	@PostMapping
 	@Override
-	public ResponseEntity<MedicoDTO> cadastrar(@Valid @RequestBody MedicoPostDTO medicoForm) {
-		Medico medico = medicoService.cadastrar(medicoForm);
-		return new ResponseEntity<MedicoDTO>(new MedicoDTO(medico), HttpStatus.CREATED);
+	public ResponseEntity<?> cadastrar(@Valid @RequestBody MedicoPostDTO medicoForm) {
+		try {
+			Medico medico = medicoService.cadastrar(medicoForm);
+			return new ResponseEntity<MedicoDTO>(new MedicoDTO(medico), HttpStatus.CREATED);
+		} catch (EspecialidadeNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Especialidade não encontrada");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
 	}
 	
 	@PutMapping("/")

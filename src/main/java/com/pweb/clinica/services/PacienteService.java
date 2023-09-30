@@ -26,7 +26,7 @@ public class PacienteService implements PessoaService<Paciente, PacientePostDTO,
 	private EnderecoService enderecoService;
 
 	public Page<PacienteDTO> getPagina(Pageable pageable) {
-		return pacienteRepository.findAll(pageable).map(PacienteConverter::converterParaDTO);
+		return pacienteRepository.findAll(pageable).map(PacienteConverter::converterModelParaDTO);
 	}
 
 	@Override
