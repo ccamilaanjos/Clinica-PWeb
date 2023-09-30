@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pweb.clinica.enums.EspecialidadeTipo;
-import com.pweb.clinica.exceptions.EspecialidadeNotFoundException;
 import com.pweb.clinica.models.Especialidade;
 import com.pweb.clinica.repositories.EspecialidadeRepository;
 
@@ -30,7 +29,6 @@ public class EspecialidadeService {
 		for(EspecialidadeTipo e : especialidades) {
 			Especialidade especialidade = new Especialidade();
 			especialidade.setTitulo(e.toString());
-			System.out.println("Especialidade: " + e.toString());
 			especialidadeRepository.save(especialidade);
 		}
 	}

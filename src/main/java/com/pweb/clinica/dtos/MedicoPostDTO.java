@@ -8,6 +8,6 @@ public record MedicoPostDTO(
 		@NotBlank(message = "O campo email não pode ser nulo ou vazio") String email,
 		@NotBlank(message = "O campo telefone não pode ser nulo ou vazio") String telefone,
 		@NotBlank(message = "O campo crm não pode ser nulo ou vazio") String crm,
-		@NotBlank(message = "O campo especialidade não pode ser nulo") String especialidade,
+		@NotBlank(message = "O campo especialidade não pode ser nulo ou vazio") String especialidade,
 		@Valid EnderecoFormDTO endereco) {
 }
