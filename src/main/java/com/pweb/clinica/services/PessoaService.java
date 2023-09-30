@@ -10,7 +10,6 @@ import com.pweb.clinica.models.Pessoa;
 public interface PessoaService<Model, PostDTO, PutDTO, DTO> {
 	
 	public Page<DTO> getPagina(Pageable pageable);
-	public DTO converterParaDTO(Model model);
 	public Pessoa cadastrar(PostDTO formDto);
 	public Model atualizar(Long id, PutDTO formDto) throws Exception; 
 	public Pessoa tornarInativo(Long id);

@@ -15,6 +15,7 @@ import com.pweb.clinica.exceptions.MedicoNotFoundException;
 import com.pweb.clinica.models.Endereco;
 import com.pweb.clinica.models.Medico;
 import com.pweb.clinica.repositories.MedicoRepository;
+import com.pweb.clinica.converters.MedicoConverter;
 
 @Service
 public class MedicoService implements PessoaService<Medico, MedicoPostDTO, MedicoPutDTO, MedicoDTO> {
@@ -26,13 +27,7 @@ public class MedicoService implements PessoaService<Medico, MedicoPostDTO, Medic
 
 	@Override
 	public Page<MedicoDTO> getPagina(Pageable pageable) {
-		return medicoRepository.findAll(pageable).map(this::converterParaDTO);
-	}
-
-	@Override
-	public MedicoDTO converterParaDTO(Medico medico) {
-		return new MedicoDTO(medico.getId(), medico.getNome(), medico.getEmail(), medico.getCRM(), medico.getEndereco(),
-				medico.getCRM(), medico.getEspecialidade(), medico.getAtivo());
+		return medicoRepository.findAll(pageable).map(MedicoConverter::converterParaDTO);
 	}
 
 	@Override
@@ -45,7 +40,7 @@ public class MedicoService implements PessoaService<Medico, MedicoPostDTO, Medic
 		medico.setEspecialidade(medicoForm.especialidade());
 		
 		Endereco endereco = EnderecoConverter.converterDtoParaModel(medicoForm.endereco());
-		medico.setEndereco(atribuirEndereco(endereco));
+		medico.setEndereco(enderecoService.atribuirEndereco(endereco));
 		medicoRepository.save(medico);
 		
 		return medico;
@@ -64,19 +59,10 @@ public class MedicoService implements PessoaService<Medico, MedicoPostDTO, Medic
 		medico.setTelefone(medicoForm.telefone());
 		
 		Endereco endereco = enderecoService.ajustarCampos(medico.getEndereco(), medicoForm.endereco());
-		medico.setEndereco(atribuirEndereco(endereco));
+		medico.setEndereco(enderecoService.atribuirEndereco(endereco));
 		medicoRepository.save(medico);
 		
 		return medico;
-	}
-	
-	private Endereco atribuirEndereco(Endereco enderecoForm) {
-		Optional<Endereco> enderecoExistente = enderecoService.buscarEnderecoExistente(enderecoForm);
-		if(enderecoExistente.isPresent()) {
-			return enderecoExistente.get();
-		}
-
-		return enderecoForm;
 	}
 
 	@Override
