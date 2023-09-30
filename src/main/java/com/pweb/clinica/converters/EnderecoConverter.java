@@ -8,17 +8,48 @@ public class EnderecoConverter {
 	public static Endereco converterDtoParaModel(EnderecoFormDTO enderecoForm) {
 		Endereco endereco = new Endereco();
 
-		endereco.setLogradouro(enderecoForm.logradouro().toUpperCase());
-		endereco.setNumero(
-				enderecoForm.numero() != null ? enderecoForm.numero() == "" ? "s/n" : enderecoForm.numero() : "s/n");
-		endereco.setComplemento(enderecoForm.complemento() != null
-				? enderecoForm.complemento() == "" ? null : enderecoForm.complemento().toUpperCase()
-				: null);
-		endereco.setBairro(enderecoForm.bairro().toUpperCase());
-		endereco.setCidade(enderecoForm.cidade().toUpperCase());
-		endereco.setUF(enderecoForm.uf().toUpperCase());
+		endereco.setLogradouro(enderecoForm.logradouro());
+		endereco.setNumero(enderecoForm.numero());
+		endereco.setComplemento(enderecoForm.complemento());
+		endereco.setBairro(enderecoForm.bairro());
+		endereco.setCidade(enderecoForm.cidade());
+		endereco.setUF(enderecoForm.uf());
 		endereco.setCep(enderecoForm.cep());
 
 		return endereco;
+	}
+	
+	public static String refinarLogradouro(String logradouro) {
+		return logradouro.toUpperCase();
+	}
+	
+	public static String refinarNumero(String numero) {
+		if(numero == null || numero.equalsIgnoreCase("s/n") || numero.equals("")) {
+			return "s/n";
+		}
+		return numero;
+	}
+	
+	public static String refinarComplemento(String complemento) {
+		if(complemento == null || complemento.equals("")) {
+			return "";
+		}
+		return complemento.toUpperCase();
+	}
+	
+	public static String refinarBairro(String bairro) {
+		return bairro.toUpperCase();
+	}
+	
+	public static String refinarCidade(String cidade) {
+		return cidade.toUpperCase();
+	}
+	
+	public static String refinarUF(String uf) {
+		return uf.toUpperCase();
+	}
+	
+	public static String refinarCep(String cep) {
+		return cep;
 	}
 }
