@@ -1,16 +1,39 @@
 package com.pweb.clinica.models;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+
+@Entity
 public class Consulta {
+	@Id
+	@GeneratedValue(strategy=GenerationType.IDENTITY)
+	private Long id;
+	@ManyToOne
+	@JoinColumn(name="paciente_id")
 	private Paciente paciente;
+	@ManyToOne
+	@JoinColumn(name="medico_id")
 	private Medico medico;
-	private LocalDateTime dataHora;
+	@Column(nullable=false)
+	private LocalDate data;
+	@Column(nullable=false)
+	private LocalTime horario;
 	
-	public Consulta(Paciente paciente, Medico medico, LocalDateTime dataHora) {
+	public Consulta() {}
+	
+	public Consulta(Paciente paciente, Medico medico) {
 		this.paciente = paciente;
 		this.medico = medico;
-		this.dataHora = dataHora;
+		this.data = LocalDate.now();
+		this.horario = LocalTime.now();
 	}
 	
 	public Paciente getPaciente() {
@@ -29,11 +52,11 @@ public class Consulta {
 		this.medico = medico;
 	}
 	
-	public LocalDateTime getDataHora() {
-		return dataHora;
+	public LocalDate getData() {
+		return data;
 	}
 	
-	public void setDataHora(LocalDateTime dataHora) {
-		this.dataHora = dataHora;
+	public LocalTime getHorario() {
+		return horario;
 	}
 }
