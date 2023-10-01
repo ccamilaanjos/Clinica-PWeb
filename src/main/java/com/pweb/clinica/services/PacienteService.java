@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.pweb.clinica.dtos.EnderecoFormDTO;
 import com.pweb.clinica.dtos.PacienteDTO;
 import com.pweb.clinica.dtos.PacientePostDTO;
 import com.pweb.clinica.dtos.PacientePutDTO;
@@ -37,8 +38,7 @@ public class PacienteService implements PessoaService<Paciente, PacientePostDTO,
 		paciente.setCPF(pacienteForm.cpf());
 		paciente.setTelefone(pacienteForm.telefone());
 		
-		Endereco endereco = EnderecoConverter.converterDtoParaModel(pacienteForm.endereco());
-		paciente.setEndereco(enderecoService.atribuirEndereco(endereco));
+		paciente.setEndereco(enderecoService.atribuirEndereco(pacienteForm.endereco()));
 		pacienteRepository.save(paciente);
 		
 		return paciente;
@@ -52,7 +52,8 @@ public class PacienteService implements PessoaService<Paciente, PacientePostDTO,
 		paciente.setTelefone(pacienteForm.telefone());
 		
 		Endereco endereco = enderecoService.ajustarCampos(paciente.getEndereco(), pacienteForm.endereco());
-		paciente.setEndereco(enderecoService.atribuirEndereco(endereco));
+		EnderecoFormDTO enderecoAjustado = new EnderecoFormDTO(endereco);
+		paciente.setEndereco(enderecoService.atribuirEndereco(enderecoAjustado));
 		pacienteRepository.save(paciente);
 		
 		return paciente;

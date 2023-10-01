@@ -21,13 +21,9 @@ public class EnderecoService {
 				endereco.getCidade(), endereco.getUF(), endereco.getCep());
 	}
 	
-	public Endereco atribuirEndereco(Endereco enderecoForm) {
-		Optional<Endereco> enderecoExistente = buscarEnderecoExistente(enderecoForm);
-		if(enderecoExistente.isPresent()) {
-			return enderecoExistente.get();
-		}
-
-		return enderecoForm;
+	public Endereco atribuirEndereco(EnderecoFormDTO enderecoForm) {
+		Endereco endereco = EnderecoConverter.converterDtoParaModel(enderecoForm);
+		return buscarEnderecoExistente(endereco).orElse(endereco);
 	}
 	
 	public Endereco ajustarCampos(Endereco enderecoAntigo, EnderecoFormDTO enderecoForm) {
