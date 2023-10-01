@@ -2,7 +2,9 @@ package com.pweb.clinica.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -35,7 +37,8 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoP
 	
 	@GetMapping
 	@Override
-	public ResponseEntity<Page<MedicoDTO>> listar(@PageableDefault(size = 10, direction = Direction.ASC, sort = "nome") Pageable pageable) {
+	public ResponseEntity<Page<MedicoDTO>> listar(@RequestParam("page") int page) {
+		final Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "nome"));
 		return new ResponseEntity<Page<MedicoDTO>>(medicoService.getPagina(pageable), HttpStatus.OK);
 	}
 	
