@@ -36,17 +36,14 @@ public class MedicoService implements PessoaService<Medico, MedicoPostDTO, Medic
 
 	@Override
 	public Medico cadastrar(MedicoPostDTO medicoForm) throws EspecialidadeNotFoundException {
+		Especialidade especialidade = especialidadeService.buscarPorTitulo(medicoForm.especialidade()).orElseThrow(EspecialidadeNotFoundException::new);
+		
 		Medico medico = new Medico();
+		medico.setEspecialidade(especialidade);
 		medico.setNome(medicoForm.nome());
 		medico.setTelefone(medicoForm.telefone());
 		medico.setEmail(medicoForm.email());
 		medico.setCRM(medicoForm.crm());
-		
-		Especialidade especialidade = especialidadeService.verificarEspecialidade(medicoForm.especialidade());
-		if(especialidade == null){
-			throw new EspecialidadeNotFoundException();
-		}
-		medico.setEspecialidade(especialidade);
 		
 		Endereco endereco = EnderecoConverter.converterDtoParaModel(medicoForm.endereco());
 		medico.setEndereco(enderecoService.atribuirEndereco(endereco));
@@ -57,13 +54,7 @@ public class MedicoService implements PessoaService<Medico, MedicoPostDTO, Medic
 	
 	@Override
 	public Medico atualizar(Long id, MedicoPutDTO medicoForm) throws MedicoNotFoundException {
-		Optional<Medico> optionalMedico = buscarPorID(id);
-		if (optionalMedico.isEmpty()) {
-			throw new MedicoNotFoundException();
-		}
-		
-		Medico medico = optionalMedico.get();
-
+		Medico medico = buscarPorID(id).orElseThrow(MedicoNotFoundException::new);
 		medico.setNome(medicoForm.nome());
 		medico.setTelefone(medicoForm.telefone());
 		

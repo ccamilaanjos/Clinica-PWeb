@@ -46,12 +46,8 @@ public class PacienteService implements PessoaService<Paciente, PacientePostDTO,
 	
 	@Override
 	public Paciente atualizar(Long id, PacientePutDTO pacienteForm) throws PacienteNotFoundException {
-		Optional<Paciente> optionalPaciente = buscarPorID(id);
-		if (optionalPaciente.isEmpty()) {
-			throw new PacienteNotFoundException();
-		}
+		Paciente paciente = buscarPorID(id).orElseThrow(PacienteNotFoundException::new);
 		
-		Paciente paciente = optionalPaciente.get();
 		paciente.setNome(pacienteForm.nome());
 		paciente.setTelefone(pacienteForm.telefone());
 		

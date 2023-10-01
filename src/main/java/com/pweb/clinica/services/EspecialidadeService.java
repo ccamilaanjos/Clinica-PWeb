@@ -33,14 +33,6 @@ public class EspecialidadeService {
 		}
 	}
 	
-	public Especialidade verificarEspecialidade (String especialidade) {
-		Optional<Especialidade> optionalEspecialidade = buscarPorTitulo(especialidade);
-		if(optionalEspecialidade.isEmpty()) {
-			return null;
-		}
-		return optionalEspecialidade.get();
-	}
-	
 	public Optional<Especialidade> buscarPorTitulo(String titulo){
 		return especialidadeRepository.findByTituloIgnoreCase(titulo);
 	}

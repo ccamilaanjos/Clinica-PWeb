@@ -1,3 +1,3 @@
 package com.pweb.clinica.exceptions;
 
-public class PacienteNotFoundException extends PessoaNotFoundException {}
+public class PacienteNotFoundException extends Exception {}
