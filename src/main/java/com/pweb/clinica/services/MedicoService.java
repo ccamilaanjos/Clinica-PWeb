@@ -34,7 +34,7 @@ public class MedicoService implements PessoaService<Medico, MedicoPostDTO, Medic
 	}
 
 	@Override
-	public Medico cadastrar(MedicoPostDTO medicoForm) throws EspecialidadeNotFoundException {
+	public MedicoDTO cadastrar(MedicoPostDTO medicoForm) throws EspecialidadeNotFoundException {
 		Especialidade especialidade = especialidadeService.buscarPorTitulo(medicoForm.especialidade())
 				.orElseThrow(EspecialidadeNotFoundException::new);
 
@@ -47,11 +47,12 @@ public class MedicoService implements PessoaService<Medico, MedicoPostDTO, Medic
 
 		medico.setEndereco(enderecoService.atribuirEndereco(medicoForm.endereco()));
 		medicoRepository.save(medico);
-		return medico;
+		
+		return new MedicoDTO(medico);
 	}
 
 	@Override
-	public Medico atualizar(Long id, MedicoPutDTO medicoForm) throws MedicoNotFoundException {
+	public MedicoDTO atualizar(Long id, MedicoPutDTO medicoForm) throws MedicoNotFoundException {
 		Medico medico = buscarPorID(id).orElseThrow(MedicoNotFoundException::new);
 		medico.setNome(medicoForm.nome());
 		medico.setTelefone(medicoForm.telefone());
@@ -61,7 +62,7 @@ public class MedicoService implements PessoaService<Medico, MedicoPostDTO, Medic
 		medico.setEndereco(enderecoService.atribuirEndereco(enderecoAjustado));
 		medicoRepository.save(medico);
 
-		return medico;
+		return new MedicoDTO(medico);
 	}
 
 	@Override

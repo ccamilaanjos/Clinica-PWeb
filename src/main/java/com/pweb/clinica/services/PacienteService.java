@@ -31,7 +31,7 @@ public class PacienteService implements PessoaService<Paciente, PacientePostDTO,
 	}
 
 	@Override
-	public Paciente cadastrar(PacientePostDTO pacienteForm) {
+	public PacienteDTO cadastrar(PacientePostDTO pacienteForm) {
 		Paciente paciente = new Paciente();
 		paciente.setNome(pacienteForm.nome());
 		paciente.setEmail(pacienteForm.email());
@@ -41,11 +41,11 @@ public class PacienteService implements PessoaService<Paciente, PacientePostDTO,
 		paciente.setEndereco(enderecoService.atribuirEndereco(pacienteForm.endereco()));
 		pacienteRepository.save(paciente);
 		
-		return paciente;
+		return new PacienteDTO(paciente);
 	}
 	
 	@Override
-	public Paciente atualizar(Long id, PacientePutDTO pacienteForm) throws PacienteNotFoundException {
+	public PacienteDTO atualizar(Long id, PacientePutDTO pacienteForm) throws PacienteNotFoundException {
 		Paciente paciente = buscarPorID(id).orElseThrow(PacienteNotFoundException::new);
 		
 		paciente.setNome(pacienteForm.nome());
@@ -56,7 +56,7 @@ public class PacienteService implements PessoaService<Paciente, PacientePostDTO,
 		paciente.setEndereco(enderecoService.atribuirEndereco(enderecoAjustado));
 		pacienteRepository.save(paciente);
 		
-		return paciente;
+		return new PacienteDTO(paciente);
 	}
 	
 	@Override

@@ -7,7 +7,8 @@ public enum EspecialidadeTipo {
 	ORTOPEDIA,
 	CARDIOLOGIA,
 	GINECOLOGIA,
-	DERMATOLOGIA;
+	DERMATOLOGIA,
+	PNEUMOLOGIA;
 	
 	public static List<EspecialidadeTipo> obterTipos() {
         return Arrays.asList(EspecialidadeTipo.values());

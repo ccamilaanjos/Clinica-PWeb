@@ -45,9 +45,10 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoP
 	@PostMapping
 	@Override
 	public ResponseEntity<?> cadastrar(@Valid @RequestBody MedicoPostDTO medicoForm) {
+		MedicoDTO medico;
 		try {
-			Medico medico = medicoService.cadastrar(medicoForm);
-			return new ResponseEntity<MedicoDTO>(new MedicoDTO(medico), HttpStatus.CREATED);
+			medico = medicoService.cadastrar(medicoForm);
+			return new ResponseEntity<MedicoDTO>(medico, HttpStatus.CREATED);
 		} catch (EspecialidadeNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Especialidade não encontrada");
 		} catch (Exception e) {
@@ -58,9 +59,10 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoP
 	@PutMapping("/")
 	@Override
 	public ResponseEntity<?> atualizar(@RequestParam(required=true) Long id, @Valid @RequestBody MedicoPutDTO medicoForm) {
+		MedicoDTO medico;
 		try {
-			Medico medico = medicoService.atualizar(id, medicoForm);
-			return new ResponseEntity<MedicoDTO>(new MedicoDTO(medico), HttpStatus.OK);
+			medico = medicoService.atualizar(id, medicoForm);
+			return new ResponseEntity<MedicoDTO>(medico, HttpStatus.OK);
 		} catch (MedicoNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Médico não encontrado");
 		} catch (Exception e) {

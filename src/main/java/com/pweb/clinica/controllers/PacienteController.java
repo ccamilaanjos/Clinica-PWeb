@@ -44,18 +44,18 @@ public class PacienteController implements PessoaController<PacientePostDTO, Pac
 	@PostMapping
 	@Override
 	public ResponseEntity<PacienteDTO> cadastrar(@Valid @RequestBody PacientePostDTO pacienteForm) {
-		Paciente paciente = pacienteService.cadastrar(pacienteForm);
-		return new ResponseEntity<PacienteDTO>(new PacienteDTO(paciente), HttpStatus.CREATED);
+		PacienteDTO paciente = pacienteService.cadastrar(pacienteForm);
+		return new ResponseEntity<PacienteDTO>(paciente, HttpStatus.CREATED);
 	}
 
 	@PutMapping("/")
 	@Override
 	public ResponseEntity<?> atualizar(@RequestParam("id") Long id,
 			@Valid @RequestBody PacientePutDTO pacienteForm) {
-		Paciente paciente;
+		PacienteDTO paciente;
 		try {
 			paciente = pacienteService.atualizar(id, pacienteForm);
-			return new ResponseEntity<PacienteDTO>(new PacienteDTO(paciente), HttpStatus.OK);
+			return new ResponseEntity<PacienteDTO>(paciente, HttpStatus.OK);
 		} catch (PacienteNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente não encontrado");
 		} catch (Exception e) {
