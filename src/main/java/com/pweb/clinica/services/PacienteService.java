@@ -15,8 +15,6 @@ import com.pweb.clinica.exceptions.PacienteNotFoundException;
 import com.pweb.clinica.models.Endereco;
 import com.pweb.clinica.models.Paciente;
 import com.pweb.clinica.repositories.PacienteRepository;
-import com.pweb.clinica.utils.converters.EnderecoConverter;
-import com.pweb.clinica.utils.converters.PacienteConverter;
 
 @Service
 public class PacienteService implements PessoaService<Paciente, PacientePostDTO, PacientePutDTO, PacienteDTO> {
@@ -27,7 +25,7 @@ public class PacienteService implements PessoaService<Paciente, PacientePostDTO,
 	private EnderecoService enderecoService;
 
 	public Page<PacienteDTO> getPagina(Pageable pageable) {
-		return pacienteRepository.findAll(pageable).map(PacienteConverter::converterModelParaDTO);
+		return pacienteRepository.findAll(pageable).map(PacienteDTO::new);
 	}
 
 	@Override

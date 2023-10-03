@@ -1,5 +1,12 @@
 package com.pweb.clinica.services;
 
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
 import com.pweb.clinica.dtos.EnderecoFormDTO;
 import com.pweb.clinica.dtos.MedicoDTO;
 import com.pweb.clinica.dtos.MedicoPostDTO;
@@ -10,13 +17,6 @@ import com.pweb.clinica.models.Endereco;
 import com.pweb.clinica.models.Especialidade;
 import com.pweb.clinica.models.Medico;
 import com.pweb.clinica.repositories.MedicoRepository;
-import com.pweb.clinica.utils.converters.MedicoConverter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 public class MedicoService implements PessoaService<Medico, MedicoPostDTO, MedicoPutDTO, MedicoDTO> {
@@ -30,7 +30,7 @@ public class MedicoService implements PessoaService<Medico, MedicoPostDTO, Medic
 
 	@Override
 	public Page<MedicoDTO> getPagina(Pageable pageable) {
-		return medicoRepository.findAll(pageable).map(MedicoConverter::converterParaDTO);
+		return medicoRepository.findAll(pageable).map(MedicoDTO::new);
 	}
 
 	@Override

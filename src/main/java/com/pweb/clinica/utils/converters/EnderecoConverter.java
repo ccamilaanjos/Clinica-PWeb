@@ -1,6 +1,5 @@
 package com.pweb.clinica.utils.converters;
 
-import com.pweb.clinica.dtos.EnderecoDTO;
 import com.pweb.clinica.dtos.EnderecoFormDTO;
 import com.pweb.clinica.models.Endereco;
 
@@ -18,13 +17,6 @@ public class EnderecoConverter {
 		endereco.setCep(enderecoForm.cep());
 
 		return endereco;
-	}
-	
-	public static EnderecoDTO converterModelParaDTO(Endereco endereco) {
-		EnderecoDTO enderecoDto = new EnderecoDTO(
-				endereco.getId(), endereco.getLogradouro(), endereco.getNumero(), endereco.getComplemento(), endereco.getBairro(), endereco.getCidade(),
-				endereco.getUF(), endereco.getCep());
-		return enderecoDto;
 	}
 	
 	public static String refinarLogradouro(String logradouro) {
