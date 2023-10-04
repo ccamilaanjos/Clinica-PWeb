@@ -26,19 +26,9 @@ public class ConsultaService {
 		ConsultaValidator.emHorarioDeFuncionamento();
 		Consulta consulta = new Consulta();
 		
-		Optional<Paciente> opPaciente = pacienteService.buscarPorID(idPaciente);
-		Optional<Medico> opMedico = medicoService.buscarPorID(idMedico);
-		if(opPaciente.isEmpty()) {
-			throw new PacienteNotFoundException();
-		}
-		if(opMedico.isEmpty()) {
-			throw new MedicoNotFoundException();
-		}
-		
-		Paciente paciente = opPaciente.get();
-		Medico medico = opMedico.get();
+		Paciente paciente = pacienteService.buscarPorID(idPaciente).orElseThrow(PacienteNotFoundException::new);
+		Medico medico = medicoService.buscarPorID(idMedico).orElseThrow(MedicoNotFoundException::new);
 		
 		return consulta;
 	}
-	
 }

@@ -1,10 +1,14 @@
 package com.pweb.clinica.models;
 
+import com.pweb.clinica.dtos.MedicoPostDTO;
+
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 
 @Entity(name="medicos")
 public class Medico extends Pessoa {
+	@Column(unique = true)
 	private String crm;
 //	@Enumerated(EnumType.STRING)
 //	private EspecialidadeTipo especialidade;
@@ -19,6 +23,15 @@ public class Medico extends Pessoa {
 		super(nome, email, telefone, endereco);
 		this.crm = crm;
 		this.especialidade = especialidade;
+	}
+	
+	public Medico(MedicoPostDTO medico, Especialidade especialidade, Endereco endereco) {
+		this.especialidade = especialidade;
+		this.crm = medico.crm();
+		super.setNome(medico.nome());
+		super.setTelefone(medico.telefone());
+		super.setEmail(medico.email());
+		super.setEndereco(endereco);
 	}
 
 	public String getCRM() {

@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.pweb.clinica.dtos.EnderecoFormDTO;
 import com.pweb.clinica.models.Endereco;
 import com.pweb.clinica.repositories.EnderecoRepository;
-import com.pweb.clinica.utils.converters.EnderecoConverter;
 
 @Service
 public class EnderecoService {
@@ -22,12 +21,12 @@ public class EnderecoService {
 	}
 	
 	public Endereco atribuirEndereco(EnderecoFormDTO enderecoForm) {
-		Endereco endereco = EnderecoConverter.converterDtoParaModel(enderecoForm);
+		Endereco endereco = new Endereco(enderecoForm);
 		return buscarEnderecoExistente(endereco).orElse(endereco);
 	}
 	
 	public Endereco ajustarCampos(Endereco enderecoAntigo, EnderecoFormDTO enderecoForm) {
-		Endereco endereco = EnderecoConverter.converterDtoParaModel(enderecoForm);
+		Endereco endereco = new Endereco(enderecoForm);
 		Endereco enderecoFinal = new Endereco();
 
 		// Se os campos obrigatórios forem uma String vazia, manter registro antigo

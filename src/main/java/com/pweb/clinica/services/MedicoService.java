@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.pweb.clinica.dtos.EnderecoFormDTO;
 import com.pweb.clinica.dtos.MedicoDTO;
+import com.pweb.clinica.dtos.MedicoGetDTO;
 import com.pweb.clinica.dtos.MedicoPostDTO;
 import com.pweb.clinica.dtos.MedicoPutDTO;
 import com.pweb.clinica.exceptions.EspecialidadeNotFoundException;
@@ -19,7 +20,7 @@ import com.pweb.clinica.models.Medico;
 import com.pweb.clinica.repositories.MedicoRepository;
 
 @Service
-public class MedicoService implements PessoaService<Medico, MedicoPostDTO, MedicoPutDTO, MedicoDTO> {
+public class MedicoService implements PessoaService<Medico, MedicoGetDTO, MedicoPostDTO, MedicoPutDTO, MedicoDTO> {
 
 	@Autowired
 	private MedicoRepository medicoRepository;
@@ -29,8 +30,8 @@ public class MedicoService implements PessoaService<Medico, MedicoPostDTO, Medic
 	private EspecialidadeService especialidadeService;
 
 	@Override
-	public Page<MedicoDTO> getPagina(Pageable pageable) {
-		return medicoRepository.findAll(pageable).map(MedicoDTO::new);
+	public Page<MedicoGetDTO> getPagina(Pageable pageable) {
+		return medicoRepository.findAll(pageable).map(medico -> new MedicoGetDTO(medico, medico.getEspecialidade()));
 	}
 
 	@Override
@@ -38,30 +39,26 @@ public class MedicoService implements PessoaService<Medico, MedicoPostDTO, Medic
 		Especialidade especialidade = especialidadeService.buscarPorTitulo(medicoForm.especialidade())
 				.orElseThrow(EspecialidadeNotFoundException::new);
 
-		Medico medico = new Medico();
-		medico.setEspecialidade(especialidade);
-		medico.setNome(medicoForm.nome());
-		medico.setTelefone(medicoForm.telefone());
-		medico.setEmail(medicoForm.email());
-		medico.setCRM(medicoForm.crm());
-
-		medico.setEndereco(enderecoService.atribuirEndereco(medicoForm.endereco()));
-		medicoRepository.save(medico);
+		Endereco endereco = enderecoService.atribuirEndereco(medicoForm.endereco());
+		Medico medico = new Medico(medicoForm, especialidade, endereco);
 		
+		medicoRepository.save(medico);
 		return new MedicoDTO(medico);
 	}
 
 	@Override
 	public MedicoDTO atualizar(Long id, MedicoPutDTO medicoForm) throws MedicoNotFoundException {
 		Medico medico = buscarPorID(id).orElseThrow(MedicoNotFoundException::new);
+		
 		medico.setNome(medicoForm.nome());
 		medico.setTelefone(medicoForm.telefone());
 
 		Endereco endereco = enderecoService.ajustarCampos(medico.getEndereco(), medicoForm.endereco());
-		EnderecoFormDTO enderecoAjustado = new EnderecoFormDTO(endereco);
-		medico.setEndereco(enderecoService.atribuirEndereco(enderecoAjustado));
+		EnderecoFormDTO enderecoDto = new EnderecoFormDTO(endereco);
+		
+		medico.setEndereco(enderecoService.atribuirEndereco(enderecoDto));
+		
 		medicoRepository.save(medico);
-
 		return new MedicoDTO(medico);
 	}
 

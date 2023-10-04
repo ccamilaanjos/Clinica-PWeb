@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pweb.clinica.dtos.PacienteDTO;
+import com.pweb.clinica.dtos.PacienteGetDTO;
 import com.pweb.clinica.dtos.PacientePostDTO;
 import com.pweb.clinica.dtos.PacientePutDTO;
 import com.pweb.clinica.exceptions.PacienteNotFoundException;
@@ -26,16 +27,16 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/pacientes")
-public class PacienteController implements PessoaController<PacientePostDTO, PacientePutDTO, PacienteDTO> {
+public class PacienteController implements PessoaController<PacientePostDTO, PacienteGetDTO, PacientePutDTO, PacienteDTO> {
 
 	@Autowired
 	private PacienteService pacienteService;
 
 	@GetMapping
 	@Override
-	public ResponseEntity<Page<PacienteDTO>> listar(@RequestParam("page") int page) {
+	public ResponseEntity<Page<PacienteGetDTO>> listar(@RequestParam("page") int page) {
 		final Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "nome"));
-		return new ResponseEntity<Page<PacienteDTO>>(pacienteService.getPagina(pageable), HttpStatus.OK);
+		return new ResponseEntity<Page<PacienteGetDTO>>(pacienteService.getPagina(pageable), HttpStatus.OK);
 	}
 
 	@PostMapping

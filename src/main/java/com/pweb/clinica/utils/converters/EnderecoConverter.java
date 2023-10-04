@@ -1,23 +1,6 @@
 package com.pweb.clinica.utils.converters;
 
-import com.pweb.clinica.dtos.EnderecoFormDTO;
-import com.pweb.clinica.models.Endereco;
-
 public class EnderecoConverter {
-
-	public static Endereco converterDtoParaModel(EnderecoFormDTO enderecoForm) {
-		Endereco endereco = new Endereco();
-
-		endereco.setLogradouro(enderecoForm.logradouro());
-		endereco.setNumero(enderecoForm.numero());
-		endereco.setComplemento(enderecoForm.complemento());
-		endereco.setBairro(enderecoForm.bairro());
-		endereco.setCidade(enderecoForm.cidade());
-		endereco.setUF(enderecoForm.uf());
-		endereco.setCep(enderecoForm.cep());
-
-		return endereco;
-	}
 	
 	public static String refinarLogradouro(String logradouro) {
 		return logradouro.toUpperCase();

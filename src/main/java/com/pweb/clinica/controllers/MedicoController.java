@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pweb.clinica.dtos.MedicoDTO;
+import com.pweb.clinica.dtos.MedicoGetDTO;
 import com.pweb.clinica.dtos.MedicoPostDTO;
 import com.pweb.clinica.dtos.MedicoPutDTO;
 import com.pweb.clinica.exceptions.EspecialidadeNotFoundException;
@@ -27,16 +28,16 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/medicos")
-public class MedicoController implements PessoaController<MedicoPostDTO, MedicoPutDTO, MedicoDTO> {
+public class MedicoController implements PessoaController<MedicoPostDTO, MedicoGetDTO, MedicoPutDTO, MedicoDTO> {
 	
 	@Autowired
 	private MedicoService medicoService;
 	
 	@GetMapping
 	@Override
-	public ResponseEntity<Page<MedicoDTO>> listar(@RequestParam("page") int page) {
+	public ResponseEntity<Page<MedicoGetDTO>> listar(@RequestParam("page") int page) {
 		final Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "nome"));
-		return new ResponseEntity<Page<MedicoDTO>>(medicoService.getPagina(pageable), HttpStatus.OK);
+		return new ResponseEntity<Page<MedicoGetDTO>>(medicoService.getPagina(pageable), HttpStatus.OK);
 	}
 	
 	@PostMapping

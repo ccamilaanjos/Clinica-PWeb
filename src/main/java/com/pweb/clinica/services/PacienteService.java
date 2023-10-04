@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.pweb.clinica.dtos.EnderecoFormDTO;
 import com.pweb.clinica.dtos.PacienteDTO;
+import com.pweb.clinica.dtos.PacienteGetDTO;
 import com.pweb.clinica.dtos.PacientePostDTO;
 import com.pweb.clinica.dtos.PacientePutDTO;
 import com.pweb.clinica.exceptions.PacienteNotFoundException;
@@ -17,28 +18,23 @@ import com.pweb.clinica.models.Paciente;
 import com.pweb.clinica.repositories.PacienteRepository;
 
 @Service
-public class PacienteService implements PessoaService<Paciente, PacientePostDTO, PacientePutDTO, PacienteDTO> {
+public class PacienteService implements PessoaService<Paciente, PacienteGetDTO, PacientePostDTO, PacientePutDTO, PacienteDTO> {
 
 	@Autowired
 	private PacienteRepository pacienteRepository;
 	@Autowired
 	private EnderecoService enderecoService;
 
-	public Page<PacienteDTO> getPagina(Pageable pageable) {
-		return pacienteRepository.findAll(pageable).map(PacienteDTO::new);
+	public Page<PacienteGetDTO> getPagina(Pageable pageable) {
+		return pacienteRepository.findAll(pageable).map(PacienteGetDTO::new);
 	}
 
 	@Override
 	public PacienteDTO cadastrar(PacientePostDTO pacienteForm) {
-		Paciente paciente = new Paciente();
-		paciente.setNome(pacienteForm.nome());
-		paciente.setEmail(pacienteForm.email());
-		paciente.setCPF(pacienteForm.cpf());
-		paciente.setTelefone(pacienteForm.telefone());
+		Endereco endereco = enderecoService.atribuirEndereco(pacienteForm.endereco());
+		Paciente paciente = new Paciente(pacienteForm, endereco);
 		
-		paciente.setEndereco(enderecoService.atribuirEndereco(pacienteForm.endereco()));
 		pacienteRepository.save(paciente);
-		
 		return new PacienteDTO(paciente);
 	}
 	
