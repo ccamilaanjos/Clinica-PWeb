@@ -30,6 +30,8 @@ public class ConsultaController {
 		return new ResponseEntity<>(HttpStatus.CREATED);
 	}
 	
+	
+	
 	@DeleteMapping("/cancelarConsulta")
 	public ResponseEntity<?> cancelarConsulta(@RequestParam("id") Long id) {
 		return new ResponseEntity<>(HttpStatus.CREATED);

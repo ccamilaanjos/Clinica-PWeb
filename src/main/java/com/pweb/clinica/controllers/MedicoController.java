@@ -40,6 +40,8 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoG
 		return new ResponseEntity<Page<MedicoGetDTO>>(medicoService.getPagina(pageable), HttpStatus.OK);
 	}
 	
+	// TODO: public ResponseEntity<Page<MedicoGetDTO>> listarPorEspecialidade();
+	
 	@PostMapping
 	@Override
 	public ResponseEntity<?> cadastrar(@Valid @RequestBody MedicoPostDTO medicoForm) {
