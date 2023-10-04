@@ -5,8 +5,6 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
-import com.pweb.clinica.models.Pessoa;
-
 public interface PessoaService<Model, PostDTO, PutDTO, DTO> {
 	public Page<DTO> getPagina(Pageable pageable);
 	public DTO cadastrar(PostDTO formDto) throws Exception;
