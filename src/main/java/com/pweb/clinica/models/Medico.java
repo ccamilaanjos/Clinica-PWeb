@@ -49,5 +49,11 @@ public class Medico extends Pessoa {
 	public void setEspecialidade(Especialidade especialidade) {
 		this.especialidade = especialidade;
 	}
+
+	@Override
+	public String toString() {
+		return "Medico [crm=" + crm + ", especialidade=" + especialidade + "]";
+	}
+	
 	
 }

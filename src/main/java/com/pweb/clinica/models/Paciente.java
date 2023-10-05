@@ -34,4 +34,9 @@ public class Paciente extends Pessoa {
 	public void setCPF(String cpf) {
 		this.cpf = cpf;
 	}
+
+	@Override
+	public String toString() {
+		return "Paciente [cpf=" + cpf + "]";
+	}
 }

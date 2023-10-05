@@ -56,7 +56,15 @@ public class Consulta {
 		return data;
 	}
 	
+	public void setData(LocalDate data) {
+		this.data = data;
+	}
+	
 	public LocalTime getHorario() {
 		return horario;
+	}
+	
+	public void setHorario(LocalTime horario) {
+		this.horario = horario;
 	}
 }

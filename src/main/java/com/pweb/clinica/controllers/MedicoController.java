@@ -43,7 +43,7 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoG
 		return new ResponseEntity<Page<MedicoGetDTO>>(medicoService.getPagina(pageable), HttpStatus.OK);
 	}
 	
-	@GetMapping("/")
+	@GetMapping("/especialidade")
 	public ResponseEntity<?> listarPorEspecialidade(@RequestParam("id") Long id) {
 		try {
 			return new ResponseEntity<List<MedicoGetDTO>>(medicoService.buscarMedicosPorEspecialidade(id), HttpStatus.OK);			
