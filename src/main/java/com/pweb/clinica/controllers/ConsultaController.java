@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pweb.clinica.dtos.ConsultaPostDTO;
 import com.pweb.clinica.exceptions.EmptyListException;
 import com.pweb.clinica.exceptions.EspecialidadeNotFoundException;
 import com.pweb.clinica.exceptions.MedicoNotFoundException;
