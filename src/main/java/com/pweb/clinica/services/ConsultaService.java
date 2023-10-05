@@ -11,7 +11,7 @@ import com.pweb.clinica.models.Paciente;
 import com.pweb.clinica.repositories.ConsultaRepository;
 import com.pweb.clinica.repositories.MedicoRepository;
 import com.pweb.clinica.repositories.PacienteRepository;
-import com.pweb.clinica.utils.validators.ConsultaValidator;
+import com.pweb.clinica.validators.ConsultaValidator;
 
 @Service
 public class ConsultaService {

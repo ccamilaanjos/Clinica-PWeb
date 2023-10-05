@@ -3,7 +3,6 @@ package com.pweb.clinica.exceptions;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import com.pweb.clinica.dtos.MedicoDTO;
 import com.pweb.clinica.dtos.PacienteDTO;
 
 public class DuplicatePacienteException extends Exception {

@@ -1,7 +1,7 @@
 package com.pweb.clinica.models;
 
 import com.pweb.clinica.dtos.EnderecoFormDTO;
-import com.pweb.clinica.utils.converters.EnderecoConverter;
+// import com.pweb.clinica.utils.converters.EnderecoConverter;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,13 +31,13 @@ public class Endereco {
 	
 	public Endereco(String logradouro, String numero, String complemento, String bairro, String cidade, String uf,
 			String cep) {
-		this.logradouro = EnderecoConverter.refinarLogradouro(logradouro);
-		this.numero = EnderecoConverter.refinarNumero(numero);
-		this.complemento = EnderecoConverter.refinarComplemento(complemento);
-		this.bairro = EnderecoConverter.refinarBairro(bairro);
-		this.cidade = EnderecoConverter.refinarCidade(cidade);
-		this.uf = EnderecoConverter.refinarUF(uf);
-		this.cep = EnderecoConverter.refinarCep(cep);
+		this.logradouro = refinarLogradouro(logradouro);
+		this.numero = refinarNumero(numero);
+		this.complemento = refinarComplemento(complemento);
+		this.bairro = refinarBairro(bairro);
+		this.cidade = refinarCidade(cidade);
+		this.uf = refinarUF(uf);
+		this.cep = cep;
 	}
 	
 	public Endereco(EnderecoFormDTO endereco) {
@@ -59,7 +59,7 @@ public class Endereco {
 	}
 
 	public void setLogradouro(String logradouro) {
-		this.logradouro = EnderecoConverter.refinarLogradouro(logradouro);
+		this.logradouro = refinarLogradouro(logradouro);
 	}
 
 	public String getNumero() {
@@ -67,7 +67,7 @@ public class Endereco {
 	}
 
 	public void setNumero(String numero) {
-		this.numero = EnderecoConverter.refinarNumero(numero);
+		this.numero = refinarNumero(numero);
 	}
 
 	public String getComplemento() {
@@ -75,7 +75,7 @@ public class Endereco {
 	}
 
 	public void setComplemento(String complemento) {
-		this.complemento = EnderecoConverter.refinarComplemento(complemento);
+		this.complemento = refinarComplemento(complemento);
 	}
 
 	public String getBairro() {
@@ -83,7 +83,7 @@ public class Endereco {
 	}
 
 	public void setBairro(String bairro) {
-		this.bairro = EnderecoConverter.refinarBairro(bairro);
+		this.bairro = refinarBairro(bairro);
 	}
 
 	public String getCidade() {
@@ -91,7 +91,7 @@ public class Endereco {
 	}
 
 	public void setCidade(String cidade) {
-		this.cidade = EnderecoConverter.refinarCidade(cidade);
+		this.cidade = refinarCidade(cidade);
 	}
 
 	public String getUF() {
@@ -99,7 +99,7 @@ public class Endereco {
 	}
 
 	public void setUF(String uf) {
-		this.uf = EnderecoConverter.refinarUF(uf);
+		this.uf = refinarUF(uf);
 	}
 
 	public String getCep() {
@@ -107,6 +107,42 @@ public class Endereco {
 	}
 
 	public void setCep(String cep) {
-		this.cep = EnderecoConverter.refinarCep(cep);
+		this.cep = cep;
+	}
+	
+	/*
+	 * Os métodos abaixo garantem que o endereço seja persistido em upper case,
+	 * para facilitar a comparação entre os campos ao verificar se um dado endereço
+	 * já existe. 
+	 */
+	
+	public String refinarLogradouro(String logradouro) {
+		return logradouro.toUpperCase();
+	}
+
+	public String refinarNumero(String numero) {
+		if(numero == null || numero.equalsIgnoreCase("s/n") || numero.equals("")) {
+			return "s/n";
+		}
+		return numero;
+	}
+
+	public String refinarComplemento(String complemento) {
+		if(complemento == null || complemento.equals("")) {
+			return "";
+		}
+		return complemento.toUpperCase();
+	}
+
+	public String refinarBairro(String bairro) {
+		return bairro.toUpperCase();
+	}
+
+	public  String refinarCidade(String cidade) {
+		return cidade.toUpperCase();
+	}
+
+	public String refinarUF(String uf) {
+		return uf.toUpperCase();
 	}
 }

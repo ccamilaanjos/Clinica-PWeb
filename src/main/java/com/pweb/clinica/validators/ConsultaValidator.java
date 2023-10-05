@@ -1,4 +1,4 @@
-package com.pweb.clinica.utils.validators;
+package com.pweb.clinica.validators;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
