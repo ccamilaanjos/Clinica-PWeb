@@ -1,5 +1,7 @@
 package com.pweb.clinica.controllers;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +22,7 @@ import com.pweb.clinica.dtos.MedicoDTO;
 import com.pweb.clinica.dtos.MedicoGetDTO;
 import com.pweb.clinica.dtos.MedicoPostDTO;
 import com.pweb.clinica.dtos.MedicoPutDTO;
+import com.pweb.clinica.exceptions.DuplicateMedicoException;
 import com.pweb.clinica.exceptions.EspecialidadeNotFoundException;
 import com.pweb.clinica.exceptions.MedicoNotFoundException;
 import com.pweb.clinica.services.MedicoService;
@@ -40,7 +43,14 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoG
 		return new ResponseEntity<Page<MedicoGetDTO>>(medicoService.getPagina(pageable), HttpStatus.OK);
 	}
 	
-	// TODO: public ResponseEntity<Page<MedicoGetDTO>> listarPorEspecialidade();
+	@GetMapping("/")
+	public ResponseEntity<?> listarPorEspecialidade(@RequestParam("id") Long id) {
+		try {
+			return new ResponseEntity<List<MedicoGetDTO>>(medicoService.buscarMedicosPorEspecialidade(id), HttpStatus.OK);			
+		} catch (EspecialidadeNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Especialidade não encontrada");
+		}
+	}
 	
 	@PostMapping
 	@Override
@@ -49,6 +59,8 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoG
 		try {
 			medico = medicoService.cadastrar(medicoForm);
 			return new ResponseEntity<MedicoDTO>(medico, HttpStatus.CREATED);
+		} catch (DuplicateMedicoException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getResponse());
 		} catch (EspecialidadeNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Especialidade não encontrada");
 		} catch (Exception e) {

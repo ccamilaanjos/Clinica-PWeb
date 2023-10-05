@@ -16,10 +16,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pweb.clinica.dtos.MedicoDTO;
 import com.pweb.clinica.dtos.PacienteDTO;
 import com.pweb.clinica.dtos.PacienteGetDTO;
 import com.pweb.clinica.dtos.PacientePostDTO;
 import com.pweb.clinica.dtos.PacientePutDTO;
+import com.pweb.clinica.exceptions.DuplicateMedicoException;
+import com.pweb.clinica.exceptions.DuplicatePacienteException;
 import com.pweb.clinica.exceptions.PacienteNotFoundException;
 import com.pweb.clinica.services.PacienteService;
 
@@ -41,9 +44,16 @@ public class PacienteController implements PessoaController<PacientePostDTO, Pac
 
 	@PostMapping
 	@Override
-	public ResponseEntity<PacienteDTO> cadastrar(@Valid @RequestBody PacientePostDTO pacienteForm) {
-		PacienteDTO paciente = pacienteService.cadastrar(pacienteForm);
-		return new ResponseEntity<PacienteDTO>(paciente, HttpStatus.CREATED);
+	public ResponseEntity<?> cadastrar(@Valid @RequestBody PacientePostDTO pacienteForm) {
+		PacienteDTO paciente;
+		try {
+			paciente = pacienteService.cadastrar(pacienteForm);
+			return new ResponseEntity<PacienteDTO>(paciente, HttpStatus.CREATED);
+		} catch(DuplicatePacienteException e) {
+			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getResponse());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
 	}
 
 	@PutMapping("/")

@@ -12,6 +12,7 @@ import com.pweb.clinica.dtos.PacienteDTO;
 import com.pweb.clinica.dtos.PacienteGetDTO;
 import com.pweb.clinica.dtos.PacientePostDTO;
 import com.pweb.clinica.dtos.PacientePutDTO;
+import com.pweb.clinica.exceptions.DuplicatePacienteException;
 import com.pweb.clinica.exceptions.PacienteNotFoundException;
 import com.pweb.clinica.models.Endereco;
 import com.pweb.clinica.models.Paciente;
@@ -30,7 +31,12 @@ public class PacienteService implements PessoaService<Paciente, PacienteGetDTO, 
 	}
 
 	@Override
-	public PacienteDTO cadastrar(PacientePostDTO pacienteForm) {
+	public PacienteDTO cadastrar(PacientePostDTO pacienteForm) throws DuplicatePacienteException {
+		Optional<Paciente> cpfExistente = pacienteRepository.findByCpf(pacienteForm.cpf());
+		if(cpfExistente.isPresent()) {
+			throw new DuplicatePacienteException(new PacienteDTO(cpfExistente.get()));
+		}
+		
 		Endereco endereco = enderecoService.atribuirEndereco(pacienteForm.endereco());
 		Paciente paciente = new Paciente(pacienteForm, endereco);
 		
@@ -40,7 +46,7 @@ public class PacienteService implements PessoaService<Paciente, PacienteGetDTO, 
 	
 	@Override
 	public PacienteDTO atualizar(Long id, PacientePutDTO pacienteForm) throws PacienteNotFoundException {
-		Paciente paciente = buscarPorID(id).orElseThrow(PacienteNotFoundException::new);
+		Paciente paciente = pacienteRepository.findById(id).orElseThrow(PacienteNotFoundException::new);
 		
 		paciente.setNome(pacienteForm.nome());
 		paciente.setTelefone(pacienteForm.telefone());
@@ -55,7 +61,7 @@ public class PacienteService implements PessoaService<Paciente, PacienteGetDTO, 
 	
 	@Override
 	public Paciente tornarInativo(Long id) {
-		Optional<Paciente> optionalPaciente = buscarPorID(id);
+		Optional<Paciente> optionalPaciente = pacienteRepository.findById(id);
 
 		if (optionalPaciente.isEmpty()) {
 			return null;
@@ -66,11 +72,5 @@ public class PacienteService implements PessoaService<Paciente, PacienteGetDTO, 
 		pacienteRepository.save(paciente);
 
 		return paciente;
-	}
-
-	@Override
-	public Optional<Paciente> buscarPorID(Long id) {
-		return pacienteRepository.findById(id);
-	}
-	
+	}	
 }

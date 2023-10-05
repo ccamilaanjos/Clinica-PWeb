@@ -32,8 +32,4 @@ public class EspecialidadeService {
 			especialidadeRepository.save(especialidade);
 		}
 	}
-	
-	public Optional<Especialidade> buscarPorTitulo(String titulo){
-		return especialidadeRepository.findByTituloIgnoreCase(titulo);
-	}
 }
