@@ -1,7 +1,6 @@
 package com.pweb.clinica.services;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Random;
@@ -9,6 +8,7 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.pweb.clinica.controllers.ConsultaPostDTO;
 import com.pweb.clinica.exceptions.EmptyListException;
 import com.pweb.clinica.exceptions.EspecialidadeNotFoundException;
 import com.pweb.clinica.exceptions.MedicoNotFoundException;
@@ -35,15 +35,19 @@ public class ConsultaService {
 	
 	private final int HORARIOS_DISPONIVEIS[] = {7, 8 , 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
 	
-	public Consulta marcarConsulta(Long idPaciente, Long idMedico, Long idEspecialidade)
+	public Consulta marcarConsulta(ConsultaPostDTO consultaForm)
 			throws PacienteNotFoundException, MedicoNotFoundException, EspecialidadeNotFoundException, EmptyListException {
+		
+		Long idMedico = consultaForm.idMedico();
+		Long idPaciente = consultaForm.idPaciente();
+		Long idEspecialidade = consultaForm.idEspecialidade();
 		
 		System.out.println("\nMARCAR CONSULTA");
 		
-		Especialidade especialidade = especialidadeRepository.findById(idEspecialidade).orElseThrow(EspecialidadeNotFoundException::new);
+		Especialidade especialidade = especialidadeRepository.findById(idEspecialidade)
+				.orElseThrow(EspecialidadeNotFoundException::new);
 		
-		if(idMedico == null) {
-			System.out.println("\nMEDICO NULL");
+		if(consultaForm.idMedico() == null) {
 			idMedico = escolherMedico(idEspecialidade);
 		}
 		

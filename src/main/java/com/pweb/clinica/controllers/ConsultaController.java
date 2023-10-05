@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,6 +14,7 @@ import com.pweb.clinica.exceptions.EmptyListException;
 import com.pweb.clinica.exceptions.EspecialidadeNotFoundException;
 import com.pweb.clinica.exceptions.MedicoNotFoundException;
 import com.pweb.clinica.exceptions.PacienteNotFoundException;
+import com.pweb.clinica.models.Consulta;
 import com.pweb.clinica.services.ConsultaService;
 
 @RestController
@@ -21,14 +23,12 @@ public class ConsultaController {
 	@Autowired
 	private ConsultaService consultaService;
 
-	@PostMapping("/marcarConsulta/")
+	@PostMapping("/marcarConsulta")
 	public ResponseEntity<?> marcarConsulta(
-			@RequestParam(value = "idPaciente", required = true) Long idPaciente,
-			@RequestParam(value = "idMedico", required = false) Long idMedico,
-			@RequestParam(value = "idEspecialidade", required = true) Long idEspecialidade) {
+			@RequestBody ConsultaPostDTO consultaForm) {
 		try {
-			consultaService.marcarConsulta(idPaciente, idMedico, idEspecialidade);
-			return new ResponseEntity<>(HttpStatus.CREATED);
+			Consulta consulta = consultaService.marcarConsulta(consultaForm);
+			return ResponseEntity.status(HttpStatus.CREATED).body(consulta);	
 		} catch (EmptyListException e) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());		
 		} catch (PacienteNotFoundException | MedicoNotFoundException | EspecialidadeNotFoundException e) {
