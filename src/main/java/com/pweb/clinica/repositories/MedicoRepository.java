@@ -13,4 +13,5 @@ public interface MedicoRepository extends JpaRepository<Medico, Long> {
 	public Optional<Medico> findByCrm(String crm);
 	public Optional<List<Medico>> findByEspecialidade_idOrderByNomeAsc(Long id);
 	public Optional<List<Medico>> findByEspecialidade_idAndAtivoTrueOrderByNomeAsc(Long id);
+	// public Boolean findByAtivoAndMedico_id(Long id);
 }

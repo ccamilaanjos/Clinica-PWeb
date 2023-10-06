@@ -11,10 +11,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pweb.clinica.dtos.ConsultaPostDTO;
+import com.pweb.clinica.exceptions.ClinicaUnavailableException;
+import com.pweb.clinica.exceptions.ConflictingScheduleException;
 import com.pweb.clinica.exceptions.EmptyListException;
 import com.pweb.clinica.exceptions.EspecialidadeNotFoundException;
 import com.pweb.clinica.exceptions.MedicoNotFoundException;
 import com.pweb.clinica.exceptions.PacienteNotFoundException;
+import com.pweb.clinica.exceptions.PessoaInativaException;
 import com.pweb.clinica.models.Consulta;
 import com.pweb.clinica.services.ConsultaService;
 
@@ -29,11 +32,17 @@ public class ConsultaController {
 			@RequestBody ConsultaPostDTO consultaForm) {
 		try {
 			Consulta consulta = consultaService.marcarConsulta(consultaForm);
-			return ResponseEntity.status(HttpStatus.CREATED).body(consulta);	
-		} catch (EmptyListException e) {
-			return ResponseEntity.status(HttpStatus.NO_CONTENT).body(e.getMessage());		
-		} catch (PacienteNotFoundException | MedicoNotFoundException | EspecialidadeNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.CREATED).body(consulta);
+		} catch (PacienteNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		} catch (ConflictingScheduleException | EmptyListException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		} catch (EspecialidadeNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		} catch (MedicoNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		} catch (PessoaInativaException e) {
+			return ResponseEntity.status(HttpStatus.GONE).body(e.getMessage());
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}

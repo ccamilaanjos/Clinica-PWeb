@@ -17,7 +17,7 @@ public class ConsultaValidator {
 			return false;
 		}
 		
-		if(horario.getHour() < HORARIO_ABERTURA || horario.getHour() > HORARIO_FECHAMENTO) {
+		if(horario.getHour() < HORARIO_ABERTURA || horario.getHour() > (HORARIO_FECHAMENTO - 1)) {
 			return false;
 		}
 		

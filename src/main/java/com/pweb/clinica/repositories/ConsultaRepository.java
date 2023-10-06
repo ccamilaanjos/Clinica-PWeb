@@ -13,6 +13,6 @@ import com.pweb.clinica.models.Consulta;
 
 @Repository
 public interface ConsultaRepository extends JpaRepository<Consulta, Long>{
-	// @Query("SELECT c FROM Consulta c WHERE c.data = :data AND c.horario = :horario AND c.medico_id = :medico_id")
     List<Consulta> findByDataAndHorarioAndMedico_id(LocalDate data, LocalTime horario, Long medicoId);
+    List<Consulta> findByDataAndHorarioAndPaciente_id(LocalDate data, LocalTime horario, Long pacienteId);
 }
