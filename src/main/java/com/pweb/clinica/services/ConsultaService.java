@@ -3,7 +3,6 @@ package com.pweb.clinica.services;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,7 +48,7 @@ public class ConsultaService {
 		LocalDate data = consultaForm.data();
 		LocalTime horario = ConsultaValidator.zerarNanos(consultaForm.horario());
 		
-		// Verifica se consulta foi marcada para um momento válido
+		// Verifica se a consulta foi marcada para um momento válido
 		if(!ConsultaValidator.emHorarioDeFuncionamento(data, horario)) {
 			throw new ClinicaUnavailableException();
 		}
@@ -58,27 +57,16 @@ public class ConsultaService {
 		Paciente paciente = pacienteRepository.findById(idPaciente).orElseThrow(PacienteNotFoundException::new);
 		
 		// Verifica se o paciente já tem consulta marcada no dia
+		
 		if(!consultaRepository.findByDataAndHorarioAndPaciente_id(data, horario, idPaciente).isEmpty()) {
 			throw new ConflictingScheduleException("Paciente já tem consulta marcada para este dia");
 		}
 		
-		// Verifica se o médico já possui outra consulta agendada na mesma data/horário
-		if(!medicoEstaDisponivel(idMedico, data, horario)) {
-			throw new ConflictingScheduleException("Médico possui outra consulta neste horário");
-		}
-		
+		verificarSeMedicoTemConsulta(idMedico, data, horario);
+
 		// Caso o id do médico não seja enviado, atribui um médico para esta consulta
 		if(consultaForm.idMedico() == null) {
-			especialidadeRepository.findById(idEspecialidade).orElseThrow(EspecialidadeNotFoundException::new);
-			
-			// Verifica se há quaisquer médicos disponíveis para esta especialidade
-			List<Medico> medicosEspecialistas = getMedicosEspecialistas(idEspecialidade);
-			if(medicosEspecialistas.isEmpty()) {
-				throw new EmptyListException("Nenhum médico disponível para esta especialidade");
-			}
-			
-			// Busca lista de médicos disponíveis para esta especialidade no mesmo horário e data
-			idMedico = escolherMedico(medicosEspecialistas, consultaForm.data(), horario);				
+			idMedico = atribuirMedicoParaConsulta(idEspecialidade, consultaForm, data, horario);
 		}
 		
 		// Verifica se o médico existe (DEAD CODE caso entre no if acima)
@@ -99,11 +87,26 @@ public class ConsultaService {
 		consulta.setHorario(horario);
 		consultaRepository.save(consulta);
 		
+		// TODO: Retornar DTO
 		return consulta;
 	}
 	
-	private Long escolherMedico(List<Medico> medicosEspecialistas, LocalDate data, LocalTime horario) throws EmptyListException {
+	private Long atribuirMedicoParaConsulta(Long idEspecialidade, ConsultaPostDTO consultaForm, LocalDate data, LocalTime horario)
+			throws EspecialidadeNotFoundException, EmptyListException {
 		
+		especialidadeRepository.findById(idEspecialidade).orElseThrow(EspecialidadeNotFoundException::new);
+
+		// Verifica se há quaisquer médicos disponíveis para esta especialidade
+		List<Medico> medicosEspecialistas = getMedicosEspecialistas(idEspecialidade);
+		if(medicosEspecialistas.isEmpty()) {
+			throw new EmptyListException("Nenhum médico disponível para esta especialidade");
+		}
+		// Busca lista de médicos disponíveis para esta especialidade no mesmo horário e data
+		return escolherMedico(medicosEspecialistas, data, horario);				
+	
+	}
+	
+	private Long escolherMedico(List<Medico> medicosEspecialistas, LocalDate data, LocalTime horario) throws EmptyListException {
 		// TODO: Criar array com indices disponíveis para evitar que o mesmo médico seja sorteado duas vezes
 		Random rand = new Random();
 		for(int i = 0; i < medicosEspecialistas.size(); i++) {
@@ -130,5 +133,16 @@ public class ConsultaService {
 			return true;
 		}
 		return false;
+	}
+	
+	private void verificarSeMedicoTemConsulta(Long idMedico, LocalDate data, LocalTime horario) throws ConflictingScheduleException {
+		// Verifica se o médico já possui outra consulta agendada na mesma data/horário
+		if(!medicoEstaDisponivel(idMedico, data, horario)) {
+			throw new ConflictingScheduleException("Médico indisponível neste horário");
+		}
+	}
+	
+	public Consulta cancelarConsulta() {
+		return null;
 	}
 }

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pweb.clinica.dtos.ConsultaPostDTO;
-import com.pweb.clinica.exceptions.ClinicaUnavailableException;
 import com.pweb.clinica.exceptions.ConflictingScheduleException;
 import com.pweb.clinica.exceptions.EmptyListException;
 import com.pweb.clinica.exceptions.EspecialidadeNotFoundException;
@@ -44,7 +43,7 @@ public class ConsultaController {
 		} catch (PessoaInativaException e) {
 			return ResponseEntity.status(HttpStatus.GONE).body(e.getMessage());
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.initCause(e));
 		}
 	}
 	
