@@ -43,10 +43,13 @@ public class ConsultaService {
 		Long idMedico = consultaForm.idMedico();
 		Long idPaciente = consultaForm.idPaciente();
 		Long idEspecialidade = consultaForm.idEspecialidade();
+		LocalTime horario = ConsultaValidator.zerarNanos(consultaForm.horario());
 		
 		if(consultaForm.idMedico() == null) {
+			System.out.println("\n\nID DO MEDICO NULL");
+			// Caso o id do médico não seja enviado, buscar lista de médicos disponíveis para esta especialidade
 			especialidadeRepository.findById(idEspecialidade).orElseThrow(EspecialidadeNotFoundException::new);
-			idMedico = escolherMedico(idEspecialidade);
+			idMedico = escolherMedico(idEspecialidade, consultaForm.data(), horario);
 		}
 		
 		// TODO: Validar se médico e paciente estão ativos no sistema
@@ -55,7 +58,7 @@ public class ConsultaService {
 		Paciente paciente = pacienteRepository.findById(idPaciente).orElseThrow(PacienteNotFoundException::new);
 		Medico medico = medicoRepository.findById(idMedico).orElseThrow(MedicoNotFoundException::new);
 
-		if(!ConsultaValidator.emHorarioDeFuncionamento(consultaForm.data(), consultaForm.horario())) {
+		if(!ConsultaValidator.emHorarioDeFuncionamento(consultaForm.data(), horario)) {
 			throw new ClinicaUnavailableException();
 		}
 		
@@ -65,22 +68,28 @@ public class ConsultaService {
 		
 		consulta.setMedico(medico);
 		consulta.setPaciente(paciente);
-		consulta.setData(LocalDate.now());
-		consulta.setHorario(LocalTime.now());
+		consulta.setData(consultaForm.data());
+		consulta.setHorario(horario);
 		consultaRepository.save(consulta);
 		
 		return consulta;
 	}
 	
-	private Long escolherMedico(Long idEspecialidade) throws EmptyListException {
-		List<Medico> medicosEsp = medicoRepository.findByEspecialidade_idAndAtivoTrueOrderByNomeAsc(idEspecialidade)
+	private Long escolherMedico(Long idEspecialidade, LocalDate data, LocalTime horario) throws EmptyListException {
+		List<Medico> medicosEspecialistas = medicoRepository.findByEspecialidade_idAndAtivoTrueOrderByNomeAsc(idEspecialidade)
 				.orElseThrow(() -> new EmptyListException("Nenhum médico disponível para esta especialidade"));
 		
 		Random rand = new Random();
-		Long id = rand.nextLong(medicosEsp.size());
-		System.out.println("\nESCOLHI O MEDICO DE ID: " + id);
-		return id;
-		// TODO: Validar se esse médico está disponível
+		int escolhido = rand.nextInt(medicosEspecialistas.size());
+		Medico medico = medicosEspecialistas.get(escolhido);
+		
+		// Valida se esse médico está disponível
+		List<Consulta> consultasNesteHorario = consultaRepository.findByDataAndHorarioAndMedico_id(data, horario, medico.getId());
+		if(consultasNesteHorario.isEmpty()) {
+			return medico.getId();			
+		}
+		
+		return escolherMedico(idEspecialidade, data, horario);
 	}
 	
 }

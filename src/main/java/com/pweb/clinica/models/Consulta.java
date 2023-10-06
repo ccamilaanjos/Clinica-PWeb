@@ -29,11 +29,11 @@ public class Consulta {
 	
 	public Consulta() {}
 	
-	public Consulta(Paciente paciente, Medico medico) {
+	public Consulta(Paciente paciente, Medico medico, LocalDate data, LocalTime horario) {
 		this.paciente = paciente;
 		this.medico = medico;
-		this.data = LocalDate.now();
-		this.horario = LocalTime.now();
+		this.data = data;
+		this.horario = horario;
 	}
 	
 	public Paciente getPaciente() {

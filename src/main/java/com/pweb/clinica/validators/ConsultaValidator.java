@@ -23,4 +23,8 @@ public class ConsultaValidator {
 		
 		return true;
 	}
+	
+	public static LocalTime zerarNanos(LocalTime horario) {
+		return horario.withNano(0);
+	}
 }

@@ -36,4 +36,9 @@ public class Especialidade {
 	public void setTitulo(String titulo) {
 		this.titulo = titulo;
 	}
+
+	@Override
+	public String toString() {
+		return "Especialidade [id=" + id + ", titulo=" + titulo + "]";
+	}
 }
