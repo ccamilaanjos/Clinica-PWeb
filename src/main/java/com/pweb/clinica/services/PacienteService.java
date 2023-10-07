@@ -26,8 +26,11 @@ public class PacienteService implements PessoaService<Paciente, PacienteGetDTO, 
 	@Autowired
 	private EnderecoService enderecoService;
 
-	public Page<PacienteGetDTO> getPagina(Pageable pageable) {
-		return pacienteRepository.findAll(pageable).map(PacienteGetDTO::new);
+	public Page<PacienteGetDTO> getPagina(Pageable pageable, String type) {
+		if(type.equalsIgnoreCase("all")) {
+			return pacienteRepository.findAll(pageable).map(PacienteGetDTO::new);			
+		}
+		return pacienteRepository.findAllByAtivoTrue(pageable).map(PacienteGetDTO::new);
 	}
 
 	@Override

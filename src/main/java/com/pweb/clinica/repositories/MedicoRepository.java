@@ -5,6 +5,8 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,6 +17,8 @@ import com.pweb.clinica.models.Medico;
 @Repository
 public interface MedicoRepository extends JpaRepository<Medico, Long> {
 	public Optional<Medico> findByCrm(String crm);
+	public Optional<Medico> findByIdAndAtivoTrue(Long id);
+	public Page<Medico> findAllByAtivoTrue(Pageable pageable);
 	public Optional<List<Medico>> findByEspecialidade_idOrderByNomeAsc(Long id);
 	public Optional<List<Medico>> findByEspecialidade_idAndAtivoTrueOrderByNomeAsc(Long id);
     @Query("SELECT m FROM medicos m LEFT JOIN consultas c "

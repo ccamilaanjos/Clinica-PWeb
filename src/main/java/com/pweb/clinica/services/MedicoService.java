@@ -34,8 +34,11 @@ public class MedicoService implements PessoaService<Medico, MedicoGetDTO, Medico
 	private EspecialidadeRepository especialidadeRepository;
 
 	@Override
-	public Page<MedicoGetDTO> getPagina(Pageable pageable) {
-		return medicoRepository.findAll(pageable).map(medico -> new MedicoGetDTO(medico, medico.getEspecialidade()));
+	public Page<MedicoGetDTO> getPagina(Pageable pageable, String type) {
+		if(type.equalsIgnoreCase("all")) {
+			return medicoRepository.findAll(pageable).map(medico -> new MedicoGetDTO(medico, medico.getEspecialidade()));			
+		}
+		return medicoRepository.findAllByAtivoTrue(pageable).map(medico -> new MedicoGetDTO(medico, medico.getEspecialidade()));
 	}
 	
 	public List<MedicoGetDTO> buscarMedicosPorEspecialidade(Long id) throws EspecialidadeNotFoundException {

@@ -36,11 +36,17 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoG
 	@Autowired
 	private MedicoService medicoService;
 	
-	@GetMapping
+	@GetMapping("/todos")
 	@Override
-	public ResponseEntity<Page<MedicoGetDTO>> listar(@RequestParam("page") int page) {
+	public ResponseEntity<Page<MedicoGetDTO>> listarTodos(@RequestParam("page") int page) {
 		final Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "nome"));
-		return new ResponseEntity<Page<MedicoGetDTO>>(medicoService.getPagina(pageable), HttpStatus.OK);
+		return new ResponseEntity<Page<MedicoGetDTO>>(medicoService.getPagina(pageable, "all"), HttpStatus.OK);
+	}
+	
+	@GetMapping("/ativos")
+	public ResponseEntity<Page<MedicoGetDTO>> listarAtivos(@RequestParam("page") int page) {
+		final Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "nome"));
+		return new ResponseEntity<Page<MedicoGetDTO>>(medicoService.getPagina(pageable, "active"), HttpStatus.OK);
 	}
 	
 	@GetMapping("/especialidade")

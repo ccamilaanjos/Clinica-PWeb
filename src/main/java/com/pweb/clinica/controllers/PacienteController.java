@@ -33,11 +33,18 @@ public class PacienteController implements PessoaController<PacientePostDTO, Pac
 	@Autowired
 	private PacienteService pacienteService;
 
-	@GetMapping
+	@GetMapping("/todos")
 	@Override
-	public ResponseEntity<Page<PacienteGetDTO>> listar(@RequestParam("page") int page) {
+	public ResponseEntity<Page<PacienteGetDTO>> listarTodos(@RequestParam("page") int page) {
 		final Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "nome"));
-		return new ResponseEntity<Page<PacienteGetDTO>>(pacienteService.getPagina(pageable), HttpStatus.OK);
+		return new ResponseEntity<Page<PacienteGetDTO>>(pacienteService.getPagina(pageable, "all"), HttpStatus.OK);
+	}
+	
+	@GetMapping("/ativos")
+	@Override
+	public ResponseEntity<Page<PacienteGetDTO>> listarAtivos(@RequestParam("page") int page) {
+		final Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "nome"));
+		return new ResponseEntity<Page<PacienteGetDTO>>(pacienteService.getPagina(pageable, "active"), HttpStatus.OK);
 	}
 
 	@PostMapping

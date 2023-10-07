@@ -1,7 +1,5 @@
 package com.pweb.clinica.services;
 
-import java.sql.Date;
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -47,18 +45,15 @@ public class ConsultaService {
 		Long idPaciente = consultaForm.idPaciente();
 		Long idEspecialidade = consultaForm.idEspecialidade();
 		LocalDate data = consultaForm.data();
-		LocalTime horario = ConsultaValidator.zerarNanos(consultaForm.horario());
+		LocalTime horario = consultaForm.horario().withNano(0);
 		
-		// Verifica se a consulta foi marcada para um momento válido
-		if(!ConsultaValidator.emHorarioDeFuncionamento(data, horario)) {
-			throw new ClinicaUnavailableException();
-		}
+		// Verifica se a consulta foi marcada para um momento válido e foi realizada com ao menos 30 minutos de antecedência
+		ConsultaValidator.validarRestricoesDeTempo(data, horario);
 		
 		// Verifica se o paciente existe
-		Paciente paciente = pacienteRepository.findById(idPaciente).orElseThrow(PacienteNotFoundException::new);
+		Paciente paciente = pacienteRepository.findByIdAndAtivoTrue(idPaciente).orElseThrow(PacienteNotFoundException::new);
 		
 		// Verifica se o paciente já tem consulta marcada no dia
-		
 		if(!consultaRepository.findByDataAndHorarioAndPaciente_id(data, horario, idPaciente).isEmpty()) {
 			throw new ConflictingScheduleException("Paciente já tem consulta marcada para este dia");
 		}
@@ -71,21 +66,19 @@ public class ConsultaService {
 			throw new PessoaInativaException();
 		}
 		
-		// TODO: Validar se a marcação foi realizada com ao menos 30 minutos de antecedência
-//		LocalDate hoje = LocalDate.now();
-//		LocalTime agora = LocalTime.now();
-//		
-		// if 
-		
+		// TODO: Retornar DTO
+		return criarNovaConsulta(medico, paciente, data, horario);
+	}
+	
+	private Consulta criarNovaConsulta(Medico medico, Paciente paciente, LocalDate data, LocalTime horario) {
 		Consulta consulta = new Consulta();
 		
 		consulta.setMedico(medico);
 		consulta.setPaciente(paciente);
-		consulta.setData(consultaForm.data());
+		consulta.setData(data);
 		consulta.setHorario(horario);
 		consultaRepository.save(consulta);
 		
-		// TODO: Retornar DTO
 		return consulta;
 	}
 	
