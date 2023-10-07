@@ -63,14 +63,7 @@ public class ConsultaService {
 			throw new ConflictingScheduleException("Paciente já tem consulta marcada para este dia");
 		}
 		
-		verificarSeMedicoTemConsulta(idMedico, data, horario);
-
-		// Caso o id do médico não seja enviado, atribui um médico para esta consulta
-		if(consultaForm.idMedico() == null) {
-			idMedico = atribuirMedicoParaConsulta(idEspecialidade, consultaForm, data, horario);
-		}
-		
-		// Verifica se o médico existe (DEAD CODE caso entre no if acima)
+		idMedico = validarMedico(idMedico, data, horario, idEspecialidade);
 		Medico medico = medicoRepository.findById(idMedico).orElseThrow(MedicoNotFoundException::new);
 		
 		// Verifica se médico e paciente estão ativos no sistema
@@ -96,21 +89,28 @@ public class ConsultaService {
 		return consulta;
 	}
 	
-	private Long atribuirMedicoParaConsulta(Long idEspecialidade, ConsultaPostDTO consultaForm, LocalDate data, LocalTime horario)
+	private Long validarMedico(Long idMedico, LocalDate data, LocalTime horario, Long idEspecialidade) throws ConflictingScheduleException,
+		EspecialidadeNotFoundException, EmptyListException {
+		if(idMedico != null) {
+			verificarSeMedicoTemConsulta(idMedico, data, horario);
+			return idMedico;
+		}
+
+		// Caso o id do médico não seja enviado, atribui um médico para esta consulta
+		return atribuirMedicoParaConsulta(idEspecialidade, idMedico, data, horario);
+	}
+	
+	private Long atribuirMedicoParaConsulta(Long idEspecialidade, Long idMedico, LocalDate data, LocalTime horario)
 			throws EspecialidadeNotFoundException, EmptyListException {
 		
 		especialidadeRepository.findById(idEspecialidade).orElseThrow(EspecialidadeNotFoundException::new);
-		
-		// Verifica se há quaisquer médicos disponíveis para esta especialidade
-//		Date date = Date.valueOf(data);
-//		Time time = Time.valueOf(horario);
-		List<Medico> medicosEspecialistas = medicoRepository.findAllByEspecialidade_idAndDataAndHorario(idEspecialidade, data, horario);
+		List<Medico> medicosEspecialistas = medicoRepository.findMedicosDisponiveis(idEspecialidade, data, horario);
 		
 		if(medicosEspecialistas.isEmpty()) {
 			throw new EmptyListException("Nenhum médico disponível para esta especialidade");
 		}
 		
-		return escolherMedico(medicosEspecialistas);				
+		return escolherMedico(medicosEspecialistas);		
 	}
 	
 	private Long escolherMedico(List<Medico> medicosDisponiveis) {
