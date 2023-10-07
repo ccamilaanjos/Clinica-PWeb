@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pweb.clinica.dtos.ConsultaPostDTO;
+import com.pweb.clinica.exceptions.ClinicaUnavailableException;
 import com.pweb.clinica.exceptions.ConflictingScheduleException;
 import com.pweb.clinica.exceptions.EmptyListException;
 import com.pweb.clinica.exceptions.EspecialidadeNotFoundException;
@@ -20,6 +21,8 @@ import com.pweb.clinica.exceptions.PessoaInativaException;
 import com.pweb.clinica.models.Consulta;
 import com.pweb.clinica.services.ConsultaService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping
 public class ConsultaController {
@@ -28,17 +31,13 @@ public class ConsultaController {
 
 	@PostMapping("/marcarConsulta")
 	public ResponseEntity<?> marcarConsulta(
-			@RequestBody ConsultaPostDTO consultaForm) {
+			@RequestBody @Valid ConsultaPostDTO consultaForm) {
 		try {
 			Consulta consulta = consultaService.marcarConsulta(consultaForm);
 			return ResponseEntity.status(HttpStatus.CREATED).body(consulta);
-		} catch (PacienteNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-		} catch (ConflictingScheduleException | EmptyListException e) {
+		} catch (ConflictingScheduleException | EmptyListException | ClinicaUnavailableException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-		} catch (EspecialidadeNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-		} catch (MedicoNotFoundException e) {
+		} catch (MedicoNotFoundException | EspecialidadeNotFoundException | PacienteNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		} catch (PessoaInativaException e) {
 			return ResponseEntity.status(HttpStatus.GONE).body(e.getMessage());

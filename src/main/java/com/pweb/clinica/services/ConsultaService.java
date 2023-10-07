@@ -1,5 +1,7 @@
 package com.pweb.clinica.services;
 
+import java.sql.Date;
+import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -37,9 +39,8 @@ public class ConsultaService {
 	private EspecialidadeRepository especialidadeRepository;
 	
 	public Consulta marcarConsulta(ConsultaPostDTO consultaForm)
-			throws ClinicaUnavailableException, PacienteNotFoundException,
-			ConflictingScheduleException, EspecialidadeNotFoundException,
-			EmptyListException, MedicoNotFoundException,
+			throws ClinicaUnavailableException, PacienteNotFoundException, ConflictingScheduleException,
+			EspecialidadeNotFoundException, EmptyListException, MedicoNotFoundException,
 			PessoaInativaException {
 		
 		Long idMedico = consultaForm.idMedico();
@@ -78,6 +79,10 @@ public class ConsultaService {
 		}
 		
 		// TODO: Validar se a marcação foi realizada com ao menos 30 minutos de antecedência
+//		LocalDate hoje = LocalDate.now();
+//		LocalTime agora = LocalTime.now();
+//		
+		// if 
 		
 		Consulta consulta = new Consulta();
 		
@@ -95,38 +100,27 @@ public class ConsultaService {
 			throws EspecialidadeNotFoundException, EmptyListException {
 		
 		especialidadeRepository.findById(idEspecialidade).orElseThrow(EspecialidadeNotFoundException::new);
-
+		
 		// Verifica se há quaisquer médicos disponíveis para esta especialidade
-		List<Medico> medicosEspecialistas = getMedicosEspecialistas(idEspecialidade);
+//		Date date = Date.valueOf(data);
+//		Time time = Time.valueOf(horario);
+		List<Medico> medicosEspecialistas = medicoRepository.findAllByEspecialidade_idAndDataAndHorario(idEspecialidade, data, horario);
+		
 		if(medicosEspecialistas.isEmpty()) {
 			throw new EmptyListException("Nenhum médico disponível para esta especialidade");
 		}
-		// Busca lista de médicos disponíveis para esta especialidade no mesmo horário e data
-		return escolherMedico(medicosEspecialistas, data, horario);				
-	
-	}
-	
-	private Long escolherMedico(List<Medico> medicosEspecialistas, LocalDate data, LocalTime horario) throws EmptyListException {
-		// TODO: Criar array com indices disponíveis para evitar que o mesmo médico seja sorteado duas vezes
-		Random rand = new Random();
-		for(int i = 0; i < medicosEspecialistas.size(); i++) {
-			int escolhido = rand.nextInt(medicosEspecialistas.size());
-			Medico medico = medicosEspecialistas.get(escolhido);
-			
-			// Valida se esse médico está disponível
-			if (medicoEstaDisponivel(medico.getId(), data, horario)) {
-				return medico.getId();
-			}
-		}
 		
-		throw new EmptyListException("Nenhum médico disponível neste horário e data");
+		return escolherMedico(medicosEspecialistas);				
 	}
 	
-	private List<Medico> getMedicosEspecialistas(Long idEspecialidade) throws EmptyListException {
-		return medicoRepository.findByEspecialidade_idAndAtivoTrueOrderByNomeAsc(idEspecialidade)
-				.orElseThrow(() -> new EmptyListException("Nenhum médico disponível para esta especialidade"));
+	private Long escolherMedico(List<Medico> medicosDisponiveis) {
+		Random rand = new Random();
+		int escolhido = rand.nextInt(medicosDisponiveis.size());
+		
+		Medico medico = medicosDisponiveis.get(escolhido);
+		return medico.getId();
 	}
-	
+
 	private Boolean medicoEstaDisponivel(Long idMedico, LocalDate data, LocalTime horario) {
 		List<Consulta> consultasNesteHorario = consultaRepository.findByDataAndHorarioAndMedico_id(data, horario, idMedico);
 		if(consultasNesteHorario.isEmpty()) {

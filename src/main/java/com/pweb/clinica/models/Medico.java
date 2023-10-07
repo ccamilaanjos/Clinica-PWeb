@@ -4,6 +4,7 @@ import com.pweb.clinica.dtos.MedicoPostDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 
 @Entity(name="medicos")
@@ -13,6 +14,7 @@ public class Medico extends Pessoa {
 //	@Enumerated(EnumType.STRING)
 //	private EspecialidadeTipo especialidade;
 	@ManyToOne
+	@JoinColumn(name="especialidade_id")
 	private Especialidade especialidade;
 	
 	public Medico() {
