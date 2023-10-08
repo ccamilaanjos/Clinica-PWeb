@@ -41,7 +41,6 @@ public class ConsultaValidator {
 	@Autowired
 	private ConsultaRepository consultaRepository;
 	
-	// Verifica se a consulta foi marcada para um momento válido e foi realizada com ao menos 30 minutos de antecedência
 	public static void validarRestricoesDeTempo(LocalDate data, LocalTime horario)
 			throws ClinicaUnavailableException, ConflictingScheduleException {
 		LocalDate hoje = LocalDate.now();
@@ -115,6 +114,11 @@ public class ConsultaValidator {
 		return atribuirMedicoParaConsulta(idEspecialidade, idMedico, data, horario);
 	}
 
+	/**
+	  * Verifica se o médico está disponível no horário da consulta, com uma hora livre. Ou seja, se não
+	  * possui consultas marcadas para menos que 1h antes ou para menos que 1h depois do horário fornecido.
+	 */
+	
 	private Boolean medicoEstaDisponivel(Long idMedico, LocalDate data, LocalTime horario) {
 		List<Consulta> consultasNesteHorario = consultaRepository.verificarConsultasNesteHorario(
 				idMedico, data, horario.minusHours(1), horario.plusHours(1));
@@ -123,6 +127,12 @@ public class ConsultaValidator {
 		}
 		return false;
 	}
+	
+	/**
+	  * Busca os médicos disponíveis no horário da consulta, com uma hora livre. Ou seja, que não possua
+	  * consultas marcadas para menos que 1h antes ou para menos que 1h depois do horário fornecido, e
+	  * escolhe um deles aleatoriamente.
+	 */
 	
 	private Medico atribuirMedicoParaConsulta(Long idEspecialidade, Long idMedico, LocalDate data, LocalTime horario)
 			throws EspecialidadeNotFoundException, EmptyListException {
