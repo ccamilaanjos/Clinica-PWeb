@@ -12,5 +12,5 @@ import com.pweb.clinica.models.Consulta;
 @Repository
 public interface ConsultaRepository extends JpaRepository<Consulta, Long>{
     List<Consulta> findByDataAndHorarioAndMedico_id(LocalDate data, LocalTime horario, Long medicoId);
-    List<Consulta> findByDataAndHorarioAndPaciente_id(LocalDate data, LocalTime horario, Long pacienteId);
+    List<Consulta> findByDataAndPaciente_id(LocalDate data, Long pacienteId);
 }

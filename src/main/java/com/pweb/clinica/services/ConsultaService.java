@@ -54,7 +54,7 @@ public class ConsultaService {
 		Paciente paciente = pacienteRepository.findByIdAndAtivoTrue(idPaciente).orElseThrow(PacienteNotFoundException::new);
 		
 		// Verifica se o paciente já tem consulta marcada no dia
-		if(!consultaRepository.findByDataAndHorarioAndPaciente_id(data, horario, idPaciente).isEmpty()) {
+		if(!consultaRepository.findByDataAndPaciente_id(data, idPaciente).isEmpty()) {
 			throw new ConflictingScheduleException("Paciente já tem consulta marcada para este dia");
 		}
 		
@@ -97,7 +97,10 @@ public class ConsultaService {
 			throws EspecialidadeNotFoundException, EmptyListException {
 		
 		especialidadeRepository.findById(idEspecialidade).orElseThrow(EspecialidadeNotFoundException::new);
-		List<Medico> medicosEspecialistas = medicoRepository.findMedicosDisponiveis(idEspecialidade, data, horario);
+		List<Medico> medicosEspecialistas = medicoRepository.findMedicosDisponiveis(idEspecialidade, data, horario.minusHours(1), horario.plusHours(1));
+		
+		System.out.println("MEDICOS DISPONIVEIS\n");
+		System.out.println(medicosEspecialistas);
 		
 		if(medicosEspecialistas.isEmpty()) {
 			throw new EmptyListException("Nenhum médico disponível para esta especialidade");

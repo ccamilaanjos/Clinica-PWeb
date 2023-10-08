@@ -10,6 +10,6 @@ public record ConsultaPostDTO(
 		@NotNull (message = "O id do paciente não pode ser nulo ou vazio") Long idPaciente,
 		Long idMedico,
 		@NotNull(message = "O id da especialidade não pode ser nulo ou vazio") Long idEspecialidade,
-		@FutureOrPresent(message = "Data e horário precisam ser programados para o futuro") @NotNull LocalDate data,
-		@FutureOrPresent(message = "Data e horário precisam ser programados para o futuro") @NotNull LocalTime horario) {
+		@FutureOrPresent(message = "Data precisa ser programada para o futuro") @NotNull LocalDate data,
+		@NotNull LocalTime horario) {
 }

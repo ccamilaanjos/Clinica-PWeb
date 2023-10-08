@@ -21,14 +21,18 @@ public interface MedicoRepository extends JpaRepository<Medico, Long> {
 	public Page<Medico> findAllByAtivoTrue(Pageable pageable);
 	public Optional<List<Medico>> findByEspecialidade_idOrderByNomeAsc(Long id);
 	public Optional<List<Medico>> findByEspecialidade_idAndAtivoTrueOrderByNomeAsc(Long id);
-    @Query("SELECT m FROM medicos m LEFT JOIN consultas c "
+	
+     @Query("SELECT m FROM medicos m LEFT JOIN consultas c "
     		+ "ON c.medico.id = m.id "
     		+ "WHERE m.especialidade.id =:especialidade "
     		+ "AND m.ativo = TRUE "
-    		+ "AND ((c.data <>:data AND c.horario <>:horario) "
+    		+ "AND ((c.data = :data AND (c.horario < :min OR c.horario > :max)) "
     		+ "OR (c.data IS NULL AND c.horario IS NULL))")
     public List<Medico> findMedicosDisponiveis(
-    		@Param("especialidade") Long especialidade, @Param("data") LocalDate data, @Param("horario") LocalTime horario);
+    		@Param("especialidade") Long especialidade,
+    		@Param("data") LocalDate data,
+    		@Param("min") LocalTime min,
+    		@Param("max") LocalTime max);
 }
 
 //SELECT * FROM MEDICOS M LEFT JOIN CONSULTAS C

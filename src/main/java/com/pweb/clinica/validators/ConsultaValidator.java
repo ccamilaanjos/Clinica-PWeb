@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import com.pweb.clinica.exceptions.ClinicaUnavailableException;
+import com.pweb.clinica.exceptions.ConflictingScheduleException;
 
 public class ConsultaValidator {
 	final static int HORARIO_ABERTURA = 7;
@@ -16,40 +17,56 @@ public class ConsultaValidator {
 	public static Boolean emHorarioDeFuncionamento(LocalDate data, LocalTime horario) {
 		DayOfWeek dia = data.getDayOfWeek();
 		
-		if(dia.compareTo(DIA_INICIAL) < 0 || dia.compareTo(DIA_FINAL) > 0) {
-			return false;
-		}
-		
-		if(horario.getHour() < HORARIO_ABERTURA || horario.getHour() > (HORARIO_FECHAMENTO - 1)) {
+		if(dia.compareTo(DIA_INICIAL) < 0
+			|| dia.compareTo(DIA_FINAL) > 0
+			|| horario.getHour() < HORARIO_ABERTURA
+			|| horario.getHour() > (HORARIO_FECHAMENTO - 1)) {
 			return false;
 		}
 		
 		return true;
 	}
 	
-	public static Boolean emTempoDeMarcacao(LocalDate data, LocalTime horario) {
-		LocalDate hoje = LocalDate.now();
-		LocalTime agora = LocalTime.now();
-
-		if(!hoje.equals(data)) {
-			return true;
+	public static Boolean emTempoDeMarcacao(LocalDate data, LocalTime horario, LocalDate hoje, LocalTime agora) {
+		if(hoje.equals(data) && agora.plusMinutes(MIN_ANTECEDENCIA_MARCACAO).isAfter(horario)) {
+			return false;
 		}
-		
-		if(agora.plusMinutes(MIN_ANTECEDENCIA_MARCACAO).isAfter(horario)) {
+			
+		return true;
+	}
+	
+	public static Boolean emHorarioValido(LocalDate data, LocalTime horario, LocalDate hoje, LocalTime agora) {
+		if(data.equals(hoje) && horario.isBefore(agora)) {
 			return false;
 		}
 		
 		return true;
 	}
+	
+	public static Boolean horarioDisponivel(LocalDate data, LocalTime horario) {
+		
+		
+		return true;
+	}
 
-	public static Boolean validarRestricoesDeTempo(LocalDate data, LocalTime horario) throws ClinicaUnavailableException {
+	public static Boolean validarRestricoesDeTempo(LocalDate data, LocalTime horario)
+			throws ClinicaUnavailableException,ConflictingScheduleException {
+		LocalDate hoje = LocalDate.now();
+		LocalTime agora = LocalTime.now();
+		
 		if(!emHorarioDeFuncionamento(data, horario)) {
 			throw new ClinicaUnavailableException("A clínica não está disponível para marcações no momento informado");
 		}
+
+		if(!emHorarioValido(data, horario, hoje, agora)) {
+			throw new ConflictingScheduleException("O horário deve estar previsto para o futuro");
+		}
 		
-		if(!emTempoDeMarcacao(data, horario)) {
+		if(!emTempoDeMarcacao(data, horario, hoje, agora)) {
 			throw new ClinicaUnavailableException("O agendamento precisa ocorrer com pelo menos 30 minutos de antecedência");
 		}
+		
+		
 		
 		return true;
 	}
