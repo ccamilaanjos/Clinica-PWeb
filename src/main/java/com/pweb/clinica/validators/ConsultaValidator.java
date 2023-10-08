@@ -26,11 +26,11 @@ import com.pweb.clinica.services.PacienteService;
 
 @Component
 public class ConsultaValidator {
-	final static int HORARIO_ABERTURA = 7;
-	final static int HORARIO_FECHAMENTO = 19;
-	final static DayOfWeek DIA_INICIAL = DayOfWeek.MONDAY;
-	final static DayOfWeek DIA_FINAL = DayOfWeek.SATURDAY;
-	final static Long MIN_ANTECEDENCIA_MARCACAO = (long) 30;
+	private final static int HORARIO_ABERTURA = 7;
+	private final static int HORARIO_FECHAMENTO = 19;
+	private final static DayOfWeek DIA_INICIAL = DayOfWeek.MONDAY;
+	private final static DayOfWeek DIA_FINAL = DayOfWeek.SATURDAY;
+	private final static Long MIN_ANTECEDENCIA_MARCACAO = (long) 30;
 	
 	@Autowired
 	private PacienteService pacienteService;
@@ -40,8 +40,6 @@ public class ConsultaValidator {
 	private EspecialidadeService especialidadeService;
 	@Autowired
 	private ConsultaRepository consultaRepository;
-	
-	public ConsultaValidator() {}
 	
 	// Verifica se a consulta foi marcada para um momento válido e foi realizada com ao menos 30 minutos de antecedência
 	public static void validarRestricoesDeTempo(LocalDate data, LocalTime horario)
@@ -53,15 +51,17 @@ public class ConsultaValidator {
 			throw new ClinicaUnavailableException("A clínica não está disponível para marcações no momento informado");
 		}
 
-		if(!emHorarioValido(data, horario, hoje, agora)) {
-			throw new ConflictingScheduleException("O horário deve estar previsto para o futuro");
-		}
-		
 		if(!emTempoDeMarcacao(data, horario, hoje, agora)) {
 			throw new ClinicaUnavailableException("O agendamento precisa ocorrer com pelo menos 30 minutos de antecedência");
 		}
-
 	}
+	
+	/** 
+	  * Verifica se o dia da semana é válido (de seg. à sábado).
+	  * Verifica se o horário é maior ou igual ao horário de abertura ou menor ou igual ao horário
+	  * de fechamento menos 1h (respeitando que cada consulta tem exatamente 1h de duração).
+	  * Verifica se o horário mais 1h (duração da consulta) passa do horário de funcionamento da clínica.
+	 */
 	
 	public static Boolean emHorarioDeFuncionamento(LocalDate data, LocalTime horario) {
 		DayOfWeek dia = data.getDayOfWeek();
@@ -76,25 +76,20 @@ public class ConsultaValidator {
 		return true;
 	}
 	
+	/**
+	  * Verifica se a consulta foi marcada com até 30 minutos de antecedência
+	 */
+	
 	public static Boolean emTempoDeMarcacao(LocalDate data, LocalTime horario, LocalDate hoje, LocalTime agora) {
-		if(hoje.equals(data) && agora.plusMinutes(MIN_ANTECEDENCIA_MARCACAO).isAfter(horario)) {
+		if(data.equals(hoje) && agora.plusMinutes(MIN_ANTECEDENCIA_MARCACAO).isAfter(horario)) {
 			return false;
 		}
 		return true;
 	}
 	
-	public static Boolean emHorarioValido(LocalDate data, LocalTime horario, LocalDate hoje, LocalTime agora) {
-		if(data.equals(hoje) && horario.isBefore(agora)) {
-			return false;
-		}
-		return true;
-	}
-
 	public Paciente validarPaciente(Long idPaciente, LocalDate data) throws PacienteNotFoundException, ConflictingScheduleException {
 		// Verifica se o paciente existe e está ativo
-		System.out.println(consultaRepository + "-----------------------");
 		Paciente paciente = pacienteService.buscarPacienteAtivo(idPaciente);
-		System.out.println("EU CHEGO AQUI");
 		
 		// Verifica se o paciente já tem consulta marcada no dia
 		if(!consultaRepository.findByDataAndPaciente_id(data, idPaciente).isEmpty()) {
