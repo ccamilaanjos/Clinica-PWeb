@@ -10,7 +10,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.pweb.clinica.models.Consulta;
-import com.pweb.clinica.models.Medico;
 
 @Repository
 public interface ConsultaRepository extends JpaRepository<Consulta, Long>{

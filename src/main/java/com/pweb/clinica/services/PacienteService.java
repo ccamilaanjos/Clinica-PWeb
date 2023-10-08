@@ -75,5 +75,9 @@ public class PacienteService implements PessoaService<Paciente, PacienteGetDTO, 
 		pacienteRepository.save(paciente);
 
 		return paciente;
-	}	
+	}
+	
+	public Paciente buscarPacienteAtivo(Long idPaciente) throws PacienteNotFoundException {
+		return pacienteRepository.findByIdAndAtivoTrue(idPaciente).orElseThrow(PacienteNotFoundException::new);
+	}
 }

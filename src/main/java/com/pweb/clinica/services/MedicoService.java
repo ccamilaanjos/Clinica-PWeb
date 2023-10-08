@@ -1,5 +1,7 @@
 package com.pweb.clinica.services;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -94,5 +96,14 @@ public class MedicoService implements PessoaService<Medico, MedicoGetDTO, Medico
 		medicoRepository.save(medico);
 
 		return medico;
+	}
+	
+	public Medico buscarMedicoAtivo(Long idMedico) throws MedicoNotFoundException {
+		return medicoRepository.findByIdAndAtivoTrue(idMedico).orElseThrow(MedicoNotFoundException::new);
+	}
+	
+	public List<Medico> buscarMedicosDisponiveis(Long idEspecialidade, Long idMedico, LocalDate data, LocalTime horario) {
+		return medicoRepository.findMedicosDisponiveis(
+				idEspecialidade, data, horario.minusHours(1), horario.plusHours(1));
 	}
 }
