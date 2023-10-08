@@ -20,7 +20,8 @@ public class ConsultaValidator {
 		if(dia.compareTo(DIA_INICIAL) < 0
 			|| dia.compareTo(DIA_FINAL) > 0
 			|| horario.getHour() < HORARIO_ABERTURA
-			|| horario.getHour() > (HORARIO_FECHAMENTO - 1)) {
+			|| horario.getHour() > (HORARIO_FECHAMENTO - 1)
+			|| horario.plusHours(1).isAfter(LocalTime.of(HORARIO_FECHAMENTO, 0, 0))) {
 			return false;
 		}
 		

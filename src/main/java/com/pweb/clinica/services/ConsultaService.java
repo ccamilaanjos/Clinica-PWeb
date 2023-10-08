@@ -97,13 +97,11 @@ public class ConsultaService {
 			throws EspecialidadeNotFoundException, EmptyListException {
 		
 		especialidadeRepository.findById(idEspecialidade).orElseThrow(EspecialidadeNotFoundException::new);
-		List<Medico> medicosEspecialistas = medicoRepository.findMedicosDisponiveis(idEspecialidade, data, horario.minusHours(1), horario.plusHours(1));
-		
-		System.out.println("MEDICOS DISPONIVEIS\n");
-		System.out.println(medicosEspecialistas);
-		
+		List<Medico> medicosEspecialistas = medicoRepository.findMedicosDisponiveis(
+				idEspecialidade, data, horario.minusHours(1), horario.plusHours(1));
+
 		if(medicosEspecialistas.isEmpty()) {
-			throw new EmptyListException("Nenhum médico disponível para esta especialidade");
+			throw new EmptyListException("Nenhum médico disponível para esta especialidade no horário e data fornecidos");
 		}
 		
 		return escolherMedico(medicosEspecialistas);		
@@ -118,7 +116,8 @@ public class ConsultaService {
 	}
 
 	private Boolean medicoEstaDisponivel(Long idMedico, LocalDate data, LocalTime horario) {
-		List<Consulta> consultasNesteHorario = consultaRepository.findByDataAndHorarioAndMedico_id(data, horario, idMedico);
+		List<Consulta> consultasNesteHorario = consultaRepository.verificarConsultasNesteHorario(
+				idMedico, data, horario.minusHours(1), horario.plusHours(1));
 		if(consultasNesteHorario.isEmpty()) {
 			return true;
 		}
