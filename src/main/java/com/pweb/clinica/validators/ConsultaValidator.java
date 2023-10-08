@@ -122,6 +122,7 @@ public class ConsultaValidator {
 	private Boolean medicoEstaDisponivel(Long idMedico, LocalDate data, LocalTime horario) {
 		List<Consulta> consultasNesteHorario = consultaRepository.verificarConsultasNesteHorario(
 				idMedico, data, horario.minusHours(1), horario.plusHours(1));
+		
 		if(consultasNesteHorario.isEmpty()) {
 			return true;
 		}
