@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import com.pweb.clinica.exceptions.ClinicaUnavailableException;
 import com.pweb.clinica.exceptions.ConflictingScheduleException;
@@ -23,6 +24,7 @@ import com.pweb.clinica.services.EspecialidadeService;
 import com.pweb.clinica.services.MedicoService;
 import com.pweb.clinica.services.PacienteService;
 
+@Component
 public class ConsultaValidator {
 	final static int HORARIO_ABERTURA = 7;
 	final static int HORARIO_FECHAMENTO = 19;
@@ -35,15 +37,15 @@ public class ConsultaValidator {
 	@Autowired
 	private MedicoService medicoService;
 	@Autowired
-	private ConsultaRepository consultaRepository;
-	@Autowired
 	private EspecialidadeService especialidadeService;
+	@Autowired
+	private ConsultaRepository consultaRepository;
 	
 	public ConsultaValidator() {}
 	
 	// Verifica se a consulta foi marcada para um momento válido e foi realizada com ao menos 30 minutos de antecedência
 	public static void validarRestricoesDeTempo(LocalDate data, LocalTime horario)
-			throws ClinicaUnavailableException,ConflictingScheduleException {
+			throws ClinicaUnavailableException, ConflictingScheduleException {
 		LocalDate hoje = LocalDate.now();
 		LocalTime agora = LocalTime.now();
 		
@@ -71,7 +73,6 @@ public class ConsultaValidator {
 			|| horario.plusHours(1).isAfter(LocalTime.of(HORARIO_FECHAMENTO, 0, 0))) {
 			return false;
 		}
-		
 		return true;
 	}
 	
@@ -79,7 +80,6 @@ public class ConsultaValidator {
 		if(hoje.equals(data) && agora.plusMinutes(MIN_ANTECEDENCIA_MARCACAO).isAfter(horario)) {
 			return false;
 		}
-			
 		return true;
 	}
 	
@@ -87,13 +87,14 @@ public class ConsultaValidator {
 		if(data.equals(hoje) && horario.isBefore(agora)) {
 			return false;
 		}
-		
 		return true;
 	}
 
 	public Paciente validarPaciente(Long idPaciente, LocalDate data) throws PacienteNotFoundException, ConflictingScheduleException {
 		// Verifica se o paciente existe e está ativo
+		System.out.println(consultaRepository + "-----------------------");
 		Paciente paciente = pacienteService.buscarPacienteAtivo(idPaciente);
+		System.out.println("EU CHEGO AQUI");
 		
 		// Verifica se o paciente já tem consulta marcada no dia
 		if(!consultaRepository.findByDataAndPaciente_id(data, idPaciente).isEmpty()) {

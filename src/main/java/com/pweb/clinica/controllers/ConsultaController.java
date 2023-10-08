@@ -17,7 +17,6 @@ import com.pweb.clinica.exceptions.EmptyListException;
 import com.pweb.clinica.exceptions.EspecialidadeNotFoundException;
 import com.pweb.clinica.exceptions.MedicoNotFoundException;
 import com.pweb.clinica.exceptions.PacienteNotFoundException;
-import com.pweb.clinica.exceptions.PessoaInativaException;
 import com.pweb.clinica.models.Consulta;
 import com.pweb.clinica.services.ConsultaService;
 
@@ -35,14 +34,12 @@ public class ConsultaController {
 		try {
 			Consulta consulta = consultaService.marcarConsulta(consultaForm);
 			return ResponseEntity.status(HttpStatus.CREATED).body(consulta);
-		} catch (ConflictingScheduleException | EmptyListException | ClinicaUnavailableException e) {
+		} catch (ClinicaUnavailableException | ConflictingScheduleException | EmptyListException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-		} catch (MedicoNotFoundException | EspecialidadeNotFoundException | PacienteNotFoundException e) {
+		} catch (PacienteNotFoundException | MedicoNotFoundException | EspecialidadeNotFoundException  e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-		} catch (PessoaInativaException e) {
-			return ResponseEntity.status(HttpStatus.GONE).body(e.getMessage());
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.initCause(e));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
 	}
 	
