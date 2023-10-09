@@ -1,4 +1,4 @@
-package com.pweb.clinica.services;
+package com.pweb.clinica.exceptions;
 
 import com.pweb.clinica.enums.MotivoCancelamento;
 

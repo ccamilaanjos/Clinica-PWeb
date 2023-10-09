@@ -1,7 +1,11 @@
 package com.pweb.clinica.models;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import com.pweb.clinica.enums.MotivoCancelamento;
 
@@ -32,6 +36,12 @@ public class Consulta {
 	private LocalTime horario;
 	@Enumerated(EnumType.STRING)
 	private MotivoCancelamento motivoCancelamento;
+	@CreationTimestamp
+	@Column(nullable = false)
+	private LocalDateTime createdAt;
+	@UpdateTimestamp
+	@Column(nullable=false)
+	private LocalDateTime updatedAt;
 	
 	public Consulta() {}
 	
@@ -42,6 +52,14 @@ public class Consulta {
 		this.horario = horario;
 	}
 	
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
+	}
+
 	public Paciente getPaciente() {
 		return paciente;
 	}

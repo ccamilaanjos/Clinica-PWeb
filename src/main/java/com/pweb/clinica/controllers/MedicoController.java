@@ -69,7 +69,7 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoG
 		} catch (EntityNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
 	}
 	
@@ -83,16 +83,20 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoG
 		} catch (EntityNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
 	}
 
 	@DeleteMapping("/")
 	@Override
 	public ResponseEntity<?> remover(@RequestParam(required=true) Long id) {
-		if(medicoService.tornarInativo(id) == null) {
-			return new ResponseEntity<>("Registro não encontrado", HttpStatus.NOT_FOUND);
+		try {
+			medicoService.tornarInativo(id);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
-		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

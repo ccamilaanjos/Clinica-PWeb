@@ -25,7 +25,7 @@ import com.pweb.clinica.repositories.EspecialidadeRepository;
 import com.pweb.clinica.repositories.MedicoRepository;
 
 @Service
-public class MedicoService implements PessoaService<Medico, MedicoGetDTO, MedicoPostDTO, MedicoPutDTO, MedicoDTO> {
+public class MedicoService implements PessoaService<MedicoGetDTO, MedicoPostDTO, MedicoPutDTO, MedicoDTO> {
 
 	@Autowired
 	private MedicoRepository medicoRepository;
@@ -84,17 +84,11 @@ public class MedicoService implements PessoaService<Medico, MedicoGetDTO, Medico
 	}
 
 	@Override
-	public Medico tornarInativo(Long id) {
-		Optional<Medico> optionalMedico = medicoRepository.findById(id);
-		if (optionalMedico.isEmpty()) {
-			return null;
-		}
+	public void tornarInativo(Long id) throws EntityNotFoundException {
+		Medico medico = medicoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Medico"));
 
-		Medico medico = optionalMedico.get();
 		medico.setAtivo(false);
 		medicoRepository.save(medico);
-
-		return medico;
 	}
 	
 	public Medico buscarMedicoAtivo(Long idMedico) throws EntityNotFoundException {

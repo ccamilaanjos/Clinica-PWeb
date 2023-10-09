@@ -19,7 +19,7 @@ import com.pweb.clinica.models.Paciente;
 import com.pweb.clinica.repositories.PacienteRepository;
 
 @Service
-public class PacienteService implements PessoaService<Paciente, PacienteGetDTO, PacientePostDTO, PacientePutDTO, PacienteDTO> {
+public class PacienteService implements PessoaService<PacienteGetDTO, PacientePostDTO, PacientePutDTO, PacienteDTO> {
 
 	@Autowired
 	private PacienteRepository pacienteRepository;
@@ -49,7 +49,7 @@ public class PacienteService implements PessoaService<Paciente, PacienteGetDTO, 
 	
 	@Override
 	public PacienteDTO atualizar(Long id, PacientePutDTO pacienteForm) throws EntityNotFoundException {
-		Paciente paciente = pacienteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Medico"));
+		Paciente paciente = pacienteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Paciente"));
 		
 		paciente.setNome(pacienteForm.nome());
 		paciente.setTelefone(pacienteForm.telefone());
@@ -63,18 +63,11 @@ public class PacienteService implements PessoaService<Paciente, PacienteGetDTO, 
 	}
 	
 	@Override
-	public Paciente tornarInativo(Long id) {
-		Optional<Paciente> optionalPaciente = pacienteRepository.findById(id);
+	public void tornarInativo(Long id) throws EntityNotFoundException {
+		Paciente paciente = pacienteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Paciente"));
 
-		if (optionalPaciente.isEmpty()) {
-			return null;
-		}
-
-		Paciente paciente = optionalPaciente.get();
 		paciente.setAtivo(false);
 		pacienteRepository.save(paciente);
-
-		return paciente;
 	}
 	
 	public Paciente buscarPacienteAtivo(Long idPaciente) throws EntityNotFoundException {

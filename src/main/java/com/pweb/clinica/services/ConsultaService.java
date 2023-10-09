@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 
 import com.pweb.clinica.dtos.ConsultaCancelDTO;
 import com.pweb.clinica.dtos.ConsultaCreateDTO;
+import com.pweb.clinica.dtos.ConsultaDTO;
 import com.pweb.clinica.enums.MotivoCancelamento;
 import com.pweb.clinica.exceptions.ClinicaUnavailableException;
 import com.pweb.clinica.exceptions.ConflictingScheduleException;
+import com.pweb.clinica.exceptions.ConsultaCanceladaException;
 import com.pweb.clinica.exceptions.ConsultaNotFoundException;
 import com.pweb.clinica.exceptions.EmptyListException;
 import com.pweb.clinica.exceptions.EntityNotFoundException;
@@ -27,7 +29,7 @@ public class ConsultaService {
 	@Autowired
 	private ConsultaRepository consultaRepository;
 
-	public Consulta marcarConsulta(ConsultaCreateDTO consultaForm)
+	public ConsultaDTO marcarConsulta(ConsultaCreateDTO consultaForm)
 			throws ClinicaUnavailableException, ConflictingScheduleException,
 			EntityNotFoundException, EmptyListException {
 		
@@ -42,23 +44,19 @@ public class ConsultaService {
 		Paciente paciente = consultaValidator.validarPaciente(idPaciente, data);
 		Medico medico = consultaValidator.validarMedico(idMedico, data, horario, idEspecialidade);
 		
-		// TODO: Retornar DTO
 		Consulta consulta = new Consulta(paciente, medico, data, horario);
 		consultaRepository.save(consulta);
-		return consulta;
+		return new ConsultaDTO(consulta, paciente, medico, medico.getEspecialidade());
 	}
 		
-	public Consulta cancelarConsulta(ConsultaCancelDTO consultaForm, Long idConsulta)
+	public void cancelarConsulta(ConsultaCancelDTO consultaForm, Long idConsulta)
 			throws ConsultaNotFoundException, ConsultaCanceladaException, ConflictingScheduleException {
 		
 		Consulta consulta = consultaValidator.validarConsulta(idConsulta);
 		ConsultaValidator.validarRestricoesDeTempoCancelamento(consulta.getData(), consulta.getHorario());
-		MotivoCancelamento motivo = ConsultaValidator.validarMotivoCancelamento(consultaForm.motivo());
+		MotivoCancelamento motivo = ConsultaValidator.validarMotivoCancelamento(consultaForm.motivo_cancelamento());
 		
 		consulta.setMotivoCancelamento(motivo);
 		consultaRepository.save(consulta);
-		
-		// TODO: Retornar DTO
-		return consulta;
 	}
 }
