@@ -13,7 +13,7 @@ import com.pweb.clinica.dtos.PacienteGetDTO;
 import com.pweb.clinica.dtos.PacientePostDTO;
 import com.pweb.clinica.dtos.PacientePutDTO;
 import com.pweb.clinica.exceptions.DuplicatePacienteException;
-import com.pweb.clinica.exceptions.PacienteNotFoundException;
+import com.pweb.clinica.exceptions.EntityNotFoundException;
 import com.pweb.clinica.models.Endereco;
 import com.pweb.clinica.models.Paciente;
 import com.pweb.clinica.repositories.PacienteRepository;
@@ -48,8 +48,8 @@ public class PacienteService implements PessoaService<Paciente, PacienteGetDTO, 
 	}
 	
 	@Override
-	public PacienteDTO atualizar(Long id, PacientePutDTO pacienteForm) throws PacienteNotFoundException {
-		Paciente paciente = pacienteRepository.findById(id).orElseThrow(PacienteNotFoundException::new);
+	public PacienteDTO atualizar(Long id, PacientePutDTO pacienteForm) throws EntityNotFoundException {
+		Paciente paciente = pacienteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Medico"));
 		
 		paciente.setNome(pacienteForm.nome());
 		paciente.setTelefone(pacienteForm.telefone());
@@ -77,7 +77,7 @@ public class PacienteService implements PessoaService<Paciente, PacienteGetDTO, 
 		return paciente;
 	}
 	
-	public Paciente buscarPacienteAtivo(Long idPaciente) throws PacienteNotFoundException {
-		return pacienteRepository.findByIdAndAtivoTrue(idPaciente).orElseThrow(PacienteNotFoundException::new);
+	public Paciente buscarPacienteAtivo(Long idPaciente) throws EntityNotFoundException {
+		return pacienteRepository.findByIdAndAtivoTrue(idPaciente).orElseThrow(() -> new EntityNotFoundException("Paciente"));
 	}
 }

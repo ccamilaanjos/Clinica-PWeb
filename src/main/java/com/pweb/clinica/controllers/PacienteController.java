@@ -21,7 +21,7 @@ import com.pweb.clinica.dtos.PacienteGetDTO;
 import com.pweb.clinica.dtos.PacientePostDTO;
 import com.pweb.clinica.dtos.PacientePutDTO;
 import com.pweb.clinica.exceptions.DuplicatePacienteException;
-import com.pweb.clinica.exceptions.PacienteNotFoundException;
+import com.pweb.clinica.exceptions.EntityNotFoundException;
 import com.pweb.clinica.services.PacienteService;
 
 import jakarta.validation.Valid;
@@ -69,8 +69,8 @@ public class PacienteController implements PessoaController<PacientePostDTO, Pac
 		try {
 			paciente = pacienteService.atualizar(id, pacienteForm);
 			return new ResponseEntity<PacienteDTO>(paciente, HttpStatus.OK);
-		} catch (PacienteNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Paciente não encontrado");
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}

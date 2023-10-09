@@ -10,14 +10,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pweb.clinica.dtos.ConsultaPostDTO;
+import com.pweb.clinica.dtos.ConsultaCancelDTO;
+import com.pweb.clinica.dtos.ConsultaCreateDTO;
 import com.pweb.clinica.exceptions.ClinicaUnavailableException;
 import com.pweb.clinica.exceptions.ConflictingScheduleException;
+import com.pweb.clinica.exceptions.ConsultaNotFoundException;
 import com.pweb.clinica.exceptions.EmptyListException;
-import com.pweb.clinica.exceptions.EspecialidadeNotFoundException;
-import com.pweb.clinica.exceptions.MedicoNotFoundException;
-import com.pweb.clinica.exceptions.PacienteNotFoundException;
+import com.pweb.clinica.exceptions.EntityNotFoundException;
 import com.pweb.clinica.models.Consulta;
+import com.pweb.clinica.services.ConsultaCanceladaException;
 import com.pweb.clinica.services.ConsultaService;
 
 import jakarta.validation.Valid;
@@ -30,13 +31,13 @@ public class ConsultaController {
 
 	@PostMapping("/marcarConsulta")
 	public ResponseEntity<?> marcarConsulta(
-			@RequestBody @Valid ConsultaPostDTO consultaForm) {
+			@RequestBody @Valid ConsultaCreateDTO consultaForm) {
 		try {
 			Consulta consulta = consultaService.marcarConsulta(consultaForm);
 			return ResponseEntity.status(HttpStatus.CREATED).body(consulta);
 		} catch (ClinicaUnavailableException | ConflictingScheduleException | EmptyListException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-		} catch (PacienteNotFoundException | MedicoNotFoundException | EspecialidadeNotFoundException  e) {
+		} catch (EntityNotFoundException  e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -44,7 +45,15 @@ public class ConsultaController {
 	}
 	
 	@DeleteMapping("/cancelarConsulta")
-	public ResponseEntity<?> cancelarConsulta(@RequestParam("id") Long id) {
-		return new ResponseEntity<>(HttpStatus.CREATED);
+	public ResponseEntity<?> cancelarConsulta(
+			@RequestParam("id") Long id, @RequestBody @Valid ConsultaCancelDTO consultaForm) {
+		try {
+			Consulta consulta = consultaService.cancelarConsulta(consultaForm, id);
+			return ResponseEntity.status(HttpStatus.OK).body(consulta);
+		} catch (ConsultaNotFoundException | ConsultaCanceladaException | ConflictingScheduleException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());			
+		}
 	}
 }

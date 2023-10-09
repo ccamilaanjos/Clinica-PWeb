@@ -23,8 +23,7 @@ import com.pweb.clinica.dtos.MedicoGetDTO;
 import com.pweb.clinica.dtos.MedicoPostDTO;
 import com.pweb.clinica.dtos.MedicoPutDTO;
 import com.pweb.clinica.exceptions.DuplicateMedicoException;
-import com.pweb.clinica.exceptions.EspecialidadeNotFoundException;
-import com.pweb.clinica.exceptions.MedicoNotFoundException;
+import com.pweb.clinica.exceptions.EntityNotFoundException;
 import com.pweb.clinica.services.MedicoService;
 
 import jakarta.validation.Valid;
@@ -53,8 +52,8 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoG
 	public ResponseEntity<?> listarPorEspecialidade(@RequestParam("id") Long id) {
 		try {
 			return new ResponseEntity<List<MedicoGetDTO>>(medicoService.buscarMedicosPorEspecialidade(id), HttpStatus.OK);			
-		} catch (EspecialidadeNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Especialidade não encontrada");
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
 	}
 	
@@ -67,8 +66,8 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoG
 			return new ResponseEntity<MedicoDTO>(medico, HttpStatus.CREATED);
 		} catch (DuplicateMedicoException e) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getResponse());
-		} catch (EspecialidadeNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Especialidade não encontrada");
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
@@ -81,8 +80,8 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoG
 		try {
 			medico = medicoService.atualizar(id, medicoForm);
 			return new ResponseEntity<MedicoDTO>(medico, HttpStatus.OK);
-		} catch (MedicoNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Médico não encontrado");
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}

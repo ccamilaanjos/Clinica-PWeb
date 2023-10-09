@@ -6,13 +6,14 @@ import java.time.LocalTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pweb.clinica.dtos.ConsultaPostDTO;
+import com.pweb.clinica.dtos.ConsultaCancelDTO;
+import com.pweb.clinica.dtos.ConsultaCreateDTO;
+import com.pweb.clinica.enums.MotivoCancelamento;
 import com.pweb.clinica.exceptions.ClinicaUnavailableException;
 import com.pweb.clinica.exceptions.ConflictingScheduleException;
+import com.pweb.clinica.exceptions.ConsultaNotFoundException;
 import com.pweb.clinica.exceptions.EmptyListException;
-import com.pweb.clinica.exceptions.EspecialidadeNotFoundException;
-import com.pweb.clinica.exceptions.MedicoNotFoundException;
-import com.pweb.clinica.exceptions.PacienteNotFoundException;
+import com.pweb.clinica.exceptions.EntityNotFoundException;
 import com.pweb.clinica.models.Consulta;
 import com.pweb.clinica.models.Medico;
 import com.pweb.clinica.models.Paciente;
@@ -26,9 +27,9 @@ public class ConsultaService {
 	@Autowired
 	private ConsultaRepository consultaRepository;
 
-	public Consulta marcarConsulta(ConsultaPostDTO consultaForm)
-			throws ClinicaUnavailableException, ConflictingScheduleException, PacienteNotFoundException,
-			EspecialidadeNotFoundException, EmptyListException, MedicoNotFoundException {
+	public Consulta marcarConsulta(ConsultaCreateDTO consultaForm)
+			throws ClinicaUnavailableException, ConflictingScheduleException,
+			EntityNotFoundException, EmptyListException {
 		
 		Long idMedico = consultaForm.idMedico();
 		Long idPaciente = consultaForm.idPaciente();
@@ -36,7 +37,7 @@ public class ConsultaService {
 		LocalDate data = consultaForm.data();
 		LocalTime horario = consultaForm.horario().withNano(0);
 		
-		ConsultaValidator.validarRestricoesDeTempo(data, horario);
+		ConsultaValidator.validarRestricoesDeTempoMarcacao(data, horario);
 		
 		Paciente paciente = consultaValidator.validarPaciente(idPaciente, data);
 		Medico medico = consultaValidator.validarMedico(idMedico, data, horario, idEspecialidade);
@@ -47,7 +48,17 @@ public class ConsultaService {
 		return consulta;
 	}
 		
-	public Consulta cancelarConsulta() {
-		return null;
+	public Consulta cancelarConsulta(ConsultaCancelDTO consultaForm, Long idConsulta)
+			throws ConsultaNotFoundException, ConsultaCanceladaException, ConflictingScheduleException {
+		
+		Consulta consulta = consultaValidator.validarConsulta(idConsulta);
+		ConsultaValidator.validarRestricoesDeTempoCancelamento(consulta.getData(), consulta.getHorario());
+		MotivoCancelamento motivo = ConsultaValidator.validarMotivoCancelamento(consultaForm.motivo());
+		
+		consulta.setMotivoCancelamento(motivo);
+		consultaRepository.save(consulta);
+		
+		// TODO: Retornar DTO
+		return consulta;
 	}
 }

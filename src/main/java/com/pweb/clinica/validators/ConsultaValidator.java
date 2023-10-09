@@ -2,6 +2,7 @@ package com.pweb.clinica.validators;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Random;
@@ -9,17 +10,18 @@ import java.util.Random;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.pweb.clinica.enums.MotivoCancelamento;
 import com.pweb.clinica.exceptions.ClinicaUnavailableException;
 import com.pweb.clinica.exceptions.ConflictingScheduleException;
+import com.pweb.clinica.exceptions.ConsultaNotFoundException;
 import com.pweb.clinica.exceptions.EmptyListException;
-import com.pweb.clinica.exceptions.EspecialidadeNotFoundException;
-import com.pweb.clinica.exceptions.MedicoNotFoundException;
-import com.pweb.clinica.exceptions.PacienteNotFoundException;
+import com.pweb.clinica.exceptions.EntityNotFoundException;
 import com.pweb.clinica.models.Consulta;
 import com.pweb.clinica.models.Especialidade;
 import com.pweb.clinica.models.Medico;
 import com.pweb.clinica.models.Paciente;
 import com.pweb.clinica.repositories.ConsultaRepository;
+import com.pweb.clinica.services.ConsultaCanceladaException;
 import com.pweb.clinica.services.EspecialidadeService;
 import com.pweb.clinica.services.MedicoService;
 import com.pweb.clinica.services.PacienteService;
@@ -30,7 +32,8 @@ public class ConsultaValidator {
 	private final static int HORARIO_FECHAMENTO = 19;
 	private final static DayOfWeek DIA_INICIAL = DayOfWeek.MONDAY;
 	private final static DayOfWeek DIA_FINAL = DayOfWeek.SATURDAY;
-	private final static Long MIN_ANTECEDENCIA_MARCACAO = (long) 30;
+	private final static long MIN_ANTECEDENCIA_MARCACAO = 30;
+	private final static long H_ANTECEDENCIA_CANCELAMENTO = 24;
 	
 	@Autowired
 	private PacienteService pacienteService;
@@ -41,17 +44,15 @@ public class ConsultaValidator {
 	@Autowired
 	private ConsultaRepository consultaRepository;
 	
-	public static void validarRestricoesDeTempo(LocalDate data, LocalTime horario)
+	public static void validarRestricoesDeTempoMarcacao(LocalDate data, LocalTime horario)
 			throws ClinicaUnavailableException, ConflictingScheduleException {
-		LocalDate hoje = LocalDate.now();
-		LocalTime agora = LocalTime.now();
 		
 		if(!emHorarioDeFuncionamento(data, horario)) {
-			throw new ClinicaUnavailableException("A clínica não está disponível para marcações no momento informado");
+			throw new ClinicaUnavailableException();
 		}
 
-		if(!emTempoDeMarcacao(data, horario, hoje, agora)) {
-			throw new ClinicaUnavailableException("O agendamento precisa ocorrer com pelo menos 30 minutos de antecedência");
+		if(!emTempoDeMarcacao(data, horario)) {
+			throw new ConflictingScheduleException("O agendamento precisa ocorrer com pelo menos 30 minutos de antecedência");
 		}
 	}
 	
@@ -76,22 +77,25 @@ public class ConsultaValidator {
 	}
 	
 	/**
-	  * Verifica se a consulta foi marcada com até 30 minutos de antecedência
+	  * Verifica se a consulta foi marcada com pelo menos 30 minutos de antecedência
 	 */
 	
-	public static Boolean emTempoDeMarcacao(LocalDate data, LocalTime horario, LocalDate hoje, LocalTime agora) {
+	public static Boolean emTempoDeMarcacao(LocalDate data, LocalTime horario) {
+		LocalDate hoje = LocalDate.now();
+		LocalTime agora = LocalTime.now();
+		
 		if(data.equals(hoje) && agora.plusMinutes(MIN_ANTECEDENCIA_MARCACAO).isAfter(horario)) {
 			return false;
 		}
 		return true;
 	}
 	
-	public Paciente validarPaciente(Long idPaciente, LocalDate data) throws PacienteNotFoundException, ConflictingScheduleException {
+	public Paciente validarPaciente(Long idPaciente, LocalDate data) throws EntityNotFoundException, ConflictingScheduleException {
 		// Verifica se o paciente existe e está ativo
 		Paciente paciente = pacienteService.buscarPacienteAtivo(idPaciente);
 		
 		// Verifica se o paciente já tem consulta marcada no dia
-		if(!consultaRepository.findByDataAndPaciente_id(data, idPaciente).isEmpty()) {
+		if(!encontrarPorDataEPaciente(data, idPaciente).isEmpty()) {
 			throw new ConflictingScheduleException("Paciente já tem consulta marcada para este dia");
 		}
 		
@@ -99,7 +103,7 @@ public class ConsultaValidator {
 	}
 	
 	public Medico validarMedico(Long idMedico, LocalDate data, LocalTime horario, Long idEspecialidade)
-			throws ConflictingScheduleException, EspecialidadeNotFoundException, EmptyListException, MedicoNotFoundException {
+			throws ConflictingScheduleException, EntityNotFoundException, EmptyListException {
 		if(idMedico != null) {
 			// Verifica se o médico existe e está ativo
 			Medico medico = medicoService.buscarMedicoAtivo(idMedico);
@@ -120,8 +124,7 @@ public class ConsultaValidator {
 	 */
 	
 	private Boolean medicoEstaDisponivel(Long idMedico, LocalDate data, LocalTime horario) {
-		List<Consulta> consultasNesteHorario = consultaRepository.verificarConsultasNesteHorario(
-				idMedico, data, horario.minusHours(1), horario.plusHours(1));
+		List<Consulta> consultasNesteHorario = encontrarConsultasMesmoHorario(idMedico, data, horario);
 		
 		if(consultasNesteHorario.isEmpty()) {
 			return true;
@@ -136,7 +139,7 @@ public class ConsultaValidator {
 	 */
 	
 	private Medico atribuirMedicoParaConsulta(Long idEspecialidade, Long idMedico, LocalDate data, LocalTime horario)
-			throws EspecialidadeNotFoundException, EmptyListException {
+			throws EntityNotFoundException, EmptyListException {
 		
 		Especialidade especialidade = especialidadeService.buscarEspecialidade(idEspecialidade);
 		List<Medico> medicosDisponiveis = medicoService.buscarMedicosDisponiveis(especialidade.getId(), idMedico, data, horario);
@@ -150,5 +153,61 @@ public class ConsultaValidator {
 		
 		Medico medico = medicosDisponiveis.get(escolhido);
 		return medico;
+	}
+	
+	/**
+	  * Verifica se a consulta foi cancelada com pelo menos 24 horas de antecedência
+	  * @throws ConflictingScheduleException 
+	 */
+	
+	public static void validarRestricoesDeTempoCancelamento(LocalDate data, LocalTime horario)
+			throws ConflictingScheduleException {
+		
+		if(!emTempoDeCancelamento(data, horario)) {
+			throw new ConflictingScheduleException("O cancelamento precisa ocorrer com pelo menos 24 horas de antecedência");
+		}
+	}
+	
+	public Consulta validarConsulta(Long idConsulta) throws ConsultaNotFoundException, ConsultaCanceladaException {
+		Consulta consulta = buscarConsulta(idConsulta);
+		
+		if(consulta.getMotivoCancelamento() != null) {
+			throw new ConsultaCanceladaException(consulta.getMotivoCancelamento());
+		}
+		return consulta;
+	}
+	
+	public static Boolean emTempoDeCancelamento(LocalDate data, LocalTime horario) {
+		LocalDateTime dateTimeConsulta = LocalDateTime.of(data, horario);
+		LocalDateTime hojeAgora = LocalDateTime.now();
+		
+		if(hojeAgora.plusHours(H_ANTECEDENCIA_CANCELAMENTO).isAfter(dateTimeConsulta)) {
+			return false;
+		}
+		return true;
+	}
+	
+	public Consulta buscarConsulta (Long idConsulta) throws ConsultaNotFoundException {
+		return consultaRepository.findById(idConsulta).orElseThrow(ConsultaNotFoundException::new);
+	}
+	
+	public List<Consulta> encontrarPorDataEPaciente(LocalDate data, Long idPaciente) {
+		return consultaRepository.findByDataAndPaciente_id(data, idPaciente);
+	}
+	
+	public List<Consulta> encontrarConsultasMesmoHorario(Long idMedico, LocalDate data, LocalTime horario) {
+		return consultaRepository.verificarConsultasNesteHorario(
+				idMedico, data, horario.minusHours(1), horario.plusHours(1));
+	}
+
+	public static MotivoCancelamento validarMotivoCancelamento(String motivo) {
+		List<MotivoCancelamento> motivosPrevistos = MotivoCancelamento.obterMotivos();
+		
+		for(MotivoCancelamento m : motivosPrevistos) {
+			if(m.name().equalsIgnoreCase(motivo)) {
+				return m;
+			}
+		}
+		return MotivoCancelamento.OUTROS;		
 	}
 }

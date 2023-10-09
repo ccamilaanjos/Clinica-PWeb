@@ -6,7 +6,7 @@ import java.time.LocalTime;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.NotNull;
 
-public record ConsultaPostDTO(
+public record ConsultaCreateDTO(
 		@NotNull (message = "O id do paciente não pode ser nulo ou vazio") Long idPaciente,
 		Long idMedico,
 		@NotNull(message = "O id da especialidade não pode ser nulo ou vazio") Long idEspecialidade,

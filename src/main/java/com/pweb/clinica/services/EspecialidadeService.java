@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.pweb.clinica.enums.EspecialidadeTipo;
-import com.pweb.clinica.exceptions.EspecialidadeNotFoundException;
+import com.pweb.clinica.exceptions.EntityNotFoundException;
 import com.pweb.clinica.models.Especialidade;
 import com.pweb.clinica.repositories.EspecialidadeRepository;
 
@@ -33,7 +33,7 @@ public class EspecialidadeService {
 		}
 	}
 	
-	public Especialidade buscarEspecialidade(Long idEspecialidade) throws EspecialidadeNotFoundException {
-		return especialidadeRepository.findById(idEspecialidade).orElseThrow(EspecialidadeNotFoundException::new);
+	public Especialidade buscarEspecialidade(Long idEspecialidade) throws EntityNotFoundException {
+		return especialidadeRepository.findById(idEspecialidade).orElseThrow(() -> new EntityNotFoundException("Especialidade"));
 	}
 }

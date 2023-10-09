@@ -3,8 +3,12 @@ package com.pweb.clinica.models;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
+import com.pweb.clinica.enums.MotivoCancelamento;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -26,6 +30,8 @@ public class Consulta {
 	private LocalDate data;
 	@Column(nullable=false)
 	private LocalTime horario;
+	@Enumerated(EnumType.STRING)
+	private MotivoCancelamento motivoCancelamento;
 	
 	public Consulta() {}
 	
@@ -66,5 +72,13 @@ public class Consulta {
 	
 	public void setHorario(LocalTime horario) {
 		this.horario = horario;
+	}
+	
+	public MotivoCancelamento getMotivoCancelamento() {
+		return motivoCancelamento;
+	}
+	
+	public void setMotivoCancelamento(MotivoCancelamento motivo) {
+		this.motivoCancelamento = motivo;
 	}
 }
