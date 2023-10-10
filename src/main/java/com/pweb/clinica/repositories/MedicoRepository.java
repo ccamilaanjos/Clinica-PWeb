@@ -27,7 +27,8 @@ public interface MedicoRepository extends JpaRepository<Medico, Long> {
     		+ "WHERE m.especialidade.id =:especialidade "
     		+ "AND m.ativo = TRUE "
     		+ "AND ((c.data = :data AND (c.horario <= :min OR c.horario >= :max)) "
-    		+ "OR (c.data IS NULL AND c.horario IS NULL))")
+    		+ "OR (c.data IS NULL AND c.horario IS NULL) "
+    		+ "OR (c.motivoCancelamento IS NOT NULL))")
     public List<Medico> findMedicosDisponiveis(
     		@Param("especialidade") Long especialidade,
     		@Param("data") LocalDate data,

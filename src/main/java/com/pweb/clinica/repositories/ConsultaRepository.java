@@ -14,11 +14,12 @@ import com.pweb.clinica.models.Consulta;
 @Repository
 public interface ConsultaRepository extends JpaRepository<Consulta, Long>{
     List<Consulta> findByDataAndHorarioAndMedico_id(LocalDate data, LocalTime horario, Long medicoId);
-    List<Consulta> findByDataAndPaciente_id(LocalDate data, Long pacienteId);
+    List<Consulta> findByDataAndPaciente_idAndMotivoCancelamentoNull(LocalDate data, Long pacienteId);
     
     @Query("SELECT c FROM consultas c "
     		+ "WHERE c.medico.id =:medicoId "
-    		+ "AND (c.data = :data AND (c.horario > :min AND c.horario < :max))")
+    		+ "AND (c.data = :data AND (c.horario > :min AND c.horario < :max) "
+    		+ "AND c.motivoCancelamento IS NULL)")
     public List<Consulta> verificarConsultasNesteHorario (
     		@Param("medicoId") Long especialidade,
     		@Param("data") LocalDate data,

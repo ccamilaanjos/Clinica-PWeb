@@ -35,6 +35,7 @@ public class Consulta {
 	@Column(nullable=false)
 	private LocalTime horario;
 	@Enumerated(EnumType.STRING)
+	@Column(name="motivo_cancelamento")
 	private MotivoCancelamento motivoCancelamento;
 	@CreationTimestamp
 	@Column(nullable = false)

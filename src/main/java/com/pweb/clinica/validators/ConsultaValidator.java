@@ -192,7 +192,7 @@ public class ConsultaValidator {
 	}
 	
 	public List<Consulta> encontrarPorDataEPaciente(LocalDate data, Long idPaciente) {
-		return consultaRepository.findByDataAndPaciente_id(data, idPaciente);
+		return consultaRepository.findByDataAndPaciente_idAndMotivoCancelamentoNull(data, idPaciente);
 	}
 	
 	public List<Consulta> encontrarConsultasMesmoHorario(Long idMedico, LocalDate data, LocalTime horario) {
