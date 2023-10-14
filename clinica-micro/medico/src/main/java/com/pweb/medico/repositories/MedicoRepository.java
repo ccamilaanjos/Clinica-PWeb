@@ -22,18 +22,18 @@ public interface MedicoRepository extends JpaRepository<Medico, Long> {
 	public Optional<List<Medico>> findByEspecialidade_idOrderByNomeAsc(Long id);
 	public Optional<List<Medico>> findByEspecialidade_idAndAtivoTrueOrderByNomeAsc(Long id);
 	
-     @Query("SELECT m FROM medicos m LEFT JOIN consultas c "
-    		+ "ON c.medico.id = m.id "
-    		+ "WHERE m.especialidade.id =:especialidade "
-    		+ "AND m.ativo = TRUE "
-    		+ "AND ((c.data = :data AND (c.horario <= :min OR c.horario >= :max)) "
-    		+ "OR (c.data IS NULL AND c.horario IS NULL) "
-    		+ "OR (c.motivoCancelamento IS NOT NULL))")
-    public List<Medico> findMedicosDisponiveis(
-    		@Param("especialidade") Long especialidade,
-    		@Param("data") LocalDate data,
-    		@Param("min") LocalTime min,
-    		@Param("max") LocalTime max);
+//     @Query("SELECT m FROM medicos m LEFT JOIN consultas c "
+//    		+ "ON c.medico.id = m.id "
+//    		+ "WHERE m.especialidade.id =:especialidade "
+//    		+ "AND m.ativo = TRUE "
+//    		+ "AND ((c.data = :data AND (c.horario <= :min OR c.horario >= :max)) "
+//    		+ "OR (c.data IS NULL AND c.horario IS NULL) "
+//    		+ "OR (c.motivoCancelamento IS NOT NULL))")
+//    public List<Medico> findMedicosDisponiveis(
+//    		@Param("especialidade") Long especialidade,
+//    		@Param("data") LocalDate data,
+//    		@Param("min") LocalTime min,
+//    		@Param("max") LocalTime max);
 }
 
 //SELECT * FROM MEDICOS M LEFT JOIN CONSULTAS C

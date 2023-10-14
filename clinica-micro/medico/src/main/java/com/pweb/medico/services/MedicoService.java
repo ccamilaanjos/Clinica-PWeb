@@ -94,8 +94,8 @@ public class MedicoService implements PessoaService<MedicoGetDTO, MedicoPostDTO,
 		return medicoRepository.findByIdAndAtivoTrue(idMedico).orElseThrow(() -> new EntityNotFoundException("Medico"));
 	}
 	
-	public List<Medico> buscarMedicosDisponiveis(Long idEspecialidade, Long idMedico, LocalDate data, LocalTime horario) {
-		return medicoRepository.findMedicosDisponiveis(
-				idEspecialidade, data, horario.minusHours(1), horario.plusHours(1));
-	}
+//	public List<Medico> buscarMedicosDisponiveis(Long idEspecialidade, Long idMedico, LocalDate data, LocalTime horario) {
+//		return medicoRepository.findMedicosDisponiveis(
+//				idEspecialidade, data, horario.minusHours(1), horario.plusHours(1));
+//	}
 }
