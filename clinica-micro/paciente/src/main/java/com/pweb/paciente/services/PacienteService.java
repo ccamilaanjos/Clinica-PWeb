@@ -57,8 +57,8 @@ public class PacienteService implements PessoaService<PacienteGetDTO, PacientePo
 		EnderecoPutDTO enderecoForm = new EnderecoPutDTO(paciente.getEndereco(), pacienteForm.endereco());
 		Long endereco = enderecoClient.atualizar(enderecoForm).getBody();
 		paciente.setEndereco(endereco);
-		pacienteRepository.save(paciente);
 		
+		pacienteRepository.save(paciente);
 		return new PacienteDTO(paciente);
 	}
 	
