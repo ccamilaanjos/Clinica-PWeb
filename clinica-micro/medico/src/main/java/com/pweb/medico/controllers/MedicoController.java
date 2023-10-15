@@ -48,12 +48,27 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoG
 		return new ResponseEntity<Page<MedicoGetDTO>>(medicoService.getPagina(pageable, "active"), HttpStatus.OK);
 	}
 	
-	@GetMapping("/especialidade")
-	public ResponseEntity<?> listarPorEspecialidade(@RequestParam("id") Long id) {
+	@GetMapping("/especialidade/")
+	public ResponseEntity<?> listarAtivosPorEspecialidade(@RequestParam("id") Long id) {
 		try {
-			return new ResponseEntity<List<MedicoGetDTO>>(medicoService.buscarMedicosPorEspecialidade(id), HttpStatus.OK);			
+			List<Long> medicos = medicoService.buscarMedicosAtivosPorEspecialidade(id);
+			return new ResponseEntity<List<Long>>(medicos, HttpStatus.OK);			
 		} catch (EntityNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		}
+	}
+	
+	@GetMapping("/")
+	public ResponseEntity<?> buscarAtivoPorId(@RequestParam(required=true) Long id) {
+		try {
+			medicoService.buscarMedicoAtivo(id);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
 	}
 	

@@ -46,6 +46,18 @@ public class PacienteController implements PessoaController<PacientePostDTO, Pac
 		final Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "nome"));
 		return new ResponseEntity<Page<PacienteGetDTO>>(pacienteService.getPagina(pageable, "active"), HttpStatus.OK);
 	}
+	
+	@GetMapping("/")
+	public ResponseEntity<?> buscarAtivoPorId(@RequestParam(required=true) Long id) {
+		try {
+			pacienteService.buscarPacienteAtivo(id);
+			return new ResponseEntity<>(HttpStatus.OK);
+		} catch (EntityNotFoundException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+		}
+	}
 
 	@PostMapping
 	@Override

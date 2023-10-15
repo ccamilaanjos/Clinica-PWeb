@@ -33,7 +33,11 @@ public class EspecialidadeService {
 		}
 	}
 	
-	public Especialidade buscarEspecialidade(Long idEspecialidade) throws EntityNotFoundException {
+	public Especialidade buscarPorId(Long idEspecialidade) throws EntityNotFoundException {
 		return especialidadeRepository.findById(idEspecialidade).orElseThrow(() -> new EntityNotFoundException("Especialidade"));
 	}
+	
+	public Especialidade buscarPorTitulo(String titulo) throws EntityNotFoundException {
+		return especialidadeRepository.findByTituloIgnoreCase(titulo).orElseThrow(() -> new EntityNotFoundException("Especialidade"));
+	} 
 }
