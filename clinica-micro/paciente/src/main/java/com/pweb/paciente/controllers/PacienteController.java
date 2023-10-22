@@ -21,8 +21,9 @@ import com.pweb.paciente.dtos.PacienteGetDTO;
 import com.pweb.paciente.dtos.PacientePostDTO;
 import com.pweb.paciente.dtos.PacientePutDTO;
 import com.pweb.paciente.exceptions.DuplicatePacienteException;
-import com.pweb.paciente.exceptions.EntityNotFoundException;
+import com.pweb.paciente.exceptions.PacienteNotFoundException;
 import com.pweb.paciente.services.PacienteService;
+import com.pweb.pessoa.controllers.PessoaController;
 
 import jakarta.validation.Valid;
 
@@ -52,8 +53,8 @@ public class PacienteController implements PessoaController<PacientePostDTO, Pac
 		try {
 			pacienteService.buscarPacienteAtivo(id);
 			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (EntityNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		} catch (PacienteNotFoundException e) {
+			throw new PacienteNotFoundException();
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
@@ -62,12 +63,11 @@ public class PacienteController implements PessoaController<PacientePostDTO, Pac
 	@PostMapping
 	@Override
 	public ResponseEntity<?> cadastrar(@Valid @RequestBody PacientePostDTO pacienteForm) {
-		PacienteDTO paciente;
 		try {
-			paciente = pacienteService.cadastrar(pacienteForm);
+			PacienteDTO paciente = pacienteService.cadastrar(pacienteForm);
 			return new ResponseEntity<PacienteDTO>(paciente, HttpStatus.CREATED);
 		} catch(DuplicatePacienteException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getResponse());
+			throw new DuplicatePacienteException();
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
@@ -77,12 +77,11 @@ public class PacienteController implements PessoaController<PacientePostDTO, Pac
 	@Override
 	public ResponseEntity<?> atualizar(@RequestParam(required=true) Long id,
 			@Valid @RequestBody PacientePutDTO pacienteForm) {
-		PacienteDTO paciente;
 		try {
-			paciente = pacienteService.atualizar(id, pacienteForm);
+			PacienteDTO paciente = pacienteService.atualizar(id, pacienteForm);
 			return new ResponseEntity<PacienteDTO>(paciente, HttpStatus.OK);
-		} catch (EntityNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		} catch (PacienteNotFoundException e) {
+			throw new PacienteNotFoundException();
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
@@ -94,7 +93,7 @@ public class PacienteController implements PessoaController<PacientePostDTO, Pac
 		try {
 			pacienteService.tornarInativo(id);
 			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (EntityNotFoundException e) {
+		} catch (PacienteNotFoundException e) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());

@@ -1,4 +1,4 @@
-package com.pweb.medico.services;
+package com.pweb.pessoa.services;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

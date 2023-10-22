@@ -25,4 +25,12 @@ public interface ConsultaRepository extends JpaRepository<Consulta, Long>{
     		@Param("data") LocalDate data,
     		@Param("min") LocalTime min,
     		@Param("max") LocalTime max);
+    
+    @Query("SELECT c.medicoId FROM consultas c "
+    		+ "WHERE (c.data = :data AND (c.horario > :min AND c.horario < :max) "
+    		+ "AND c.motivoCancelamento IS NULL)")
+    public List<Long> verificarMedicosOcupados (
+    		@Param("data") LocalDate data,
+    		@Param("min") LocalTime min,
+    		@Param("max") LocalTime max);
 }

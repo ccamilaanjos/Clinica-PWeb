@@ -14,9 +14,10 @@ import com.pweb.paciente.dtos.PacienteGetDTO;
 import com.pweb.paciente.dtos.PacientePostDTO;
 import com.pweb.paciente.dtos.PacientePutDTO;
 import com.pweb.paciente.exceptions.DuplicatePacienteException;
-import com.pweb.paciente.exceptions.EntityNotFoundException;
+import com.pweb.paciente.exceptions.PacienteNotFoundException;
 import com.pweb.paciente.models.Paciente;
 import com.pweb.paciente.repositories.PacienteRepository;
+import com.pweb.pessoa.services.PessoaService;
 
 @Service
 public class PacienteService implements PessoaService<PacienteGetDTO, PacientePostDTO, PacientePutDTO, PacienteDTO> {
@@ -37,7 +38,7 @@ public class PacienteService implements PessoaService<PacienteGetDTO, PacientePo
 	public PacienteDTO cadastrar(PacientePostDTO pacienteForm) throws DuplicatePacienteException {
 		Optional<Paciente> cpfExistente = pacienteRepository.findByCpf(pacienteForm.cpf());
 		if(cpfExistente.isPresent()) {
-			throw new DuplicatePacienteException(new PacienteDTO(cpfExistente.get()));
+			throw new DuplicatePacienteException();
 		}
 		
 		Long endereco = enderecoClient.cadastrar(pacienteForm.endereco()).getBody();
@@ -48,8 +49,8 @@ public class PacienteService implements PessoaService<PacienteGetDTO, PacientePo
 	}
 	
 	@Override
-	public PacienteDTO atualizar(Long id, PacientePutDTO pacienteForm) throws EntityNotFoundException {
-		Paciente paciente = pacienteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Paciente"));
+	public PacienteDTO atualizar(Long id, PacientePutDTO pacienteForm) throws PacienteNotFoundException {
+		Paciente paciente = pacienteRepository.findById(id).orElseThrow(PacienteNotFoundException::new);
 		
 		paciente.setNome(pacienteForm.nome());
 		paciente.setTelefone(pacienteForm.telefone());
@@ -63,14 +64,14 @@ public class PacienteService implements PessoaService<PacienteGetDTO, PacientePo
 	}
 	
 	@Override
-	public void tornarInativo(Long id) throws EntityNotFoundException {
-		Paciente paciente = pacienteRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Paciente"));
+	public void tornarInativo(Long id) throws PacienteNotFoundException {
+		Paciente paciente = pacienteRepository.findById(id).orElseThrow(PacienteNotFoundException::new);
 
 		paciente.setAtivo(false);
 		pacienteRepository.save(paciente);
 	}
 	
-	public Paciente buscarPacienteAtivo(Long idPaciente) throws EntityNotFoundException {
-		return pacienteRepository.findByIdAndAtivoTrue(idPaciente).orElseThrow(() -> new EntityNotFoundException("Paciente"));
+	public Paciente buscarPacienteAtivo(Long idPaciente) throws PacienteNotFoundException {
+		return pacienteRepository.findByIdAndAtivoTrue(idPaciente).orElseThrow(PacienteNotFoundException::new);
 	}
 }

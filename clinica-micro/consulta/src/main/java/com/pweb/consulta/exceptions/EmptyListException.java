@@ -1,13 +1,9 @@
 package com.pweb.consulta.exceptions;
 
-public class EmptyListException extends Exception {
-	private final String message;
+public class EmptyListException extends RuntimeException {
 	
 	public EmptyListException(String message) {
-		 this.message = message;
+		 super(message);
 	}
-	
-	public String getMessage() {
-		return message;
-	}
+
 }

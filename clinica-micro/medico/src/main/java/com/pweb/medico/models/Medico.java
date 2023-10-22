@@ -5,8 +5,6 @@ import com.pweb.pessoa.models.Pessoa;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 
 @Entity(name="medicos")
 public class Medico extends Pessoa {
@@ -14,15 +12,14 @@ public class Medico extends Pessoa {
 	private String crm;
 //	@Enumerated(EnumType.STRING)
 //	private EspecialidadeTipo especialidade;
-	@ManyToOne
-	@JoinColumn(name="especialidade_id")
-	private Especialidade especialidade;
+	@Column(nullable=false)
+	private Long especialidade;
 	
 	public Medico() {
 		super();
 	}
 	
-	public Medico(MedicoPostDTO medico, Especialidade especialidade, Long endereco) {
+	public Medico(MedicoPostDTO medico, Long especialidade, Long endereco) {
 		this.especialidade = especialidade;
 		this.crm = medico.crm();
 		super.setNome(medico.nome());
@@ -31,7 +28,7 @@ public class Medico extends Pessoa {
 		super.setEndereco(endereco);
 	}
 	
-	public Medico(String nome, String email, String telefone, Long endereco, String crm, Especialidade especialidade) {
+	public Medico(String nome, String email, String telefone, Long endereco, String crm, Long especialidade) {
 		super(nome, email, telefone, endereco);
 		this.crm = crm;
 		this.especialidade = especialidade;
@@ -45,18 +42,16 @@ public class Medico extends Pessoa {
 		this.crm = crm;
 	}
 
-	public Especialidade getEspecialidade() {
+	public Long getEspecialidade() {
 		return especialidade;
 	}
 
-	public void setEspecialidade(Especialidade especialidade) {
+	public void setEspecialidade(Long especialidade) {
 		this.especialidade = especialidade;
 	}
 
 	@Override
 	public String toString() {
 		return "Medico [crm=" + crm + ", especialidade=" + especialidade + "]";
-	}
-	
-	
+	}	
 }

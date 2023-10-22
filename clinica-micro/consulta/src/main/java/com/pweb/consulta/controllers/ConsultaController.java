@@ -24,34 +24,34 @@ import com.pweb.consulta.services.ConsultaService;
 import jakarta.validation.Valid;
 
 @RestController
-@RequestMapping
+@RequestMapping("consultas")
 public class ConsultaController {
 	@Autowired
 	private ConsultaService consultaService;
 
-	@PostMapping("/marcarConsulta")
+	@PostMapping("/marcar")
 	public ResponseEntity<?> marcarConsulta(
 			@RequestBody @Valid ConsultaCreateDTO consultaForm) {
 		try {
 			ConsultaDTO consulta = consultaService.marcarConsulta(consultaForm);
 			return ResponseEntity.status(HttpStatus.CREATED).body(consulta);
 		} catch (ClinicaUnavailableException | ConflictingScheduleException | EmptyListException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+			throw e;
 		} catch (EntityNotFoundException  e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+			throw e;
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
 	}
 	
-	@DeleteMapping("/cancelarConsulta")
+	@DeleteMapping("/cancelar")
 	public ResponseEntity<?> cancelarConsulta(
 			@RequestParam(required=true) Long id, @RequestBody @Valid ConsultaCancelDTO consultaForm) {
 		try {
 			consultaService.cancelarConsulta(consultaForm, id);
 			return new ResponseEntity<>(HttpStatus.OK);
 		} catch (ConsultaNotFoundException | ConsultaCanceladaException | ConflictingScheduleException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+			throw e;
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());			
 		}

@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -136,17 +137,24 @@ public class ConsultaValidator {
 			throws EntityNotFoundException, EmptyListException {
 		
 		medicoClient.buscarEspecialidade(idEspecialidade);
-		// List<Long> medicosDisponiveis = medicoClient.buscarMedicosDisponiveis(idEspecialidade, idMedico, data, horario);
-
-//		if(medicosDisponiveis.isEmpty()) {
-//			throw new EmptyListException("Nenhum médico disponível para esta especialidade no horário e data fornecidos");
-//		}
-//		
-//		Random rand = new Random();
-//		int escolhido = rand.nextInt(medicosDisponiveis.size());
-//		
-//		Long medico = medicosDisponiveis.get(escolhido);
-		return idMedico;
+		List<Long> medicos = medicoClient.listarAtivosPorEspecialidade(idEspecialidade).getBody();
+		List<Long> medicosOcupadosNesteHorario = consultaRepository.verificarMedicosOcupados(data, horario.minusHours(1), horario.plusHours(1));
+		
+		List<Long> medicosDisponiveis = medicos
+				.stream()
+                .filter(medico -> !medicosOcupadosNesteHorario.contains(medico))
+                .collect(Collectors.toList());
+		
+		if(medicosDisponiveis.isEmpty()) {
+			throw new EmptyListException("Nenhum médico disponível para esta especialidade no horário e data fornecidos");
+		}
+		
+		Random rand = new Random();
+		int escolhido = rand.nextInt(medicosDisponiveis.size());
+		
+		Long medico = medicosDisponiveis.get(escolhido);
+		
+		return medico;
 	}
 	
 	/**

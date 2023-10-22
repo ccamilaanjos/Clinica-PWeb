@@ -2,7 +2,6 @@ package com.pweb.medico.services;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,10 +15,14 @@ import com.pweb.medico.dtos.MedicoGetDTO;
 import com.pweb.medico.dtos.MedicoPostDTO;
 import com.pweb.medico.dtos.MedicoPutDTO;
 import com.pweb.medico.exceptions.DuplicateMedicoException;
-import com.pweb.medico.exceptions.EntityNotFoundException;
+import com.pweb.medico.exceptions.EspecialidadeNotFoundException;
+import com.pweb.medico.exceptions.MedicoNotFoundException;
 import com.pweb.medico.models.Especialidade;
 import com.pweb.medico.models.Medico;
 import com.pweb.medico.repositories.MedicoRepository;
+import com.pweb.pessoa.services.PessoaService;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class MedicoService implements PessoaService<MedicoGetDTO, MedicoPostDTO, MedicoPutDTO, MedicoDTO> {
@@ -39,32 +42,27 @@ public class MedicoService implements PessoaService<MedicoGetDTO, MedicoPostDTO,
 		return medicoRepository.findAllByAtivoTrue(pageable).map(medico -> new MedicoGetDTO(medico, medico.getEspecialidade()));
 	}
 	
-	public List<MedicoGetDTO> buscarMedicosPorEspecialidade(Long id) throws EntityNotFoundException {
-		Especialidade especialidade = especialidadeService.buscarPorId(id);
-		
-		List<Medico> medicos = medicoRepository.findByEspecialidade_idOrderByNomeAsc(id).orElse(null);
-		return medicos.stream().map(medico -> new MedicoGetDTO(medico, especialidade)).collect(Collectors.toList());
-	}
 
 	@Override
-	public MedicoDTO cadastrar(MedicoPostDTO medicoForm) throws EntityNotFoundException, DuplicateMedicoException {
+	public MedicoDTO cadastrar(MedicoPostDTO medicoForm)
+			throws MedicoNotFoundException, EspecialidadeNotFoundException, DuplicateMedicoException {
 		Optional<Medico> crmExistente = medicoRepository.findByCrm(medicoForm.crm());
 		if(crmExistente.isPresent()) {
-			throw new DuplicateMedicoException(new MedicoDTO(crmExistente.get()));
+			throw new DuplicateMedicoException();
 		}
 		
 		Especialidade especialidade = especialidadeService.buscarPorTitulo(medicoForm.especialidade());
 
 		Long endereco = enderecoClient.cadastrar(medicoForm.endereco()).getBody();
-		Medico medico = new Medico(medicoForm, especialidade, endereco);
+		Medico medico = new Medico(medicoForm, especialidade.getId(), endereco);
 		
 		medicoRepository.save(medico);
 		return new MedicoDTO(medico);
 	}
 
 	@Override
-	public MedicoDTO atualizar(Long id, MedicoPutDTO medicoForm) throws EntityNotFoundException {
-		Medico medico = medicoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Medico"));
+	public MedicoDTO atualizar(Long id, MedicoPutDTO medicoForm) throws MedicoNotFoundException {
+		Medico medico = medicoRepository.findById(id).orElseThrow(MedicoNotFoundException::new);
 		
 		medico.setNome(medicoForm.nome());
 		medico.setTelefone(medicoForm.telefone());
@@ -73,29 +71,23 @@ public class MedicoService implements PessoaService<MedicoGetDTO, MedicoPostDTO,
 		Long endereco = enderecoClient.atualizar(enderecoForm).getBody();
 		medico.setEndereco(endereco);
 		
-		medicoRepository.save(medico);
+		medicoRepository.save(medico);		
 		return new MedicoDTO(medico);
 	}
 
 	@Override
 	public void tornarInativo(Long id) throws EntityNotFoundException {
-		Medico medico = medicoRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Medico"));
+		Medico medico = medicoRepository.findById(id).orElseThrow(MedicoNotFoundException::new);
 
 		medico.setAtivo(false);
 		medicoRepository.save(medico);
 	}
 	
 	public Medico buscarMedicoAtivo(Long idMedico) throws EntityNotFoundException {
-		return medicoRepository.findByIdAndAtivoTrue(idMedico).orElseThrow(() -> new EntityNotFoundException("Medico"));
+		return medicoRepository.findByIdAndAtivoTrue(idMedico).orElseThrow(MedicoNotFoundException::new);
 	}
 	
-	public List<Long> buscarMedicosAtivosPorEspecialidade(Long idEspecialidade) throws EntityNotFoundException {
-		especialidadeService.buscarPorId(idEspecialidade);
-		return medicoRepository.findIdByAtivoTrueAndEspecialidade_id(idEspecialidade);
+	public List<Long> buscarMedicosAtivosPorEspecialidade(Long idEspecialidade) {
+		return medicoRepository.findAllIdsByAtivoTrueAndEspecialidade(idEspecialidade);
 	}
-	
-//	public List<Medico> buscarMedicosDisponiveis(Long idEspecialidade, Long idMedico, LocalDate data, LocalTime horario) {
-//		return medicoRepository.findMedicosDisponiveis(
-//				idEspecialidade, data, horario.minusHours(1), horario.plusHours(1));
-//	}
 }

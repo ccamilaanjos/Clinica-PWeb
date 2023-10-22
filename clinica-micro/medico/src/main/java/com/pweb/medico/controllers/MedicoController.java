@@ -23,20 +23,20 @@ import com.pweb.medico.dtos.MedicoGetDTO;
 import com.pweb.medico.dtos.MedicoPostDTO;
 import com.pweb.medico.dtos.MedicoPutDTO;
 import com.pweb.medico.exceptions.DuplicateMedicoException;
-import com.pweb.medico.exceptions.EntityNotFoundException;
+import com.pweb.medico.exceptions.EspecialidadeNotFoundException;
+import com.pweb.medico.exceptions.MedicoNotFoundException;
 import com.pweb.medico.services.MedicoService;
 
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/medicos")
-public class MedicoController implements PessoaController<MedicoPostDTO, MedicoGetDTO, MedicoPutDTO, MedicoDTO> {
+public class MedicoController {
 	
 	@Autowired
 	private MedicoService medicoService;
 	
 	@GetMapping("/todos")
-	@Override
 	public ResponseEntity<Page<MedicoGetDTO>> listarTodos(@RequestParam("page") int page) {
 		final Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "nome"));
 		return new ResponseEntity<Page<MedicoGetDTO>>(medicoService.getPagina(pageable, "all"), HttpStatus.OK);
@@ -49,12 +49,12 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoG
 	}
 	
 	@GetMapping("/especialidade/")
-	public ResponseEntity<?> listarAtivosPorEspecialidade(@RequestParam("id") Long id) {
+	public ResponseEntity<?> listarAtivosPorEspecialidade(@RequestParam(required=true) Long id) {
 		try {
 			List<Long> medicos = medicoService.buscarMedicosAtivosPorEspecialidade(id);
 			return new ResponseEntity<List<Long>>(medicos, HttpStatus.OK);			
-		} catch (EntityNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		} catch (EspecialidadeNotFoundException e) {
+			throw new EspecialidadeNotFoundException();
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
@@ -65,51 +65,52 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoG
 		try {
 			medicoService.buscarMedicoAtivo(id);
 			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (EntityNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		} catch (MedicoNotFoundException e) {
+			throw new MedicoNotFoundException();
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
 	}
 	
 	@PostMapping
-	@Override
 	public ResponseEntity<?> cadastrar(@Valid @RequestBody MedicoPostDTO medicoForm) {
 		MedicoDTO medico;
 		try {
 			medico = medicoService.cadastrar(medicoForm);
 			return new ResponseEntity<MedicoDTO>(medico, HttpStatus.CREATED);
 		} catch (DuplicateMedicoException e) {
-			return ResponseEntity.status(HttpStatus.CONFLICT).body(e.getResponse());
-		} catch (EntityNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+			throw new DuplicateMedicoException();
+		} catch (MedicoNotFoundException e) {
+			throw new MedicoNotFoundException();
+		} catch (EspecialidadeNotFoundException e) {
+			throw new EspecialidadeNotFoundException();
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
 	}
 	
 	@PutMapping("/")
-	@Override
 	public ResponseEntity<?> atualizar(@RequestParam(required=true) Long id, @Valid @RequestBody MedicoPutDTO medicoForm) {
 		MedicoDTO medico;
 		try {
 			medico = medicoService.atualizar(id, medicoForm);
 			return new ResponseEntity<MedicoDTO>(medico, HttpStatus.OK);
-		} catch (EntityNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		} catch (MedicoNotFoundException e) {
+			throw new MedicoNotFoundException();
+		} catch (EspecialidadeNotFoundException e) {
+			throw new EspecialidadeNotFoundException();
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
 	}
 
 	@DeleteMapping("/")
-	@Override
 	public ResponseEntity<?> remover(@RequestParam(required=true) Long id) {
 		try {
 			medicoService.tornarInativo(id);
 			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (EntityNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		} catch (MedicoNotFoundException e) {
+			throw new MedicoNotFoundException();
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}

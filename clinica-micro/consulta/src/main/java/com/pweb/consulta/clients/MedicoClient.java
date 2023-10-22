@@ -1,5 +1,7 @@
 package com.pweb.consulta.clients;
 
+import java.util.List;
+
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,4 +14,6 @@ public interface MedicoClient {
 	public ResponseEntity<?> buscarAtivoPorId(@RequestParam(required=true) Long id);
 	@RequestMapping(method = RequestMethod.GET, value = "/especialidades")
 	public ResponseEntity<?> buscarEspecialidade(@RequestParam(required=true) Long id);
+	@RequestMapping(method = RequestMethod.GET, value = "/medicos/especialidade/")
+	public ResponseEntity<List<Long>> listarAtivosPorEspecialidade(@RequestParam(required=true) Long id);
 }
