@@ -14,6 +14,6 @@ public record EnderecoPostDTO(
 		@NotNull(message = "O campo cep não pode ser nulo") String cep) {
 	public EnderecoPostDTO(Endereco endereco) {
 		this(endereco.getLogradouro().toUpperCase(), endereco.getNumero(), endereco.getComplemento().toUpperCase(), endereco.getBairro().toUpperCase(),
-				endereco.getCidade().toUpperCase(), endereco.getUF().toUpperCase(), endereco.getCep().toUpperCase());
+				endereco.getCidade().toUpperCase(), endereco.getUF().toUpperCase(), endereco.getCep());
 	}
 }

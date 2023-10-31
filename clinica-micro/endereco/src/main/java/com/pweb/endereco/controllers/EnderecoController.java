@@ -1,10 +1,8 @@
 package com.pweb.endereco.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -45,10 +43,5 @@ public class EnderecoController {
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
 		}
-	}
-	
-	@GetMapping("/porta")
-		public String retornaPorta(@Value("${local.server.port}") String porta){
-			return String.format("Requisição respondida pela instância executando na porta %s", porta);
 	}
 }

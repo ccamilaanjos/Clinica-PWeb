@@ -12,5 +12,5 @@ public record PacientePostDTO (
 		@NotBlank(message = "O campo nome não pode ser nulo ou vazio") String nome,
 		@NotBlank(message = "O campo email não pode ser nulo ou vazio") String email,
 		@NotBlank(message = "O campo telefone não pode ser nulo ou vazio") String telefone,
-		@CPF @NotNull String cpf,
+		@NotNull(message = "O campo cpf não deve ser nulo") @CPF(message = "CPF inválido") String cpf,
 		@Valid EnderecoPostDTO endereco) {}

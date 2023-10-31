@@ -20,8 +20,6 @@ import com.pweb.paciente.dtos.PacienteDTO;
 import com.pweb.paciente.dtos.PacienteGetDTO;
 import com.pweb.paciente.dtos.PacientePostDTO;
 import com.pweb.paciente.dtos.PacientePutDTO;
-import com.pweb.paciente.exceptions.DuplicatePacienteException;
-import com.pweb.paciente.exceptions.PacienteNotFoundException;
 import com.pweb.paciente.services.PacienteService;
 import com.pweb.pessoa.controllers.PessoaController;
 
@@ -50,53 +48,29 @@ public class PacienteController implements PessoaController<PacientePostDTO, Pac
 	
 	@GetMapping("/")
 	public ResponseEntity<?> buscarAtivoPorId(@RequestParam(required=true) Long id) {
-		try {
-			pacienteService.buscarPacienteAtivo(id);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (PacienteNotFoundException e) {
-			throw new PacienteNotFoundException();
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-		}
+		pacienteService.buscarPacienteAtivo(id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@PostMapping
 	@Override
 	public ResponseEntity<?> cadastrar(@Valid @RequestBody PacientePostDTO pacienteForm) {
-		try {
-			PacienteDTO paciente = pacienteService.cadastrar(pacienteForm);
-			return new ResponseEntity<PacienteDTO>(paciente, HttpStatus.CREATED);
-		} catch(DuplicatePacienteException e) {
-			throw new DuplicatePacienteException();
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-		}
+		PacienteDTO paciente = pacienteService.cadastrar(pacienteForm);
+		return new ResponseEntity<PacienteDTO>(paciente, HttpStatus.CREATED);
 	}
 
 	@PutMapping("/")
 	@Override
 	public ResponseEntity<?> atualizar(@RequestParam(required=true) Long id,
 			@Valid @RequestBody PacientePutDTO pacienteForm) {
-		try {
-			PacienteDTO paciente = pacienteService.atualizar(id, pacienteForm);
-			return new ResponseEntity<PacienteDTO>(paciente, HttpStatus.OK);
-		} catch (PacienteNotFoundException e) {
-			throw new PacienteNotFoundException();
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-		}
+		PacienteDTO paciente = pacienteService.atualizar(id, pacienteForm);
+		return new ResponseEntity<PacienteDTO>(paciente, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/")
 	@Override
 	public ResponseEntity<?> remover(@RequestParam(required=true) Long id) {
-		try {
-			pacienteService.tornarInativo(id);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (PacienteNotFoundException e) {
-			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-		}
+		pacienteService.tornarInativo(id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

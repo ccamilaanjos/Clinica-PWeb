@@ -13,12 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pweb.consulta.dtos.ConsultaCancelDTO;
 import com.pweb.consulta.dtos.ConsultaCreateDTO;
 import com.pweb.consulta.dtos.ConsultaDTO;
-import com.pweb.consulta.exceptions.ClinicaUnavailableException;
-import com.pweb.consulta.exceptions.ConflictingScheduleException;
-import com.pweb.consulta.exceptions.ConsultaCanceladaException;
-import com.pweb.consulta.exceptions.ConsultaNotFoundException;
-import com.pweb.consulta.exceptions.EmptyListException;
-import com.pweb.consulta.exceptions.EntityNotFoundException;
 import com.pweb.consulta.services.ConsultaService;
 
 import jakarta.validation.Valid;
@@ -30,30 +24,15 @@ public class ConsultaController {
 	private ConsultaService consultaService;
 
 	@PostMapping("/marcar")
-	public ResponseEntity<?> marcarConsulta(
-			@RequestBody @Valid ConsultaCreateDTO consultaForm) {
-		try {
-			ConsultaDTO consulta = consultaService.marcarConsulta(consultaForm);
-			return ResponseEntity.status(HttpStatus.CREATED).body(consulta);
-		} catch (ClinicaUnavailableException | ConflictingScheduleException | EmptyListException e) {
-			throw e;
-		} catch (EntityNotFoundException  e) {
-			throw e;
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-		}
+	public ResponseEntity<?> marcarConsulta(@RequestBody @Valid ConsultaCreateDTO consultaForm) {
+		ConsultaDTO consulta = consultaService.marcarConsulta(consultaForm);
+		return ResponseEntity.status(HttpStatus.CREATED).body(consulta);
 	}
-	
+
 	@DeleteMapping("/cancelar")
-	public ResponseEntity<?> cancelarConsulta(
-			@RequestParam(required=true) Long id, @RequestBody @Valid ConsultaCancelDTO consultaForm) {
-		try {
-			consultaService.cancelarConsulta(consultaForm, id);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (ConsultaNotFoundException | ConsultaCanceladaException | ConflictingScheduleException e) {
-			throw e;
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());			
-		}
+	public ResponseEntity<?> cancelarConsulta(@RequestParam(required = true) Long id,
+			@RequestBody @Valid ConsultaCancelDTO consultaForm) {
+		consultaService.cancelarConsulta(consultaForm, id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }

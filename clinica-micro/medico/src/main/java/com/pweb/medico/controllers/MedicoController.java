@@ -22,9 +22,6 @@ import com.pweb.medico.dtos.MedicoDTO;
 import com.pweb.medico.dtos.MedicoGetDTO;
 import com.pweb.medico.dtos.MedicoPostDTO;
 import com.pweb.medico.dtos.MedicoPutDTO;
-import com.pweb.medico.exceptions.DuplicateMedicoException;
-import com.pweb.medico.exceptions.EspecialidadeNotFoundException;
-import com.pweb.medico.exceptions.MedicoNotFoundException;
 import com.pweb.medico.services.MedicoService;
 
 import jakarta.validation.Valid;
@@ -32,87 +29,50 @@ import jakarta.validation.Valid;
 @RestController
 @RequestMapping("/medicos")
 public class MedicoController {
-	
+
 	@Autowired
 	private MedicoService medicoService;
-	
+
 	@GetMapping("/todos")
 	public ResponseEntity<Page<MedicoGetDTO>> listarTodos(@RequestParam("page") int page) {
 		final Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "nome"));
 		return new ResponseEntity<Page<MedicoGetDTO>>(medicoService.getPagina(pageable, "all"), HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/ativos")
 	public ResponseEntity<Page<MedicoGetDTO>> listarAtivos(@RequestParam("page") int page) {
 		final Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.ASC, "nome"));
 		return new ResponseEntity<Page<MedicoGetDTO>>(medicoService.getPagina(pageable, "active"), HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/especialidade/")
-	public ResponseEntity<?> listarAtivosPorEspecialidade(@RequestParam(required=true) Long id) {
-		try {
-			List<Long> medicos = medicoService.buscarMedicosAtivosPorEspecialidade(id);
-			return new ResponseEntity<List<Long>>(medicos, HttpStatus.OK);			
-		} catch (EspecialidadeNotFoundException e) {
-			throw new EspecialidadeNotFoundException();
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-		}
+	public ResponseEntity<?> listarAtivosPorEspecialidade(@RequestParam(required = true) Long id) {
+		List<Long> medicos = medicoService.buscarMedicosAtivosPorEspecialidade(id);
+		return new ResponseEntity<List<Long>>(medicos, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/")
-	public ResponseEntity<?> buscarAtivoPorId(@RequestParam(required=true) Long id) {
-		try {
-			medicoService.buscarMedicoAtivo(id);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (MedicoNotFoundException e) {
-			throw new MedicoNotFoundException();
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-		}
+	public ResponseEntity<?> buscarAtivoPorId(@RequestParam(required = true) Long id) {
+		medicoService.buscarMedicoAtivo(id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
-	
+
 	@PostMapping
 	public ResponseEntity<?> cadastrar(@Valid @RequestBody MedicoPostDTO medicoForm) {
-		MedicoDTO medico;
-		try {
-			medico = medicoService.cadastrar(medicoForm);
-			return new ResponseEntity<MedicoDTO>(medico, HttpStatus.CREATED);
-		} catch (DuplicateMedicoException e) {
-			throw new DuplicateMedicoException();
-		} catch (MedicoNotFoundException e) {
-			throw new MedicoNotFoundException();
-		} catch (EspecialidadeNotFoundException e) {
-			throw new EspecialidadeNotFoundException();
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-		}
+		MedicoDTO medico = medicoService.cadastrar(medicoForm);
+		return new ResponseEntity<MedicoDTO>(medico, HttpStatus.CREATED);
 	}
-	
+
 	@PutMapping("/")
-	public ResponseEntity<?> atualizar(@RequestParam(required=true) Long id, @Valid @RequestBody MedicoPutDTO medicoForm) {
-		MedicoDTO medico;
-		try {
-			medico = medicoService.atualizar(id, medicoForm);
-			return new ResponseEntity<MedicoDTO>(medico, HttpStatus.OK);
-		} catch (MedicoNotFoundException e) {
-			throw new MedicoNotFoundException();
-		} catch (EspecialidadeNotFoundException e) {
-			throw new EspecialidadeNotFoundException();
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-		}
+	public ResponseEntity<?> atualizar(@RequestParam(required = true) Long id,
+			@Valid @RequestBody MedicoPutDTO medicoForm) {
+		MedicoDTO medico = medicoService.atualizar(id, medicoForm);
+		return new ResponseEntity<MedicoDTO>(medico, HttpStatus.OK);
 	}
 
 	@DeleteMapping("/")
-	public ResponseEntity<?> remover(@RequestParam(required=true) Long id) {
-		try {
-			medicoService.tornarInativo(id);
-			return new ResponseEntity<>(HttpStatus.OK);
-		} catch (MedicoNotFoundException e) {
-			throw new MedicoNotFoundException();
-		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
-		}
+	public ResponseEntity<?> remover(@RequestParam(required = true) Long id) {
+		medicoService.tornarInativo(id);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }
