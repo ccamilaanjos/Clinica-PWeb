@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.pweb.consulta.clients.EmailClient;
 import com.pweb.consulta.clients.EmailDTO;
+import com.pweb.consulta.clients.MedicoClient;
 import com.pweb.consulta.clients.MedicoGetDTO;
+import com.pweb.consulta.clients.PacienteClient;
 import com.pweb.consulta.clients.PacienteGetDTO;
 import com.pweb.consulta.dtos.ConsultaCancelDTO;
 import com.pweb.consulta.dtos.ConsultaCreateDTO;
@@ -36,6 +38,13 @@ public class ConsultaService {
 	private ConsultaRepository consultaRepository;
 	@Autowired
 	private EmailClient emailClient;
+	@Autowired
+	private PacienteClient pacienteClient;
+	@Autowired
+	private MedicoClient medicoClient;
+	
+	private final String MARCACAO = "Marcação de Consulta";
+	private final String CANCELAMENTO = "Cancelamento de Consulta";	
 
 	public ConsultaDTO marcarConsulta(ConsultaCreateDTO consultaForm)
 			throws ClinicaUnavailableException, ConflictingScheduleException,
@@ -55,7 +64,7 @@ public class ConsultaService {
 		Consulta consulta = new Consulta(paciente.id(), medico.id(), data, horario);
 		consultaRepository.save(consulta);
 		
-		enviarEmailAoPaciente(paciente.paciente(), medico.medico(), consulta);
+		enviarEmailAoPaciente(paciente.paciente(), medico.medico(), consulta, MARCACAO);
 		return new ConsultaDTO(consulta, paciente.id(), medico.id());
 	}
 		
@@ -68,24 +77,67 @@ public class ConsultaService {
 		
 		consulta.setMotivoCancelamento(motivo);
 		consultaRepository.save(consulta);
+		
+
+		PacienteGetDTO paciente = pacienteClient.buscarAtivoPorId(consulta.getPaciente()).getBody();
+		MedicoGetDTO medico = medicoClient.buscarAtivoPorId(consulta.getMedico()).getBody();
+		enviarEmailAoPaciente(paciente, medico, consulta, CANCELAMENTO);
 	}
 	
-	private void enviarEmailAoPaciente(PacienteGetDTO paciente, MedicoGetDTO medico, Consulta consulta) {	
+	private void enviarEmailAoPaciente(PacienteGetDTO paciente, MedicoGetDTO medico, Consulta consulta, String subject) {	
 		String mailTo = paciente.email();
 		String mailFrom = "camila003hm@gmail.com";
-		String subject = "Marcação de Consulta";
+		
 		Locale locale = Locale.getDefault();
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy", locale);
         String date = consulta.getData().format(formatter);
-		
-		StringBuilder text = new StringBuilder();
-		text.append("Olá, " + paciente.nome() + "!\n");
-		text.append("A sua consulta foi marcada com sucesso.\n\n");
-		text.append("Data: " + date + "\n");
-		text.append("Horário: " + consulta.getHorario() + "\n");
-		text.append("Dr./Dra. " + medico.nome() + ", CRM " + medico.crm() + "\n\n");
-		text.append("Agradecemos pela preferência. :D");
+        MotivoCancelamento motivoCancelamento = consulta.getMotivoCancelamento();
+        String text = "";
+        
+		if (subject.equalsIgnoreCase(MARCACAO)) {
+			text = setMensagemMarcacao(
+					paciente.nome(),
+					medico.nome(),
+					date,
+					consulta.getHorario(),
+					medico.crm());
+		}
+		else if (subject.equalsIgnoreCase(CANCELAMENTO)) {
+			text = setMensagemCancelamento(
+					paciente.nome(),
+					medico.nome(),
+					date,
+					consulta.getHorario(),
+					medico.crm(),
+					motivoCancelamento);
+		}
 		
 		emailClient.enviarEmail(new EmailDTO(mailTo, mailFrom, subject, new String(text)));
+	}
+	
+	private String setMensagemMarcacao(
+			String nomePaciente, String nomeMedico, String data, LocalTime horario, String crm) {		
+		StringBuilder text = new StringBuilder();
+		text.append("Olá, " + nomePaciente + "!\n");
+		text.append("A sua consulta foi marcada com sucesso.\n\n");
+		text.append("Data: " + data + "\n");
+		text.append("Horário: " + horario + "\n");
+		text.append("Dr(a). " + nomeMedico + ", CRM " + crm + "\n\n");
+		text.append("Agradecemos pela preferência. :D\n");
+		text.append("Enviado por CLINICA PWEB");
+		
+		return new String(text);
+	}
+	
+	private String setMensagemCancelamento(
+			String nomePaciente, String nomeMedico, String data, LocalTime horario, String crm, MotivoCancelamento motivoCancelamento) {
+		StringBuilder text = new StringBuilder();
+		text.append("Olá, " + nomePaciente + "!\n");
+		text.append("A sua consulta com o(a) Dr(a) " + nomeMedico + " no dia " + data + " às " + horario + " foi desmarcada.\n");
+		text.append("O motivo declarado foi: " + motivoCancelamento.toString() + "\n\n");
+		text.append("Agradecemos pela preferência. :D\n");
+		text.append("Enviado por CLINICA PWEB");
+		
+		return new String(text);
 	}
 }
