@@ -47,9 +47,9 @@ public class PacienteController implements PessoaController<PacientePostDTO, Pac
 	}
 	
 	@GetMapping("/")
-	public ResponseEntity<?> buscarAtivoPorId(@RequestParam(required=true) Long id) {
-		pacienteService.buscarPacienteAtivo(id);
-		return new ResponseEntity<>(HttpStatus.OK);
+	public ResponseEntity<PacienteGetDTO> buscarAtivoPorId(@RequestParam(required=true) Long id) {
+		PacienteGetDTO paciente = new PacienteGetDTO(pacienteService.buscarPacienteAtivo(id));
+		return new ResponseEntity<PacienteGetDTO>(paciente, HttpStatus.OK);
 	}
 
 	@PostMapping

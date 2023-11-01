@@ -52,9 +52,9 @@ public class MedicoController {
 	}
 
 	@GetMapping("/")
-	public ResponseEntity<?> buscarAtivoPorId(@RequestParam(required = true) Long id) {
-		medicoService.buscarMedicoAtivo(id);
-		return new ResponseEntity<>(HttpStatus.OK);
+	public ResponseEntity<MedicoGetDTO> buscarAtivoPorId(@RequestParam(required = true) Long id) {
+		MedicoGetDTO medico = new MedicoGetDTO(medicoService.buscarMedicoAtivo(id));
+		return new ResponseEntity<MedicoGetDTO>(medico, HttpStatus.OK);
 	}
 
 	@PostMapping

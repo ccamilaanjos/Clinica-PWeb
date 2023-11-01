@@ -12,7 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.pweb.consulta.clients.MedicoClient;
+import com.pweb.consulta.clients.MedicoGetDTO;
 import com.pweb.consulta.clients.PacienteClient;
+import com.pweb.consulta.clients.PacienteGetDTO;
+import com.pweb.consulta.dtos.MedicoDTO;
+import com.pweb.consulta.dtos.PacienteDTO;
 import com.pweb.consulta.enums.MotivoCancelamento;
 import com.pweb.consulta.exceptions.ClinicaUnavailableException;
 import com.pweb.consulta.exceptions.ConflictingScheduleException;
@@ -85,32 +89,35 @@ public class ConsultaValidator {
 		return true;
 	}
 	
-	public Long validarPaciente(Long idPaciente, LocalDate data) throws EntityNotFoundException, ConflictingScheduleException {
+	public PacienteDTO validarPaciente(Long idPaciente, LocalDate data) throws EntityNotFoundException, ConflictingScheduleException {
 		// Verifica se o paciente existe e está ativo
-		pacienteClient.buscarAtivoPorId(idPaciente);
+		PacienteGetDTO paciente = pacienteClient.buscarAtivoPorId(idPaciente).getBody();
 		
 		// Verifica se o paciente já tem consulta marcada no dia
 		if(!encontrarPorDataEPaciente(data, idPaciente).isEmpty()) {
 			throw new ConflictingScheduleException("Paciente já tem consulta marcada para este dia");
 		}
 		
-		return idPaciente;
+		return new PacienteDTO(idPaciente, paciente);
 	}
 	
-	public Long validarMedico(Long idMedico, LocalDate data, LocalTime horario, Long idEspecialidade)
+	public MedicoDTO validarMedico(Long idMedico, LocalDate data, LocalTime horario, Long idEspecialidade)
 			throws ConflictingScheduleException, EntityNotFoundException, EmptyListException {
 		if(idMedico != null) {
 			// Verifica se o médico existe e está ativo
-			medicoClient.buscarAtivoPorId(idMedico);
+			MedicoGetDTO medico = medicoClient.buscarAtivoPorId(idMedico).getBody();
 			// Verifica se o médico está disponível neste horário e até que acabe a consulta (1h depois)
 			if(!medicoEstaDisponivel(idMedico, data, horario)) {
 				throw new ConflictingScheduleException("Médico indisponível neste horário");
 			}
-			return idMedico;
+			return new MedicoDTO(idMedico, medico);
 		}
 	
 		// Caso o id do médico não seja enviado, atribui um médico para esta consulta
-		return atribuirMedicoParaConsulta(idEspecialidade, idMedico, data, horario);
+		idMedico = atribuirMedicoParaConsulta(idEspecialidade, idMedico, data, horario);
+		MedicoGetDTO medico = medicoClient.buscarAtivoPorId(idMedico).getBody();
+		
+		return new MedicoDTO(idMedico, medico);
 	}
 
 	/**

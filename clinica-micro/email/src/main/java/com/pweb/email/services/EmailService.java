@@ -18,7 +18,7 @@ public class EmailService {
 	@Autowired
 	private EmailRepository emailRepository;
 	@Autowired
-	private JavaMailSender emailSender;
+	private JavaMailSender javaMailSender;
 
 	public Email enviarEmail(EmailDTO emailDto) {
 		Email data = new Email(emailDto);
@@ -31,7 +31,7 @@ public class EmailService {
 		message.setText(emailDto.mailText());
 		data.setStatus(EmailStatus.SENT);
 		
-		emailSender.send(message);
+		javaMailSender.send(message);
 		emailRepository.save(data);
 		return data;
 	}
