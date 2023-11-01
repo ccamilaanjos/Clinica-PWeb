@@ -16,23 +16,23 @@ import com.pweb.email.repositories.EmailRepository;
 public class EmailService {
 
 	@Autowired
-	private EmailRepository emailRepository;
-	@Autowired
 	private JavaMailSender javaMailSender;
+	@Autowired
+	private EmailRepository emailRepository;
 
 	public Email enviarEmail(EmailDTO emailDto) {
-		Email data = new Email(emailDto);
-		data.setSendDateEmail(LocalDateTime.now());
+		Email email = new Email(emailDto);
+		email.setSendDateEmail(LocalDateTime.now());
 		SimpleMailMessage message = new SimpleMailMessage();
 		
 		message.setFrom(emailDto.mailFrom());
 		message.setTo(emailDto.mailTo());
 		message.setSubject(emailDto.mailSubject());
 		message.setText(emailDto.mailText());
-		data.setStatus(EmailStatus.SENT);
-		
 		javaMailSender.send(message);
-		emailRepository.save(data);
-		return data;
+		
+		email.setStatus(EmailStatus.SENT);
+		emailRepository.save(email);
+		return email;
 	}
 }

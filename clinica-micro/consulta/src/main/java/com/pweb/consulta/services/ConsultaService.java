@@ -5,6 +5,7 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -36,12 +37,14 @@ public class ConsultaService {
 	private ConsultaValidator consultaValidator;
 	@Autowired
 	private ConsultaRepository consultaRepository;
-	@Autowired
-	private EmailClient emailClient;
+//	@Autowired
+//	private EmailClient emailClient;
 	@Autowired
 	private PacienteClient pacienteClient;
 	@Autowired
 	private MedicoClient medicoClient;
+	@Autowired
+	private RabbitTemplate rabbitTemplate;
 	
 	private final String MARCACAO = "Marcação de Consulta";
 	private final String CANCELAMENTO = "Cancelamento de Consulta";	
@@ -112,7 +115,8 @@ public class ConsultaService {
 					motivoCancelamento);
 		}
 		
-		emailClient.enviarEmail(new EmailDTO(mailTo, mailFrom, subject, new String(text)));
+		rabbitTemplate.convertAndSend("emails.to-send", new EmailDTO(mailFrom, mailTo, subject, new String(text)));
+		// emailClient.enviarEmail(new EmailDTO(mailTo, mailFrom, subject, new String(text)));
 	}
 	
 	private String setMensagemMarcacao(
