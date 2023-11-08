@@ -9,7 +9,6 @@ import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.pweb.consulta.clients.EmailClient;
 import com.pweb.consulta.clients.EmailDTO;
 import com.pweb.consulta.clients.MedicoClient;
 import com.pweb.consulta.clients.MedicoGetDTO;
@@ -37,8 +36,6 @@ public class ConsultaService {
 	private ConsultaValidator consultaValidator;
 	@Autowired
 	private ConsultaRepository consultaRepository;
-//	@Autowired
-//	private EmailClient emailClient;
 	@Autowired
 	private PacienteClient pacienteClient;
 	@Autowired
@@ -116,7 +113,6 @@ public class ConsultaService {
 		}
 		
 		rabbitTemplate.convertAndSend("emails.to-send", new EmailDTO(mailFrom, mailTo, subject, new String(text)));
-		// emailClient.enviarEmail(new EmailDTO(mailTo, mailFrom, subject, new String(text)));
 	}
 	
 	private String setMensagemMarcacao(
