@@ -63,7 +63,15 @@ public class MedicoService implements PessoaService<MedicoGetDTO, MedicoPostDTO,
 	@Override
 	public MedicoDTO atualizar(Long id, MedicoPutDTO medicoForm) throws MedicoNotFoundException {
 		Medico medico = medicoRepository.findById(id).orElseThrow(MedicoNotFoundException::new);
-		
+		return atualizarCampos(medico, medicoForm);
+	}
+	
+	public MedicoDTO atualizar(String crm, MedicoPutDTO medicoForm) throws MedicoNotFoundException {
+		Medico medico = medicoRepository.findByCrm(crm).orElseThrow(MedicoNotFoundException::new);
+		return atualizarCampos(medico, medicoForm);
+	}
+	
+	public MedicoDTO atualizarCampos(Medico medico, MedicoPutDTO medicoForm) {
 		medico.setNome(medicoForm.nome());
 		medico.setTelefone(medicoForm.telefone());
 
@@ -71,14 +79,22 @@ public class MedicoService implements PessoaService<MedicoGetDTO, MedicoPostDTO,
 		Long endereco = enderecoClient.atualizar(enderecoForm).getBody();
 		medico.setEndereco(endereco);
 		
-		medicoRepository.save(medico);		
+		medicoRepository.save(medico);
 		return new MedicoDTO(medico);
 	}
 
 	@Override
-	public void tornarInativo(Long id) throws EntityNotFoundException {
+	public void remover(Long id) throws EntityNotFoundException {
 		Medico medico = medicoRepository.findById(id).orElseThrow(MedicoNotFoundException::new);
-
+		tornarInativo(medico);
+	}
+	
+	public void remover(String crm) throws EntityNotFoundException {
+		Medico medico = medicoRepository.findByCrm(crm).orElseThrow(MedicoNotFoundException::new);
+		tornarInativo(medico);
+	}
+	
+	public void tornarInativo(Medico medico) {
 		medico.setAtivo(false);
 		medicoRepository.save(medico);
 	}

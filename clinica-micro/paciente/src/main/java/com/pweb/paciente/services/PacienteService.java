@@ -51,13 +51,11 @@ public class PacienteService implements PessoaService<PacienteGetDTO, PacientePo
 	@Override
 	public PacienteDTO atualizar(Long id, PacientePutDTO pacienteForm) throws PacienteNotFoundException {
 		Paciente paciente = pacienteRepository.findById(id).orElseThrow(PacienteNotFoundException::new);
-		
 		return atualizarCampos(paciente, pacienteForm);
 	}
 	
 	public PacienteDTO atualizar(String cpf, PacientePutDTO pacienteForm) throws PacienteNotFoundException {
 		Paciente paciente = pacienteRepository.findByCpf(cpf).orElseThrow(PacienteNotFoundException::new);
-		
 		return atualizarCampos(paciente, pacienteForm);
 	}
 	
@@ -74,16 +72,17 @@ public class PacienteService implements PessoaService<PacienteGetDTO, PacientePo
 	}
 	
 	@Override
-	public void tornarInativo(Long id) throws PacienteNotFoundException {
+	public void remover(Long id) throws PacienteNotFoundException {
 		Paciente paciente = pacienteRepository.findById(id).orElseThrow(PacienteNotFoundException::new);
-
-		paciente.setAtivo(false);
-		pacienteRepository.save(paciente);
+		tornarInativo(paciente);
 	}
 	
-	public void tornarInativo(String cpf) throws PacienteNotFoundException {
+	public void remover(String cpf) throws PacienteNotFoundException {
 		Paciente paciente = pacienteRepository.findByCpf(cpf).orElseThrow(PacienteNotFoundException::new);
-
+		tornarInativo(paciente);
+	}
+	
+	public void tornarInativo(Paciente paciente) {
 		paciente.setAtivo(false);
 		pacienteRepository.save(paciente);
 	}

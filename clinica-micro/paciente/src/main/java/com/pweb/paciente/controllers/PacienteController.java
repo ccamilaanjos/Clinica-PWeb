@@ -78,13 +78,13 @@ public class PacienteController implements PessoaController<PacientePostDTO, Pac
 	@DeleteMapping("/")
 	@Override
 	public ResponseEntity<?> remover(@RequestParam(required=true) Long id) {
-		pacienteService.tornarInativo(id);
+		pacienteService.remover(id);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/{cpf}")
 	public ResponseEntity<?> remover(@PathVariable(required=true) String cpf) {
-		pacienteService.tornarInativo(cpf);
+		pacienteService.remover(cpf);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }
