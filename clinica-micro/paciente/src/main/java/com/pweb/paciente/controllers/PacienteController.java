@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -66,11 +67,24 @@ public class PacienteController implements PessoaController<PacientePostDTO, Pac
 		PacienteDTO paciente = pacienteService.atualizar(id, pacienteForm);
 		return new ResponseEntity<PacienteDTO>(paciente, HttpStatus.OK);
 	}
+	
+	@PutMapping("/{cpf}")
+	public ResponseEntity<?> atualizar(@PathVariable(required=true) String cpf,
+			@Valid @RequestBody PacientePutDTO pacienteForm) {
+		PacienteDTO paciente = pacienteService.atualizar(cpf, pacienteForm);
+		return new ResponseEntity<PacienteDTO>(paciente, HttpStatus.OK);
+	}
 
 	@DeleteMapping("/")
 	@Override
 	public ResponseEntity<?> remover(@RequestParam(required=true) Long id) {
 		pacienteService.tornarInativo(id);
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/{cpf}")
+	public ResponseEntity<?> remover(@PathVariable(required=true) String cpf) {
+		pacienteService.tornarInativo(cpf);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 }
