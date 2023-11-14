@@ -724,7 +724,7 @@
 							"response": []
 						},
 						{
-							"name": "Update Pacientes",
+							"name": "Update Pacientes ID",
 							"event": [
 								{
 									"listen": "test",
@@ -773,7 +773,57 @@
 							"response": []
 						},
 						{
-							"name": "Delete Pacientes",
+							"name": "Update Pacientes CPF",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Successful PUT request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nome\": \"Camila V. O. dos Anjos\",\n    \"telefone\": \"71977777777\",\n    \"endereco\": {\n        \"logradouro\": \"R. Emídio dos Santos\",\n        \"numero\": \"S/N\",\n        \"complemento\": \"\",\n        \"bairro\": \"BARBALHO\",\n        \"uf\": \"BA\",\n        \"cidade\": \"SALVADOR\",\n        \"cep\": \"40301015\"\n    }\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/paciente-ms/pacientes/98765432100",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"paciente-ms",
+										"pacientes",
+										"98765432100"
+									],
+									"query": [
+										{
+											"key": "cpf",
+											"value": "98765432100",
+											"disabled": true
+										}
+									]
+								},
+								"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Pacientes ID",
 							"event": [
 								{
 									"listen": "test",
@@ -801,11 +851,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/pacientes/?id=3",
+									"raw": "{{base_url}}/paciente-ms/pacientes/?id=3",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
+										"paciente-ms",
 										"pacientes",
 										""
 									],
@@ -814,6 +865,49 @@
 											"key": "id",
 											"value": "3"
 										}
+									]
+								},
+								"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Pacientes CPF",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Successful DELETE request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/paciente-ms/pacientes/98765432100",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"paciente-ms",
+										"pacientes",
+										"98765432100"
 									]
 								},
 								"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
@@ -963,7 +1057,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"nome\": \"Jaqueline Magalhães Ribeiro\",\n    \"email\": \"jaquemagalhaes@gmail.com\",\n    \"telefone\": \"71993465268\",\n    \"endereco\": {\n        \"logradouro\": \"Rua Augusto Viana\",\n        \"numero\": \"s/n\",\n        \"complemento\": \"\",\n        \"bairro\": \"Canela\",\n        \"cidade\": \"Salvador\",\n        \"uf\": \"BA\",\n        \"cep\": \" 40110909\"\n    },\n    \"crm\": \" 29278-BA\",\n    \"especialidade\": \"CARDIOLOGIA\"\n}",
+									"raw": "{\n    \"nome\": \"Jaqueline Magalhães Ribeiro\",\n    \"email\": \"jaquemagalhaes@gmail.com\",\n    \"telefone\": \"71993465268\",\n    \"endereco\": {\n        \"logradouro\": \"Rua Augusto Viana\",\n        \"numero\": \"s/n\",\n        \"complemento\": \"\",\n        \"bairro\": \"Canela\",\n        \"cidade\": \"Salvador\",\n        \"uf\": \"BA\",\n        \"cep\": \" 40110909\"\n    },\n    \"crm\": \"29278-BA\",\n    \"especialidade\": \"CARDIOLOGIA\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -985,7 +1079,7 @@
 							"response": []
 						},
 						{
-							"name": "Update Médicos",
+							"name": "Update Médicos ID",
 							"event": [
 								{
 									"listen": "test",
@@ -1005,7 +1099,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"nome\": \"Jaqueline Magalhães Ribeiro\",\n    \"email\": \"jaquemagalhaes@gmail.com\",\n    \"telefone\": \"71993465268\",\n    \"endereco\": {\n        \"logradouro\": \"Rua Augusto Viana\",\n        \"numero\": \"14\",\n        \"complemento\": \"\",\n        \"bairro\": \"Canela\",\n        \"cidade\": \"Salvador\",\n        \"uf\": \"BA\",\n        \"cep\": \" 40110909\"\n    },\n    \"crm\": \" 29278-BA\",\n    \"especialidade\": \"CARDIOLOGIA\"\n}",
+									"raw": "{\n    \"nome\": \"Jaqueline Magalhães Ribeiro\",\n    \"email\": \"jaquemagalhaes@gmail.com\",\n    \"telefone\": \"71993465268\",\n    \"endereco\": {\n        \"logradouro\": \"Rua Augusto Viana\",\n        \"numero\": \"14\",\n        \"complemento\": \"\",\n        \"bairro\": \"Canela\",\n        \"cidade\": \"Salvador\",\n        \"uf\": \"BA\",\n        \"cep\": \" 40110909\"\n    },\n    \"crm\": \"29278-BA\",\n    \"especialidade\": \"CARDIOLOGIA\"\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -1034,7 +1128,50 @@
 							"response": []
 						},
 						{
-							"name": "Delete Médicos",
+							"name": "Update Médicos CRM",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Successful PUT request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200, 201, 204]);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"nome\": \"Jaqueline Magalhães Ribeiro\",\n    \"email\": \"jaquemagalhaes@gmail.com\",\n    \"telefone\": \"71993465268\",\n    \"endereco\": {\n        \"logradouro\": \"Rua Augusto Viana\",\n        \"numero\": \"14\",\n        \"complemento\": \"\",\n        \"bairro\": \"Canela\",\n        \"cidade\": \"Salvador\",\n        \"uf\": \"BA\",\n        \"cep\": \" 40110909\"\n    },\n    \"crm\": \"29278-BA\",\n    \"especialidade\": \"CARDIOLOGIA\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/medico-ms/medicos/29278-BA",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"medico-ms",
+										"medicos",
+										"29278-BA"
+									]
+								},
+								"description": "This is a PUT request and it is used to overwrite an existing piece of data. For instance, after you create an entity with a POST request, you may want to modify that later. You can do that using a PUT request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful PUT request typically returns a `200 OK`, `201 Created`, or `204 No Content` response code."
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Médicos ID",
 							"event": [
 								{
 									"listen": "test",
@@ -1083,6 +1220,49 @@
 							"response": []
 						},
 						{
+							"name": "Delete Médicos CRM",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Successful DELETE request\", function () {",
+											"    pm.expect(pm.response.code).to.be.oneOf([200, 202, 204]);",
+											"});",
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/medico-ms/medicos/29278-BA",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"medico-ms",
+										"medicos",
+										"29278-BA"
+									]
+								},
+								"description": "This is a DELETE request, and it is used to delete data that was previously created via a POST request. You typically identify the entity being updated by including an identifier in the URL (eg. `id=1`).\n\nA successful DELETE request typically returns a `200 OK`, `202 Accepted`, or `204 No Content` response code."
+							},
+							"response": []
+						},
+						{
 							"name": "Especialidade",
 							"request": {
 								"method": "GET",
@@ -1118,7 +1298,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"idPaciente\": 1,\r\n    \"idMedico\": null,\r\n    \"idEspecialidade\": 2,\r\n    \"horario\": \"16:00:00\",\r\n    \"data\": \"2023-11-04\"\r\n}",
+									"raw": "{\r\n    \"idPaciente\": 1,\r\n    \"idMedico\": null,\r\n    \"idEspecialidade\": 2,\r\n    \"horario\": \"16:00:00\",\r\n    \"data\": \"2023-11-16\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
