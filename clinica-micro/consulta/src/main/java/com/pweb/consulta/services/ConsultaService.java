@@ -17,8 +17,6 @@ import com.pweb.consulta.clients.PacienteGetDTO;
 import com.pweb.consulta.dtos.ConsultaCancelDTO;
 import com.pweb.consulta.dtos.ConsultaCreateDTO;
 import com.pweb.consulta.dtos.ConsultaDTO;
-import com.pweb.consulta.dtos.MedicoDTO;
-import com.pweb.consulta.dtos.PacienteDTO;
 import com.pweb.consulta.enums.MotivoCancelamento;
 import com.pweb.consulta.exceptions.ClinicaUnavailableException;
 import com.pweb.consulta.exceptions.ConflictingScheduleException;
@@ -50,21 +48,21 @@ public class ConsultaService {
 			throws ClinicaUnavailableException, ConflictingScheduleException,
 			EntityNotFoundException, EmptyListException {
 		
-		Long idMedico = consultaForm.idMedico();
-		Long idPaciente = consultaForm.idPaciente();
-		Long idEspecialidade = consultaForm.idEspecialidade();
+		String crm = consultaForm.crm();
+		String cpf = consultaForm.cpf();
+		String especialidade = consultaForm.especialidade();
 		LocalDate data = consultaForm.data();
 		LocalTime horario = consultaForm.horario().withNano(0);
 		
 		ConsultaValidator.validarRestricoesDeTempoMarcacao(data, horario);
 		
-		PacienteDTO paciente = consultaValidator.validarPaciente(idPaciente, data);
-		MedicoDTO medico = consultaValidator.validarMedico(idMedico, data, horario, idEspecialidade);
+		PacienteGetDTO paciente = consultaValidator.validarPaciente(cpf, data);
+		MedicoGetDTO medico = consultaValidator.validarMedico(crm, data, horario, especialidade);
 				
 		Consulta consulta = new Consulta(paciente.id(), medico.id(), data, horario);
 		consultaRepository.save(consulta);
 		
-		enviarEmailAoPaciente(paciente.paciente(), medico.medico(), consulta, MARCACAO);
+		enviarEmailAoPaciente(paciente, medico, consulta, MARCACAO);
 		return new ConsultaDTO(consulta, paciente.id(), medico.id());
 	}
 		

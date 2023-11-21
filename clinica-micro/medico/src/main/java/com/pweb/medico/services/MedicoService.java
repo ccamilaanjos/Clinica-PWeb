@@ -99,8 +99,12 @@ public class MedicoService implements PessoaService<MedicoGetDTO, MedicoPostDTO,
 		medicoRepository.save(medico);
 	}
 	
-	public Medico buscarMedicoAtivo(Long idMedico) throws EntityNotFoundException {
+	public Medico buscarMedicoIdAtivo(Long idMedico) throws EntityNotFoundException {
 		return medicoRepository.findByIdAndAtivoTrue(idMedico).orElseThrow(MedicoNotFoundException::new);
+	}
+	
+	public Medico buscarMedicoCrmAtivo(String crm) throws EntityNotFoundException {
+		return medicoRepository.findByCrmAndAtivoTrue(crm).orElseThrow(MedicoNotFoundException::new);
 	}
 	
 	public List<Long> buscarMedicosAtivosPorEspecialidade(Long idEspecialidade) {

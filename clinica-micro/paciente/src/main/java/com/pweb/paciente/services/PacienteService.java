@@ -87,7 +87,11 @@ public class PacienteService implements PessoaService<PacienteGetDTO, PacientePo
 		pacienteRepository.save(paciente);
 	}
 	
-	public Paciente buscarPacienteAtivo(Long idPaciente) throws PacienteNotFoundException {
+	public Paciente buscarPacienteIDAtivo(Long idPaciente) throws PacienteNotFoundException {
 		return pacienteRepository.findByIdAndAtivoTrue(idPaciente).orElseThrow(PacienteNotFoundException::new);
+	}
+	
+	public Paciente buscarPacienteCPFAtivo(String cpf) throws PacienteNotFoundException {
+		return pacienteRepository.findByCpfAndAtivoTrue(cpf).orElseThrow(PacienteNotFoundException::new);
 	}
 }

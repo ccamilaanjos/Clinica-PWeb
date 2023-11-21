@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.pweb.medico.dtos.MedicoConsultaDTO;
 import com.pweb.medico.dtos.MedicoDTO;
 import com.pweb.medico.dtos.MedicoGetDTO;
 import com.pweb.medico.dtos.MedicoPostDTO;
@@ -56,9 +57,15 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoG
 	}
 
 	@GetMapping("/")
-	public ResponseEntity<MedicoGetDTO> buscarAtivoPorId(@RequestParam(required = true) Long id) {
-		MedicoGetDTO medico = new MedicoGetDTO(medicoService.buscarMedicoAtivo(id));
-		return new ResponseEntity<MedicoGetDTO>(medico, HttpStatus.OK);
+	public ResponseEntity<MedicoConsultaDTO> buscarAtivoPorId(@RequestParam(required = true) Long id) {
+		MedicoConsultaDTO medico = new MedicoConsultaDTO(medicoService.buscarMedicoIdAtivo(id));
+		return new ResponseEntity<MedicoConsultaDTO>(medico, HttpStatus.OK);
+	}
+	
+	@GetMapping("/{crm}")
+	public ResponseEntity<MedicoConsultaDTO> buscarAtivoPorCrm(@PathVariable(required = true) String crm) {
+		MedicoConsultaDTO medico = new MedicoConsultaDTO(medicoService.buscarMedicoCrmAtivo(crm));
+		return new ResponseEntity<MedicoConsultaDTO>(medico, HttpStatus.OK);
 	}
 
 	@PostMapping

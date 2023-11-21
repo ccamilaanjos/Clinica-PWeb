@@ -16,6 +16,7 @@ import com.pweb.medico.models.Medico;
 public interface MedicoRepository extends JpaRepository<Medico, Long> {
 	public Optional<Medico> findByCrm(String crm);
 	public Optional<Medico> findByIdAndAtivoTrue(Long id);
+	public Optional<Medico> findByCrmAndAtivoTrue(String crm);
 	public Page<Medico> findAllByAtivoTrue(Pageable pageable);
 	public Optional<List<Medico>> findByEspecialidadeOrderByNomeAsc(Long especialidade);
 	public Optional<List<Medico>> findByEspecialidadeAndAtivoTrueOrderByNomeAsc(Long especialidade);

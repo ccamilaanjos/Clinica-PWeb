@@ -13,5 +13,6 @@ import com.pweb.paciente.models.Paciente;
 public interface PacienteRepository extends JpaRepository<Paciente, Long>{
 	public Optional<Paciente> findByCpf(String cpf);
 	public Optional<Paciente> findByIdAndAtivoTrue(Long id);
+	public Optional<Paciente> findByCpfAndAtivoTrue(String cpf);
 	public Page<Paciente> findAllByAtivoTrue(Pageable pageable);
 }

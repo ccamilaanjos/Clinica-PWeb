@@ -1,3 +1,3 @@
 package com.pweb.consulta.clients;
 
-public record PacienteGetDTO(String nome, String cpf, String email) {}
+public record PacienteGetDTO(Long id, String nome, String email) {}
