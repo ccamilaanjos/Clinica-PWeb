@@ -1298,7 +1298,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"idPaciente\": 1,\r\n    \"idMedico\": null,\r\n    \"idEspecialidade\": 2,\r\n    \"horario\": \"16:00:00\",\r\n    \"data\": \"2023-11-16\"\r\n}",
+									"raw": "{\r\n    \"cpf\": \"98765432100\",\r\n    \"crm\": null,\r\n    \"especialidade\": \"CARDIOLOGIA\",\r\n    \"horario\": \"16:00:00\",\r\n    \"data\": \"2023-11-29\"\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
