@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import com.pweb.endereco.dtos.EnderecoPostDTO;
 import com.pweb.endereco.dtos.EnderecoPutDTO;
+import com.pweb.endereco.exceptions.EnderecoNotFoundException;
 import com.pweb.endereco.models.Endereco;
 import com.pweb.endereco.repositories.EnderecoRepository;
 
@@ -15,6 +16,10 @@ public class EnderecoService {
 	@Autowired
 	private EnderecoRepository enderecoRepository;
 
+	public Endereco buscarEndereco(Long id) {
+		return enderecoRepository.findById(id).orElseThrow(EnderecoNotFoundException :: new);
+	}
+	
 	public Optional<Endereco> buscarEnderecoExistente(Endereco endereco) {
 		return enderecoRepository.findByLogradouroAndNumeroAndComplementoAndBairroAndCidadeAndUfAndCepIgnoreCase(
 				endereco.getLogradouro(),
