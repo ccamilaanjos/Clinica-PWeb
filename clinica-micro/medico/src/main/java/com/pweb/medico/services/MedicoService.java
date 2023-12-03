@@ -37,9 +37,16 @@ public class MedicoService implements PessoaService<MedicoGetDTO, MedicoPostDTO,
 	@Override
 	public Page<MedicoGetDTO> getPagina(Pageable pageable, String type) {
 		if(type.equalsIgnoreCase("all")) {
-			return medicoRepository.findAll(pageable).map(medico -> new MedicoGetDTO(medico));			
+			return medicoRepository.findAll(pageable).map(medico -> {
+				Especialidade especialidade = especialidadeService.buscarPorId(medico.getEspecialidade());
+				return new MedicoGetDTO(medico, especialidade.getTitulo());
+			});
 		}
-		return medicoRepository.findAllByAtivoTrue(pageable).map(medico -> new MedicoGetDTO(medico));
+		
+		return medicoRepository.findAllByAtivoTrue(pageable).map(medico -> {
+			Especialidade especialidade = especialidadeService.buscarPorId(medico.getEspecialidade());
+			return new MedicoGetDTO(medico, especialidade.getTitulo());
+		});
 	}
 	
 
