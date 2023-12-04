@@ -9,9 +9,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.pweb.medico.clients.EnderecoClient;
+import com.pweb.medico.clients.EnderecoGetDTO;
 import com.pweb.medico.clients.EnderecoPutDTO;
 import com.pweb.medico.dtos.MedicoDTO;
 import com.pweb.medico.dtos.MedicoGetDTO;
+import com.pweb.medico.dtos.MedicoGetDTO2;
 import com.pweb.medico.dtos.MedicoPostDTO;
 import com.pweb.medico.dtos.MedicoPutDTO;
 import com.pweb.medico.exceptions.DuplicateMedicoException;
@@ -116,5 +118,12 @@ public class MedicoService implements PessoaService<MedicoGetDTO, MedicoPostDTO,
 	
 	public List<Long> buscarMedicosAtivosPorEspecialidade(Long idEspecialidade) {
 		return medicoRepository.findAllIdsByAtivoTrueAndEspecialidade(idEspecialidade);
+	}
+	
+	public MedicoGetDTO2 encontrarDados(String crm) {
+		Medico medico = buscarMedicoCrmAtivo(crm);
+		Especialidade especialidade = especialidadeService.buscarPorId(medico.getEspecialidade());
+		EnderecoGetDTO endereco = enderecoClient.buscar(medico.getEndereco()).getBody();
+		return new MedicoGetDTO2(medico, especialidade.getTitulo(), endereco);
 	}
 }

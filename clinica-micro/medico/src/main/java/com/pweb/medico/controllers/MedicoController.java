@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pweb.medico.dtos.MedicoConsultaDTO;
 import com.pweb.medico.dtos.MedicoDTO;
 import com.pweb.medico.dtos.MedicoGetDTO;
+import com.pweb.medico.dtos.MedicoGetDTO2;
 import com.pweb.medico.dtos.MedicoPostDTO;
 import com.pweb.medico.dtos.MedicoPutDTO;
 import com.pweb.medico.services.MedicoService;
@@ -56,10 +57,16 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoG
 		return new ResponseEntity<List<Long>>(medicos, HttpStatus.OK);
 	}
 
-	@GetMapping("/")
-	public ResponseEntity<MedicoConsultaDTO> buscarAtivoPorId(@RequestParam(required = true) Long id) {
-		MedicoConsultaDTO medico = new MedicoConsultaDTO(medicoService.buscarMedicoIdAtivo(id));
-		return new ResponseEntity<MedicoConsultaDTO>(medico, HttpStatus.OK);
+//	@GetMapping("/")
+//	public ResponseEntity<MedicoConsultaDTO> buscarAtivoPorId(@RequestParam(required = true) Long id) {
+//		MedicoConsultaDTO medico = new MedicoConsultaDTO(medicoService.buscarMedicoIdAtivo(id));
+//		return new ResponseEntity<MedicoConsultaDTO>(medico, HttpStatus.OK);
+//	}
+	
+	@GetMapping("/data/{crm}")
+	public ResponseEntity<MedicoGetDTO2> buscarDadosPacienteAtivoPorCpf(@PathVariable(required=true) String crm) {
+		MedicoGetDTO2 medico = medicoService.encontrarDados(crm);
+		return new ResponseEntity<MedicoGetDTO2>(medico, HttpStatus.OK);
 	}
 	
 	@GetMapping("/{crm}")
