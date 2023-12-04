@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.pweb.paciente.dtos.PacienteConsultaDTO;
 import com.pweb.paciente.dtos.PacienteDTO;
 import com.pweb.paciente.dtos.PacienteGetDTO;
+import com.pweb.paciente.dtos.PacienteGetDTO2;
 import com.pweb.paciente.dtos.PacientePostDTO;
 import com.pweb.paciente.dtos.PacientePutDTO;
 import com.pweb.paciente.services.PacienteService;
@@ -48,10 +49,16 @@ public class PacienteController implements PessoaController<PacientePostDTO, Pac
 		return new ResponseEntity<Page<PacienteGetDTO>>(pacienteService.getPagina(pageable, "active"), HttpStatus.OK);
 	}
 	
-	@GetMapping("/")
-	public ResponseEntity<PacienteConsultaDTO> buscarAtivoPorId(@RequestParam(required=true) Long id) {
-		PacienteConsultaDTO paciente = new PacienteConsultaDTO(pacienteService.buscarPacienteIDAtivo(id));
-		return new ResponseEntity<PacienteConsultaDTO>(paciente, HttpStatus.OK);
+//	@GetMapping("/")
+//	public ResponseEntity<PacienteConsultaDTO> buscarAtivoPorId(@RequestParam(required=true) Long id) {
+//		PacienteConsultaDTO paciente = new PacienteConsultaDTO(pacienteService.buscarPacienteIDAtivo(id));
+//		return new ResponseEntity<PacienteConsultaDTO>(paciente, HttpStatus.OK);
+//	}
+	
+	@GetMapping("/data/{cpf}")
+	public ResponseEntity<PacienteGetDTO2> buscarDadosPacienteAtivoPorCpf(@PathVariable(required=true) String cpf) {
+		PacienteGetDTO2 paciente = pacienteService.encontrarDados(cpf);
+		return new ResponseEntity<PacienteGetDTO2>(paciente, HttpStatus.OK);
 	}
 	
 	@GetMapping("/{cpf}")

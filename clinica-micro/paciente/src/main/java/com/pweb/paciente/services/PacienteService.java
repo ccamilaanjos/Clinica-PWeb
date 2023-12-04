@@ -8,9 +8,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.pweb.paciente.clients.EnderecoClient;
+import com.pweb.paciente.clients.EnderecoGetDTO;
 import com.pweb.paciente.clients.EnderecoPutDTO;
 import com.pweb.paciente.dtos.PacienteDTO;
 import com.pweb.paciente.dtos.PacienteGetDTO;
+import com.pweb.paciente.dtos.PacienteGetDTO2;
 import com.pweb.paciente.dtos.PacientePostDTO;
 import com.pweb.paciente.dtos.PacientePutDTO;
 import com.pweb.paciente.exceptions.DuplicatePacienteException;
@@ -93,5 +95,11 @@ public class PacienteService implements PessoaService<PacienteGetDTO, PacientePo
 	
 	public Paciente buscarPacienteCPFAtivo(String cpf) throws PacienteNotFoundException {
 		return pacienteRepository.findByCpfAndAtivoTrue(cpf).orElseThrow(PacienteNotFoundException::new);
+	}
+	
+	public PacienteGetDTO2 encontrarDados(String cpf) {
+		Paciente paciente = buscarPacienteCPFAtivo(cpf);
+		EnderecoGetDTO endereco = enderecoClient.buscar(paciente.getEndereco()).getBody();
+		return new PacienteGetDTO2(paciente, endereco);
 	}
 }
