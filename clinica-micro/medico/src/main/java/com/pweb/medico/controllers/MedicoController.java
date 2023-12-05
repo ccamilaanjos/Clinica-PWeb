@@ -57,11 +57,11 @@ public class MedicoController implements PessoaController<MedicoPostDTO, MedicoG
 		return new ResponseEntity<List<Long>>(medicos, HttpStatus.OK);
 	}
 
-//	@GetMapping("/")
-//	public ResponseEntity<MedicoConsultaDTO> buscarAtivoPorId(@RequestParam(required = true) Long id) {
-//		MedicoConsultaDTO medico = new MedicoConsultaDTO(medicoService.buscarMedicoIdAtivo(id));
-//		return new ResponseEntity<MedicoConsultaDTO>(medico, HttpStatus.OK);
-//	}
+	@GetMapping("/")
+	public ResponseEntity<MedicoConsultaDTO> buscarAtivoPorId(@RequestParam(required = true) Long id) {
+		MedicoConsultaDTO medico = new MedicoConsultaDTO(medicoService.buscarMedicoIdAtivo(id));
+		return new ResponseEntity<MedicoConsultaDTO>(medico, HttpStatus.OK);
+	}
 	
 	@GetMapping("/data/{crm}")
 	public ResponseEntity<MedicoGetDTO2> buscarDadosPacienteAtivoPorCpf(@PathVariable(required=true) String crm) {

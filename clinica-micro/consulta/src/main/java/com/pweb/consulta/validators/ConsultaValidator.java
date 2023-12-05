@@ -101,7 +101,7 @@ public class ConsultaValidator {
 	
 	public MedicoGetDTO validarMedico(String crm, LocalDate data, LocalTime horario, String especialidade)
 			throws ConflictingScheduleException, EntityNotFoundException, EmptyListException {
-		if(crm != null) {
+		if(crm != null && crm != "") {
 			// Verifica se o médico existe e está ativo
 			MedicoGetDTO medico = medicoClient.buscarAtivoPorCrm(crm).getBody();
 			// Verifica se o médico está disponível neste horário e até que acabe a consulta (1h depois)

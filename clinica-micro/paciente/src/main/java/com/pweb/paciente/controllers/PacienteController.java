@@ -49,11 +49,11 @@ public class PacienteController implements PessoaController<PacientePostDTO, Pac
 		return new ResponseEntity<Page<PacienteGetDTO>>(pacienteService.getPagina(pageable, "active"), HttpStatus.OK);
 	}
 	
-//	@GetMapping("/")
-//	public ResponseEntity<PacienteConsultaDTO> buscarAtivoPorId(@RequestParam(required=true) Long id) {
-//		PacienteConsultaDTO paciente = new PacienteConsultaDTO(pacienteService.buscarPacienteIDAtivo(id));
-//		return new ResponseEntity<PacienteConsultaDTO>(paciente, HttpStatus.OK);
-//	}
+	@GetMapping("/")
+	public ResponseEntity<PacienteConsultaDTO> buscarAtivoPorId(@RequestParam(required=true) Long id) {
+		PacienteConsultaDTO paciente = new PacienteConsultaDTO(pacienteService.buscarPacienteIDAtivo(id));
+		return new ResponseEntity<PacienteConsultaDTO>(paciente, HttpStatus.OK);
+	}
 	
 	@GetMapping("/data/{cpf}")
 	public ResponseEntity<PacienteGetDTO2> buscarDadosPacienteAtivoPorCpf(@PathVariable(required=true) String cpf) {
