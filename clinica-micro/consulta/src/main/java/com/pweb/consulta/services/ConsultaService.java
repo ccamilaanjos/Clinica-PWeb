@@ -144,4 +144,15 @@ public class ConsultaService {
 			return new ConsultaGetDTO(consulta, paciente, medico);
 		});
 	}
+
+	public ConsultaGetDTO encontrarPorId(Long id) throws ConsultaNotFoundException {
+		Consulta consulta = consultaRepository.findById(id).orElseThrow(ConsultaNotFoundException::new);
+		
+		PacienteGetDTO paciente = new PacienteGetDTO(pacienteClient.buscarAtivoPorId(consulta.getPaciente()).getBody());
+		MedicoConsultaDTO medicoConsulta = medicoClient.buscarAtivoPorId(consulta.getMedico()).getBody();
+		EspecialidadeDTO especialidade = medicoClient.buscarEspecialidade(medicoConsulta.especialidade()).getBody();
+		MedicoGetDTO medico = new MedicoGetDTO(medicoConsulta, especialidade);
+		
+		return new ConsultaGetDTO(consulta, paciente, medico);
+	}
 }

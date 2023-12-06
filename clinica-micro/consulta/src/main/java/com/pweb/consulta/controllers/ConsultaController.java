@@ -35,6 +35,12 @@ public class ConsultaController {
 		return new ResponseEntity<Page<ConsultaGetDTO>>(consultaService.getTodas(pageable), HttpStatus.OK);
 	}
 	
+	@GetMapping("/")
+	public ResponseEntity<?> buscarConsulta(@RequestParam Long id) {
+		ConsultaGetDTO consulta = consultaService.encontrarPorId(id);
+		return new ResponseEntity<ConsultaGetDTO>(consulta, HttpStatus.OK);
+	}
+	
 	@PostMapping("/marcar")
 	public ResponseEntity<?> marcarConsulta(@RequestBody @Valid ConsultaCreateDTO consultaForm) {
 		ConsultaDTO consulta = consultaService.marcarConsulta(consultaForm);
