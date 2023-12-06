@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.pweb.medico.dtos.EspecialidadeDTO;
-import com.pweb.medico.models.Especialidade;
 import com.pweb.medico.services.EspecialidadeService;
 
 @RestController
@@ -23,9 +22,9 @@ public class EspecialidadeController {
 	private EspecialidadeService especialidadeService;
 
 	@GetMapping
-	public ResponseEntity<?> buscarEspecialidade(@RequestParam(required = true) Long id) {
-		especialidadeService.buscarPorId(id);
-		return new ResponseEntity<>(HttpStatus.OK);
+	public ResponseEntity<EspecialidadeDTO> buscarEspecialidade(@RequestParam(required = true) Long id) {
+		EspecialidadeDTO especialidade = new EspecialidadeDTO(especialidadeService.buscarPorId(id));
+		return new ResponseEntity<EspecialidadeDTO>(especialidade, HttpStatus.OK);
 	}
 	
 	@GetMapping("/todas")
@@ -35,9 +34,8 @@ public class EspecialidadeController {
 	}
 	
 	@GetMapping("/{nome}")
-	public ResponseEntity<Long> buscarEspecialidadePorNome(@PathVariable(required = true) String nome) {
-		Especialidade especialidade = especialidadeService.buscarPorTitulo(nome);
-		return new ResponseEntity<Long>(especialidade.getId(), HttpStatus.OK);
+	public ResponseEntity<EspecialidadeDTO> buscarEspecialidadePorNome(@PathVariable(required = true) String nome) {
+		EspecialidadeDTO especialidade = new EspecialidadeDTO(especialidadeService.buscarPorTitulo(nome));
+		return new ResponseEntity<EspecialidadeDTO>(especialidade, HttpStatus.OK);
 	}
-	
 }

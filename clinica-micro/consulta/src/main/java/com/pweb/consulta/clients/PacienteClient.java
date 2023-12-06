@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient("paciente-ms")
 public interface PacienteClient {
 	@RequestMapping(method = RequestMethod.GET, value = "/pacientes/")
-	public ResponseEntity<PacienteGetDTO> buscarAtivoPorId(@RequestParam(required=true) Long id);
+	public ResponseEntity<PacienteConsultaDTO> buscarAtivoPorId(@RequestParam(required=true) Long id);
 	@RequestMapping(method = RequestMethod.GET, value = "/pacientes/{cpf}")
-	public ResponseEntity<PacienteGetDTO> buscarAtivoPorCpf(@PathVariable(required=true) String cpf);
+	public ResponseEntity<PacienteConsultaDTO> buscarAtivoPorCpf(@PathVariable(required=true) String cpf);
 }

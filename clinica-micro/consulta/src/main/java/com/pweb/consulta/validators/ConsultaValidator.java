@@ -12,9 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.pweb.consulta.clients.MedicoClient;
-import com.pweb.consulta.clients.MedicoGetDTO;
+import com.pweb.consulta.clients.MedicoConsultaDTO;
 import com.pweb.consulta.clients.PacienteClient;
-import com.pweb.consulta.clients.PacienteGetDTO;
+import com.pweb.consulta.clients.PacienteConsultaDTO;
 import com.pweb.consulta.enums.MotivoCancelamento;
 import com.pweb.consulta.exceptions.ClinicaUnavailableException;
 import com.pweb.consulta.exceptions.ConflictingScheduleException;
@@ -87,9 +87,9 @@ public class ConsultaValidator {
 		return true;
 	}
 	
-	public PacienteGetDTO validarPaciente(String cpf, LocalDate data) throws EntityNotFoundException, ConflictingScheduleException {
+	public PacienteConsultaDTO validarPaciente(String cpf, LocalDate data) throws EntityNotFoundException, ConflictingScheduleException {
 		// Verifica se o paciente existe e está ativo
-		PacienteGetDTO paciente = pacienteClient.buscarAtivoPorCpf(cpf).getBody();
+		PacienteConsultaDTO paciente = pacienteClient.buscarAtivoPorCpf(cpf).getBody();
 		
 		// Verifica se o paciente já tem consulta marcada no dia
 		if(!encontrarPorDataEPaciente(data, paciente.id()).isEmpty()) {
@@ -99,11 +99,11 @@ public class ConsultaValidator {
 		return paciente;
 	}
 	
-	public MedicoGetDTO validarMedico(String crm, LocalDate data, LocalTime horario, String especialidade)
+	public MedicoConsultaDTO validarMedico(String crm, LocalDate data, LocalTime horario, String especialidade)
 			throws ConflictingScheduleException, EntityNotFoundException, EmptyListException {
 		if(crm != null && crm != "") {
 			// Verifica se o médico existe e está ativo
-			MedicoGetDTO medico = medicoClient.buscarAtivoPorCrm(crm).getBody();
+			MedicoConsultaDTO medico = medicoClient.buscarAtivoPorCrm(crm).getBody();
 			// Verifica se o médico está disponível neste horário e até que acabe a consulta (1h depois)
 			if(!medicoEstaDisponivel(medico.id(), data, horario)) {
 				throw new ConflictingScheduleException("Médico indisponível neste horário");
@@ -114,7 +114,7 @@ public class ConsultaValidator {
 	
 		// Caso o id do médico não seja enviado, atribui um médico para esta consulta
 		Long idMedico = atribuirMedicoParaConsulta(especialidade, data, horario);
-		MedicoGetDTO medico = medicoClient.buscarAtivoPorId(idMedico).getBody();
+		MedicoConsultaDTO medico = medicoClient.buscarAtivoPorId(idMedico).getBody();
 		
 		return medico;
 	}
@@ -142,7 +142,7 @@ public class ConsultaValidator {
 	private Long atribuirMedicoParaConsulta(String especialidade, LocalDate data, LocalTime horario)
 			throws EntityNotFoundException, EmptyListException {
 		
-		Long idEspecialidade = medicoClient.buscarEspecialidadePorNome(especialidade).getBody();
+		Long idEspecialidade = medicoClient.buscarEspecialidadePorNome(especialidade).getBody().id();
 		List<Long> medicos = medicoClient.listarAtivosPorEspecialidade(idEspecialidade).getBody();
 		List<Long> medicosOcupadosNesteHorario = consultaRepository.verificarMedicosOcupados(data, horario.minusHours(1), horario.plusHours(1));
 		

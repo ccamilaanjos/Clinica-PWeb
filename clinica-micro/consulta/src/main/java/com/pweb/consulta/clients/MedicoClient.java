@@ -12,13 +12,16 @@ import org.springframework.web.bind.annotation.RequestParam;
 @FeignClient("medico-ms")
 public interface MedicoClient {
 	@RequestMapping(method = RequestMethod.GET, value = "/medicos/")
-	public ResponseEntity<MedicoGetDTO> buscarAtivoPorId(@RequestParam(required=true) Long id);
+	public ResponseEntity<MedicoConsultaDTO> buscarAtivoPorId(@RequestParam(required=true) Long id);
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/medicos/{crm}")
-	public ResponseEntity<MedicoGetDTO> buscarAtivoPorCrm(@PathVariable(required=true) String crm);
+	public ResponseEntity<MedicoConsultaDTO> buscarAtivoPorCrm(@PathVariable(required=true) String crm);
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/especialidades/{nome}")
-	public ResponseEntity<Long> buscarEspecialidadePorNome(@PathVariable(required=true) String nome);
+	public ResponseEntity<EspecialidadeDTO> buscarEspecialidadePorNome(@PathVariable(required=true) String nome);
+	
+	@RequestMapping(method = RequestMethod.GET, value = "/especialidades")
+	public ResponseEntity<EspecialidadeDTO> buscarEspecialidade(@RequestParam(required = true) Long id);
 	
 	@RequestMapping(method = RequestMethod.GET, value = "/medicos/especialidade/")
 	public ResponseEntity<List<Long>> listarAtivosPorEspecialidade(@RequestParam(required=true) Long id);
